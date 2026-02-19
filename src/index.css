@@ -1,0 +1,158 @@
+/* google fonts */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+@import url("https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+/* tailwind css */
+@import "tailwindcss";
+
+@theme {
+  --font-primary: "Public Sans", sans-serif;
+  --font-sekuya: "Sekuya", system-ui;
+  --font-secondary: "Poppins", sans-serif;
+  --font-slot5: "Ultra", serif;
+  --font-slot25: "Caprasimo", serif;
+  --font-slot50: "Sekuya", system-ui;
+  --font-logo: -"Montserrat", sans-serif;
+  --color-darkBlue: #0076ed;
+  --color-mediumBlue: #1e90ff;
+  --color-lightBlue: #5cadff;
+  --color-lighterBlue: #b8e2ff;
+  --color-lightestBlue: #e6f5ff;
+  --color-extraLightBlue: #f7fcff;
+  --color-darkerBlack: #0d0d0d;
+  --color-darkBlack: #141414;
+  --color-mediumBlack: #1f1f24;
+  --color-lightBlack: #4a4a54;
+  --color-darkerGrey: #343b40;
+  --color-darkGrey: #637381;
+  --color-mediumGrey: #728392;
+  --color-lightGrey: #92a8c1;
+  --color-lighterGrey: #c9d3de;
+  --color-lightestGrey: #f1f5f9;
+
+  /* Breakpoints */
+  --breakpoint-3xs: 375px; /* For small phones */
+  --breakpoint-2xs: 390px; /* For medium phones */
+  --breakpoint-xs: 480px; /* For small tablets */
+  --breakpoint-sm: 480px; /* Small devices */
+  --breakpoint-md: 576px; /* Medium devices */
+  --breakpoint-lg: 768px; /* Large devices */
+  --breakpoint-xlg: 992px; /* Extra large devices */
+  --breakpoint-xl: 1200px; /* Extra extra large devices */
+  --breakpoint-2xl: 1600px; /* 2X extra large devices */
+
+  /* Container settings (as variables if needed) */
+  --container-max-2xl: 1600px;
+  --container-padding: 20px;
+}
+
+/*
+default breakpoints of tailwind css 
+sm: 640px
+md: 768px
+lg: 1024px
+xl: 1280px
+2xl: 1536px
+*/
+/* @utility container {
+  margin-inline: auto;
+  padding-inline: 1rem;
+} */
+
+.container {
+  max-width: var(--container-max-2xl);
+  padding: var(--container-padding);
+  margin: 0 auto; /* Centers the container */
+}
+
+::-webkit-scrollbar {
+  width: 8px; /* Width of the scrollbar */
+  height: 4px; /* height of the scrollbar */
+}
+::-webkit-scrollbar-track {
+  background: #fff; /* Light grey background */
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-mediumBlue); /* Darker grey */
+  border-radius: 4px;
+}
+
+.scrollbar-hide {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+
+/* Custom Thin Scrollbar */
+.thin-scrollbar::-webkit-scrollbar {
+  width: 4px; /* Thin scrollbar */
+}
+
+.thin-scrollbar::-webkit-scrollbar-track {
+  background: transparent; /* No track background */
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  background: #454f5b; /* Light gray thumb */
+  border-radius: 10px; /* Rounded corners */
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #b9cebc; /* Darker on hover */
+}
+
+body {
+  font-family: var(--font-primary);
+  font-weight: 400;
+  overflow: auto;
+  background-color: #0d0d0d;
+
+  /* Hide arrows for number input in Chrome, Safari, Edge, and Opera */
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Hide arrows for number input in Firefox */
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+}
+
+/* input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-box-shadow: none !important;  
+  box-shadow: none !important;         
+  background-color: transparent !important;  
+  -webkit-text-fill-color: inherit !important; 
+  transition: background-color 5000s ease-in-out 0s;  
+} */
+
+/* Apply styles when the input itself has the theme class */
+input.light-theme:-webkit-autofill,
+textarea.light-theme:-webkit-autofill,
+select.light-theme:-webkit-autofill {
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+  background-color: white !important;
+  -webkit-text-fill-color: #454f5b !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+input.dark-theme:-webkit-autofill,
+textarea.dark-theme:-webkit-autofill,
+select.dark-theme:-webkit-autofill {
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
+  -webkit-text-fill-color: #c9d3de !important;
+  transition: background-color 5000s ease-in-out 0s;
+}

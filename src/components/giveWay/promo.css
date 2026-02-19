@@ -1,0 +1,40 @@
+/* Custom Scrollbar - Beautiful & Themed */
+.scrollbar-container::-webkit-scrollbar {
+  height: 10px;
+}
+
+.scrollbar-container::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 10px;
+}
+
+.scrollbar-container::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.4); /* Gray for light mode */
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.scrollbar-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(107, 114, 128, 0.6);
+  background-clip: content-box;
+}
+
+/* Dark mode scrollbar */
+.dark .scrollbar-container::-webkit-scrollbar-thumb {
+  background: rgba(75, 85, 99, 0.5); /* Gray for dark mode */
+}
+
+.dark .scrollbar-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(107, 114, 128, 0.8);
+}
+
+/* Firefox support */
+.scrollbar-container {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 163, 175, 0.4) transparent;
+}
+
+.dark .scrollbar-container {
+  scrollbar-color: rgba(75, 85, 99, 0.5) transparent;
+}
