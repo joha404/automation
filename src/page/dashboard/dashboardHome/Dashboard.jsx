@@ -13,6 +13,10 @@ import GooglePlayAndAppStore from "./components/GooglePlayAndAppStore";
 import RollingBanner from "@/components/modals/FeastivalModal";
 import FreeTrialPopup from "@/page/auth/FreeTrialPopup";
 import FreeTrailSvg from "./components/FreeTrialSVG";
+import Streaks from "./components/Streaks";
+import Result from "../result/Result";
+import PastPredictions from "../pastPrediction/PastPredictions";
+import UpcomingEvents from "./components/UpcommingEvents";
 
 const Dashboard = () => {
   const { theme } = useTheme();
@@ -117,58 +121,11 @@ const Dashboard = () => {
       <div className="fixed -right-4 z-50 top-16 lg:right-4 lg:top-16">
         <FreeTrailSvg onSvgClick={handleSvgClick} />
       </div>
-
-      {/* isApiReady true হওয়ার আগে popup render-ই করবো না */}
-      {isApiReady && (
-        <FreeTrialPopup
-          isOpen={showPopup}
-          onClose={() => {
-            setShowPopup(false);
-            localStorage.setItem("showWelcomePopup", "false");
-          }}
-        />
-      )}
-
-      <div className="grid gap-2 grid-cols-1 lg:grid-cols-8">
-        <div className="xlg:col-span-4 lg:col-span-5 col-span-8">
-          <PredictionSection />
-        </div>
-        <div className="xlg:col-span-4 lg:col-span-3 col-span-8">
-          {predictions?.has_subscription ? (
-            <AutomationSection />
-          ) : (
-            <div className="relative">
-              <div className="filter blur-sm pointer-events-none">
-                <AutomationSection />
-              </div>
-              <div className="absolute inset-0 flex items-center justify-center bg-opacity-30 rounded-lg">
-                <Link
-                  to="/dashboard/subscription-tiers"
-                  className="bg-mediumBlue hover:bg-darkBlue text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-colors duration-200"
-                >
-                  Subscribe To Unlock
-                </Link>
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="xlg:col-span-4 lg:col-span-4 col-span-8">
-          <ResultSection
-            unitData={unitInfo?.data}
-            chartData={data?.chartPoints}
-            data={data}
-            selectedMarket={selectedMarket}
-            setSelectedMarket={setSelectedMarket}
-            markets={markets}
-          />
-        </div>
-        <div className="xlg:col-span-2 lg:col-span-4 col-span-8 lg:block hidden">
-          <PastPrediction />
-        </div>
-        <div className="xlg:col-span-2 lg:col-span-3 col-span-8">
-          <GooglePlayAndAppStore />
-        </div>
+      <Streaks />
+      <UpcomingEvents />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+        <ResultSection />
+        <PastPrediction />
       </div>
     </div>
   );

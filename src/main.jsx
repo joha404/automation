@@ -40,8 +40,6 @@ function App() {
         <Provider store={store}>
           <RouterProvider router={router} />
           <Toaster containerStyle={{ zIndex: 9999 }} />
-          {/* ✅ Move CookieConsent inside ThemeProvider */}
-          <CookieConsent />
         </Provider>
       </SidebarProvider>
     </ThemeProvider>
@@ -52,8 +50,6 @@ function App() {
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      {/* <ChineseNewYearFloating /> */}
-      {/* <AnimatedDragon /> */}
       <App />
     </QueryClientProvider>
   </StrictMode>,

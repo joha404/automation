@@ -13,7 +13,7 @@ const ThemeSwitch = ({ theme, toggleTheme, openBar }) => {
         openBar ? "rounded-md" : "rounded-full"
       } transition-colors duration-300 cursor-pointer ${
         theme === "dark"
-          ? "bg-lightBlack text-yellow-400 hover:bg-darkGrey"
+          ? "bg-[#086C65] text-[#88B1AE] hover:bg-darkGrey"
           : "bg-lightBlack text-white hover:bg-darkBlack"
       }`}
     >

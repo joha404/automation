@@ -17,8 +17,12 @@ import Automation from "@/page/dashboard/automation/Automation";
 import Predictions from "@/page/dashboard/predictions/Predictions";
 import Result from "@/page/dashboard/result/Result";
 import PastPredictions from "@/page/dashboard/pastPrediction/PastPredictions";
+import SportsHub from "@/page/dashboard/sports/SportsHub";
 import ScoreDetails from "@/page/dashboard/scoreDetails/ScoreDetails";
+import Referrals from "@/page/dashboard/referral/Referrals";
 import Setting from "@/page/dashboard/settings/Setting";
+import HowtoVideos from "@/page/dashboard/videos/HowtoVideos";
+import CommingSoon from "@/shared/errorPages/CommingSoon";
 import Notifications from "@/shared/Notifications";
 import Terms from "@/shared/Terms";
 import Privacy from "@/shared/Privacy";
@@ -47,9 +51,9 @@ const router = createBrowserRouter([
     path: "/dashboard",
     element: (
       <>
-        <DashboardLayout />
-        {/* <PrivateRoute allowedRoles={["superAdmin"]}>
-        </PrivateRoute> */}
+        <PrivateRoute allowedRoles={["superAdmin"]}>
+          <DashboardLayout />
+        </PrivateRoute>
       </>
     ),
     children: [
@@ -57,9 +61,9 @@ const router = createBrowserRouter([
         index: true,
         element: (
           <>
-            <Dashboard />
-            {/* <PrivateRoute allowedRoles={["superAdmin"]}>
-            </PrivateRoute> */}
+            <PrivateRoute allowedRoles={["superAdmin"]}>
+              <Dashboard />
+            </PrivateRoute>
           </>
         ),
       },
@@ -76,9 +80,9 @@ const router = createBrowserRouter([
         path: "predictions",
         element: (
           <>
-            <Predictions />
-            {/* <PrivateRoute allowedRoles={["superAdmin"]}>
-            </PrivateRoute> */}
+            <PrivateRoute allowedRoles={["superAdmin"]}>
+              <Predictions />
+            </PrivateRoute>
           </>
         ),
       },
@@ -86,9 +90,9 @@ const router = createBrowserRouter([
         path: "results",
         element: (
           <>
-            <Result />
-            {/* <PrivateRoute allowedRoles={["superAdmin"]}>
-            </PrivateRoute> */}
+            <PrivateRoute allowedRoles={["superAdmin"]}>
+              <Result />
+            </PrivateRoute>
           </>
         ),
       },
@@ -102,7 +106,30 @@ const router = createBrowserRouter([
           </>
         ),
       },
+      {
+        path: "betting-calculator",
+        element: (
+          <>
+            {/* <MetaPixelWrapper />
+            <PrivateRoute allowedRoles={["superAdmin"]}>
+              <BettingCalculator />
+            </PrivateRoute> */}
+            <CommingSoon />
+          </>
+        ),
+      },
+      {
+        path: "chat-room",
+        element: (
+          <>
+            <PrivateRoute allowedRoles={["superAdmin"]}>
+              <SportsHub />
+            </PrivateRoute>
+          </>
 
+          // <CommingSoon />
+        ),
+      },
       {
         path: "sports-hub/scoring-summary/:game_type/:id",
         element: (
@@ -123,7 +150,25 @@ const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
+      {
+        path: "referral-program",
+        element: (
+          <PrivateRoute allowedRoles={["superAdmin"]}>
+            <Referrals />
+          </PrivateRoute>
+          // <CommingSoon />
+        ),
+      },
 
+      {
+        path: "rewards",
+        element: (
+          <PrivateRoute allowedRoles={["superAdmin"]}>
+            <Offer />
+          </PrivateRoute>
+          // <CommingSoon />
+        ),
+      },
       {
         path: "settings",
         element: (
@@ -134,7 +179,16 @@ const router = createBrowserRouter([
           </>
         ),
       },
-
+      {
+        path: "how-to-videos",
+        element: (
+          <>
+            <PrivateRoute allowedRoles={["superAdmin"]}>
+              <HowtoVideos />
+            </PrivateRoute>
+          </>
+        ),
+      },
       {
         path: "notifications",
         element: (
@@ -168,7 +222,16 @@ const router = createBrowserRouter([
       </>
     ),
   },
+  {
+    path: "/wrapped",
+    element: (
+      <>
+        {/* <MetaPixelWrapper /> */}
 
+        <Festival />
+      </>
+    ),
+  },
   {
     path: "/sign-up",
     element: (

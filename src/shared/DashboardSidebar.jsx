@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { useLogout } from "@/hooks/api/auth/useLogout";
 import { useTheme } from "@/hooks/custom/useTheme";
 import { useState, useEffect } from "react";
-import logo from "@/assets/shared/logo.png";
+import logo from "../assets/dashboard/logo.png";
 import avatar from "@/assets/shared/avatar.png";
 import ThemeSwitch from "./components/ThemeSwitch";
 import {
@@ -65,7 +65,7 @@ const DashboardSidebar = ({ open, countData }) => {
         variants={sidebarVariants}
         className={`fixed top-0 z-[1000] h-screen transition-colors duration-300 ${
           theme === "dark"
-            ? "bg-darkBlack border border-darkBlack shadow-sm"
+            ? "bg-[#021716] border border-[#021716] shadow-sm"
             : "bg-white border-gray-200"
         } border-r shadow-lg`}
       >
@@ -86,7 +86,9 @@ const DashboardSidebar = ({ open, countData }) => {
             className={`m-2.5 rounded-lg p-2.5 ${
               open ? " mt-10" : "mt-0 bg-transparent"
             } transition-colors duration-200 ${
-              theme === "dark" ? "bg-mediumBlack" : "bg-lightestGrey"
+              theme === "dark"
+                ? "text-[#0A9087] bg-[#054844] hover:bg-mediumBlack hover:text-white"
+                : "bg-lightestGrey"
             }`}
           >
             {open ? (
@@ -105,9 +107,7 @@ const DashboardSidebar = ({ open, countData }) => {
                       duration: 0.2,
                     }}
                     className={`min-w-10 min-h-10 w-10 h-10 border ${
-                      theme === "dark"
-                        ? "border-lightBlack"
-                        : "border-lightGrey"
+                      theme === "dark" ? "border-[#0A9087]" : "border-lightGrey"
                     } rounded-full flex items-center justify-center overflow-hidden`}
                   >
                     <img
@@ -118,7 +118,7 @@ const DashboardSidebar = ({ open, countData }) => {
                   </motion.div>
                   <div>
                     <h2
-                      className={`text-sm font-semibold ${
+                      className={`font-logo text-[14px] ${
                         theme === "dark" ? "text-white" : "text-gray-900"
                       }`}
                     >
@@ -162,8 +162,8 @@ const DashboardSidebar = ({ open, countData }) => {
                       }}
                       className={`p-1 cursor-pointer rounded-md transition-colors duration-200 relative ${
                         theme === "dark"
-                          ? "bg-lightBlack text-white hover:bg-darkGrey"
-                          : "bg-lightBlack hover:bg-darkBlack text-white"
+                          ? "bg-[#086C65] text-[#88B1AE] hover:bg-darkGrey"
+                          : "bg-[#086C65] hover:bg-darkBlack text-white"
                       }`}
                     >
                       <MdNotifications size={19} />
@@ -219,7 +219,7 @@ const DashboardSidebar = ({ open, countData }) => {
                     }}
                     className={`p-1.5 cursor-pointer rounded-full transition-colors duration-200 relative ${
                       theme === "dark"
-                        ? "bg-lightBlack text-white hover:bg-darkGrey"
+                        ? "bg-[#086C65] text-[#88B1AE] hover:bg-[#024e49]"
                         : "bg-lightBlack hover:bg-darkBlack text-white"
                     }`}
                   >

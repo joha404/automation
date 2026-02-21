@@ -68,15 +68,15 @@ const Header = () => {
         {/* Centered section with logo and greeting */}
         <div className="flex flex-row sm:items-center justify-center items-start gap-3 sm:gap-4 w-full text-center sm:text-left">
           <div
-            className={`sm:block hidden lg:mb-2 md:mb-3 sm:mb-8 mt-1  sm:p-3 p-1 xl:rounded-xl rounded-md flex items-center justify-center flex-shrink-0 bg-mediumBlue`}
+            className={`sm:block hidden lg:mb-2 md:mb-3 sm:mb-8 mt-1  sm:p-3 p-1 xl:rounded-xl rounded-md flex items-center justify-center flex-shrink-0 bg-[#0A9087]`}
           >
             <MdCalendarMonth className="sm:text-xl text-base text-white" />
           </div>
           <div className="flex flex-col items-center sm:items-start">
             <CommonTitle
               variant="small"
-              className={`font-bold ${
-                theme === "dark" ? "text-lightBlue" : "text-darkerBlue"
+              className={`font-bold  font-logo ${
+                theme === "dark" ? "text-[#0A9087]" : "text-darkerBlue"
               }`}
             >
               {greeting}, {greet?.username || "user"}!
@@ -89,7 +89,7 @@ const Header = () => {
                 variant="small"
                 className={`px-5 py-1 rounded-xl whitespace-nowrap font-medium ${
                   theme === "dark"
-                    ? "bg-darkerBlue text-blue-300"
+                    ? "bg-[#032422] text-[#0A9087]"
                     : "bg-blue-100 text-darkBlue"
                 }`}
               >
