@@ -9,11 +9,11 @@ const ScreenLoader = () => {
 
   return (
     <CommonWrapper>
-      <div className={`fixed inset-0 z-[500] backdrop-blur-sm flex items-center justify-center ${
-        theme === "light" 
-          ? " bg-white/80" 
-          : "bg-darkerBlack"
-      }`}>
+      <div
+        className={`fixed inset-0 z-[500] backdrop-blur-sm flex items-center justify-center ${
+          theme === "light" ? " bg-white/80" : "bg-[#032422]"
+        }`}
+      >
         <div className="flex flex-col items-center justify-center gap-6">
           {/* loader with professional styling */}
           <l-tailspin
@@ -28,14 +28,18 @@ const ScreenLoader = () => {
 
           {/* Optional loading text */}
           <div className="text-center">
-            <p className={`font-semibold text-lg tracking-tight mb-1 ${
-              theme === "dark" ? "text-lightGrey" : "text-gray-700"
-            }`}>
+            <p
+              className={`font-semibold text-lg tracking-tight mb-1 ${
+                theme === "dark" ? "text-lightGrey" : "text-gray-700"
+              }`}
+            >
               Getting Things Ready
             </p>
-            <p className={`text-sm opacity-80 ${
-              theme === "dark" ? "text-lightGrey" : "text-gray-600"
-            }`}>
+            <p
+              className={`text-sm opacity-80 ${
+                theme === "dark" ? "text-lightGrey" : "text-gray-600"
+              }`}
+            >
               Please wait while we prepare your content
             </p>
           </div>

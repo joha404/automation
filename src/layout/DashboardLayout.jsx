@@ -68,7 +68,7 @@ const DashboardLayout = () => {
   return (
     <div
       className={`flex h-screen flex-col relative ${
-        theme === "dark" ? "bg-darkerBlack" : "bg-extraLightBlue"
+        theme === "dark" ? "bg-[#020C0B]" : "bg-extraLightBlue"
       }`}
     >
       <PixelTracker />
@@ -92,9 +92,7 @@ const DashboardLayout = () => {
         <button
           onClick={toggleSidebar}
           className={`mr-2 rounded-sm p-0.5 group transition-all duration-300 cursor-pointer ${
-            theme === "dark"
-              ? "hover:bg-mediumBlack"
-              : "hover:bg-extraLightBlue"
+            theme === "dark" ? "hover:bg-" : "hover:bg-extraLightBlue"
           } 
           ${
             !sidebarOpen

@@ -12,10 +12,10 @@ const SidebarMenu = ({
   textVariants,
   animationKey,
   sectionName,
-  title
+  title,
 }) => {
   return (
-    <div className={`${open? "xl:mb-6 lg:mb-4 md:mb-2":"mb-0"}`}>
+    <div className={`${open ? "xl:mb-6 lg:mb-4 md:mb-2" : "mb-0"}`}>
       {/* Section Title */}
       {open && (
         <motion.div
@@ -24,7 +24,7 @@ const SidebarMenu = ({
           transition={{ duration: 0.3, delay: 0.15 }}
         >
           <p
-            className={`text-xs font-bold uppercase tracking-wider md:mt-2 mb-0 px-2 ${
+            className={`text-xs font-bold uppercase tracking-wider md:mt-2 mb-0 px-2 font-logo ${
               theme === "dark" ? "text-gray-400" : "text-gray-500"
             }`}
           >
@@ -35,7 +35,11 @@ const SidebarMenu = ({
 
       {/* Menu Items */}
       <motion.div
-        key={open ? `menu-${animationKey}-${sectionName}` : `menu-collapsed-${sectionName}`}
+        key={
+          open
+            ? `menu-${animationKey}-${sectionName}`
+            : `menu-collapsed-${sectionName}`
+        }
         variants={containerVariants}
         initial="hidden"
         animate={open ? "visible" : "collapsed"}
@@ -49,14 +53,14 @@ const SidebarMenu = ({
           >
             <Link
               to={item.path}
-              className={`group relative flex items-center rounded-lg xl:p-2 md:p-1.5 p-[3px] xl:text-sm md:text-[13px] text-[12px] font-medium transition-all duration-300 overflow-hidden ${
+              className={`group relative flex items-center rounded-lg xl:p-2 md:p-1.5 p-[3px] xl:text-sm md:text-[13px] text-[12px] font-bold font-logo transition-all duration-300 overflow-hidden ${
                 isActive(item.path)
                   ? theme === "dark"
-                    ? "text-lightBlue bg-mediumBlack hover:bg-mediumBlack hover:text-white"
+                    ? "text-[#0A9087] bg-[#054844] hover:bg-[#024e49] hover:text-white"
                     : "text-darkBlue bg-lightestBlue hover:bg-lightestGrey hover:text-mediumBlack"
                   : theme === "dark"
-                  ? "text-gray-300 hover:bg-mediumBlack hover:text-white"
-                  : "text-darkGrey hover:bg-lightestGrey hover:text-mediumBlack"
+                    ? "text-gray-300 hover:bg-[#024e49] hover:text-white"
+                    : "text-darkGrey hover:bg-lightestGrey hover:text-mediumBlack"
               }`}
             >
               {/* Icon container - always visible */}
@@ -65,17 +69,15 @@ const SidebarMenu = ({
                 className={`flex items-center justify-center w-7 h-7 rounded-md transition-all duration-200 ${
                   isActive(item.path)
                     ? theme === "dark"
-                      ? "text-lightBlue group-hover:text-white"
+                      ? "text-[#0A9087] group-hover:text-white"
                       : "text-darkBlue group-hover:text-mediumBlack"
                     : theme === "dark"
-                    ? "text-gray-400 group-hover:text-white"
-                    : "text-darkGrey group-hover:text-mediumBlack"
+                      ? "text-[#0A9087] group-hover:text-white"
+                      : "text-darkGrey group-hover:text-mediumBlack"
                 }`}
               >
                 {item.icon}
               </motion.div>
-
-              {/* Text that appears when sidebar is open with staggered animation */}
               {open && (
                 <motion.span
                   variants={textVariants}

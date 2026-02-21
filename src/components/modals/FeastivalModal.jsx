@@ -6,7 +6,7 @@ import "./feastivalModal.css";
 const RollingBanner = () => {
   const { theme } = useTheme();
   const [bannerMessage, setBannerMessage] = useState(
-    "Welcome to TechTakes Dashboard! Stay tuned for the latest updates and features."
+    "Welcome to TechTakes Dashboard! Stay tuned for the latest updates and features.",
   );
   const containerRef = useRef(null);
   const trackRef = useRef(null);
@@ -59,7 +59,7 @@ const RollingBanner = () => {
       <div
         className={`fixed top-0 left-0 w-full z-50 border-b backdrop-blur-md ${
           theme === "dark"
-            ? "bg-darkerBlack/95 border-gray-800"
+            ? "bg-[#020C0B] border-[#022e2a]"
             : "bg-lightestGrey/95 border-gray-300"
         }`}
         style={{ height: "56px" }} // slightly smaller for mobile
