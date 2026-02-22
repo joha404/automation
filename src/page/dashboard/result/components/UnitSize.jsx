@@ -94,7 +94,7 @@ const UnitSize = ({ unitData, sportsData }) => {
     <div
       className={`rounded-xl sm:p-5 p-3 font-primary shadow-sm border transition-colors duration-300 w-full mb-5 overflow-hidden ${
         theme === "dark"
-          ? "bg-darkBlack border-mediumBlack"
+          ? "bg-[#021716] border-mediumBlack"
           : "bg-white border-lightestGrey"
       } `}
     >

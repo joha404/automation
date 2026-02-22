@@ -112,7 +112,7 @@ const ReferralList = () => {
           className={`rounded-2xl p-4 sm:p-6  mb-6 sm:mb-8 backdrop-blur-lg border
             ${
               theme === "dark"
-                ? "bg-darkBlack/60 border-lightBlack/80"
+                ? "bg-[#054844] "
                 : "bg-white/60 border-lightGrey/50"
             }
             shadow-lg
@@ -120,24 +120,24 @@ const ReferralList = () => {
         >
           <div className="flex items-start gap-2 sm:gap-3">
             {/* Blue Circle - Aligned with first line of text */}
-            <div className="sm:w-3 sm:h-3 w-2 h-2 rounded-full bg-lightBlue flex-shrink-0  sm:mt-1.5 mt-2 shadow-md"></div>
+            <div className="sm:w-3 sm:h-3 w-2 h-2 rounded-full bg-[#0A9087] flex-shrink-0  sm:mt-1.5 mt-2 shadow-md"></div>
 
             {/* Text Content */}
             <CommonParagraph className="text-sm sm:text-base leading-relaxed">
               Give your friends a head start and earn{" "}
-              <span className="font-semibold text-blue-500">
+              <span className="font-semibold text-[#0A9087]">
                 50% off your next subscription renewal automatically.
               </span>
             </CommonParagraph>
           </div>
           <div className="flex items-start gap-2 sm:gap-3">
             {/* Blue Circle - Aligned with first line of text */}
-            <div className="sm:w-3 sm:h-3 w-2 h-2 rounded-full bg-lightBlue flex-shrink-0  sm:mt-1.5 mt-2 shadow-md"></div>
+            <div className="sm:w-3 sm:h-3 w-2 h-2 rounded-full bg-[#0A9087] flex-shrink-0  sm:mt-1.5 mt-2 shadow-md"></div>
 
             {/* Text Content */}
             <CommonParagraph className="text-sm sm:text-base leading-relaxed">
               New users who signed up with your referral link will get
-              <span className="font-semibold text-blue-500 ps-1">
+              <span className="font-semibold text-[#0A9087] ps-1">
                 10 USD off their first purchase.
               </span>
             </CommonParagraph>
@@ -151,7 +151,7 @@ const ReferralList = () => {
           backdrop-blur-lg border
           ${
             theme === "dark"
-              ? "bg-darkBlack/60 border-lightBlack/80"
+              ? "bg-[#054844] "
               : "bg-white/60 border-lightGrey/50"
           }
           shadow-lg
@@ -173,7 +173,7 @@ const ReferralList = () => {
                 flex-1 rounded-xl p-3 sm:p-3.5 border backdrop-blur-md
                 ${
                   theme === "dark"
-                    ? "bg-darkerBlack/80 border-lightBlack/50 text-lightGrey"
+                    ? "bg-[#011a18] border-lightBlack/50 text-lightGrey"
                     : "bg-white/70 border-lightGrey/30 text-darkGrey"
                 }
                 break-all font-mono text-sm sm:text-base
@@ -204,7 +204,7 @@ const ReferralList = () => {
                   min-w-[140px] lg:min-w-[160px]
                   ${
                     theme === "dark"
-                      ? "bg-green-600/80 border-green-500/50 hover:bg-green-500/80 text-white disabled:bg-green-600/50"
+                      ? "bg-[#025953]  hover:bg-[#0A9087]/80 text-white disabled:bg-green-600/50"
                       : "bg-green-500/80 border-green-400/50 hover:bg-green-400/80 text-white disabled:bg-green-500/50"
                   }
                   shadow-md font-medium disabled:cursor-not-allowed
@@ -259,13 +259,13 @@ const ReferralList = () => {
                   ${
                     copied
                       ? theme === "dark"
-                        ? "bg-green-600/80 border-green-500/50 text-white"
+                        ? "bg-[#025953] border-green-500/50 text-white"
                         : "bg-green-500/80 border-green-400/50 text-white"
                       : theme === "dark"
-                        ? "bg-blue-600/80 border-blue-500/50 hover:bg-blue-500/80 text-white"
+                        ? "bg-[#036d66] border-[#0A9087]/50 hover:bg-[#0A9087]/80 text-white"
                         : "bg-blue-500/80 border-blue-400/50 hover:bg-blue-400/80 text-white"
                   }
-                  shadow-md font-medium
+                  shadow-sm font-medium
                 `}
               >
                 <IoCopy className="text-lg" />
@@ -278,7 +278,7 @@ const ReferralList = () => {
           {copied && hasReferralLink && (
             <CommonParagraph
               variant="small"
-              className="text-green-500 mt-3 text-center sm:text-left flex items-center gap-2"
+              className="text-[#0A9087] mt-3 text-center sm:text-left flex items-center gap-2"
             >
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                 <path
@@ -299,7 +299,7 @@ const ReferralList = () => {
           backdrop-blur-lg border
           ${
             theme === "dark"
-              ? "bg-darkBlack/60 border-lightBlack/80"
+              ? "bg-[#054844] "
               : "bg-white/60 border-lightGrey/50"
           }
           shadow-lg
@@ -328,12 +328,12 @@ const ReferralList = () => {
                 backdrop-blur-md border 
                 ${
                   theme === "dark"
-                    ? "bg-darkerBlack border-lightBlack/80"
+                    ? "bg-[#011a18] border-[#0A9087]/50"
                     : "bg-white/60 border-lightGrey/50"
                 }
               `}
               >
-                <div className="w-2 h-2  bg-green-500 rounded-full"></div>
+                <div className="w-2 h-2  bg-[#0A9087] rounded-full"></div>
                 <CommonParagraph variant="small" className="font-normal ">
                   {tag}
                 </CommonParagraph>
@@ -351,7 +351,7 @@ const ReferralList = () => {
                 backdrop-blur-md border 
                 ${
                   theme === "dark"
-                    ? "bg-darkerBlack/80 border-lightBlack/50"
+                    ? "bg-[#022724] border-lightBlack/50"
                     : "bg-lightestBlue/40 border-mediumBlue/20"
                 }
               `}
@@ -360,7 +360,7 @@ const ReferralList = () => {
                   className={`
                   w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-3 shadow-md
                   backdrop-blur-sm
-                  ${theme === "dark" ? "bg-lightBlack/70" : "bg-white/70"}
+                  ${theme === "dark" ? "bg-[#0A9087]" : "bg-white/70"}
                 `}
                 >
                   <span
@@ -394,7 +394,7 @@ const ReferralList = () => {
         backdrop-blur-lg border
           ${
             theme === "dark"
-              ? "bg-darkBlack/60 border-lightBlack/80"
+              ? "bg-[#0A9087] border-lightBlack/80"
               : "bg-white/60 border-lightGrey/50"
           }
       `}
@@ -417,7 +417,7 @@ const ReferralList = () => {
               backdrop-blur-md border border-opacity-20
               ${
                 theme === "dark"
-                  ? "bg-darkerBlack/80 border-lightBlack/50"
+                  ? "bg-[#022724] border-lightBlack/50"
                   : "bg-lightestBlue/40 border-mediumBlue/20"
               }
             `}

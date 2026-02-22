@@ -62,20 +62,20 @@ const ResultScreen = ({
       <div
         className={`rounded-xl font-primary sm:p-5 p-3 shadow-sm border ${
           theme === "dark"
-            ? "bg-darkBlack border-mediumBlack"
+            ? "bg-[#054844] border-mediumBlack"
             : "bg-white border-lightestGrey"
         } `}
       >
         <div
           className={` mb-2 ${
-            theme === "dark" ? " bg-[#114F8C]" : "bg-mediumBlue "
+            theme === "dark" ? " bg-[#021716]" : "bg-lightestGrey "
           } text-white rounded-xl lg:p-6 p-2 flex flex-col items-center`}
         >
           <div className="flex items-center justify-between lg:justify-center gap-2 lg:gap-6 w-full my-2 lg:my-1">
             {/* Text */}
             <CommonTitle
               variant="regular"
-              className="text-white !mb-0 ml-4 lg:ml-5 leading-none whitespace-nowrap"
+              className="text-[#0A9087] !mb-0 ml-4 lg:ml-5 leading-none whitespace-nowrap"
             >
               {data?.headline?.units || "0.00"} %
             </CommonTitle>
@@ -99,18 +99,18 @@ const ResultScreen = ({
                 key={index}
                 className={`border ${
                   theme === "dark"
-                    ? "bg-mediumBlack border-mediumBlack"
+                    ? "bg-[#054844] "
                     : "bg-white border-lighterGrey"
                 }
       text-gray-700 rounded flex justify-center items-center
       whitespace-nowrap leading-none
       
-      ${window.innerWidth < 640 ? "w-full gap-1 px-3 py-2 min-h-[40px] text-[10px] shadow-sm" : ""}
-      ${window.innerWidth >= 640 && window.innerWidth < 768 ? "w-[160px] gap-1.5 px-4 py-2 text-[11px] shadow-sm" : ""}
-      ${window.innerWidth >= 768 && window.innerWidth < 1024 ? "w-[240px] gap-2 px-5 py-2.5 text-xs shadow" : ""}
-      ${window.innerWidth >= 1024 && window.innerWidth < 1280 ? "w-[200px] gap-2 px-6 py-3 text-xs shadow-sm" : ""}
-      ${window.innerWidth >= 1280 && window.innerWidth < 1536 ? "w-[260px] gap-2.5 px-7 py-4 text-sm shadow-md" : ""}
-      ${window.innerWidth >= 1536 ? "w-[320px] gap-3 px-8 py-5 text-base shadow-lg" : ""}
+      ${window.innerWidth < 640 ? "w-full gap-1 px-3 py-2 min-h-[40px] text-[10px] " : ""}
+      ${window.innerWidth >= 640 && window.innerWidth < 768 ? "w-[160px] gap-1.5 px-4 py-2 text-[11px] " : ""}
+      ${window.innerWidth >= 768 && window.innerWidth < 1024 ? "w-[240px] gap-2 px-5 py-2.5 text-xs " : ""}
+      ${window.innerWidth >= 1024 && window.innerWidth < 1280 ? "w-[200px] gap-2 px-6 py-3 text-xs " : ""}
+      ${window.innerWidth >= 1280 && window.innerWidth < 1536 ? "w-[260px] gap-2.5 px-7 py-4 text-sm " : ""}
+      ${window.innerWidth >= 1536 ? "w-[320px] gap-3 px-8 py-5 text-base " : ""}
       `}
               >
                 <CommonParagraph className="font-medium">
@@ -145,11 +145,10 @@ const ResultScreen = ({
 
         <div
           className={`rounded-lg sm:p-5 p-3 ${
-            theme === "dark" ? "bg-darkerBlack" : "bg-lightestGrey"
-          } `}
+            theme === "dark" ? "bg-[#021716]" : "bg-lightestGrey"
+          }`}
         >
           <div>
-            {/* Chart */}
             <div className="mt-6 lg:h-[400px] md:h-[200px] h-[150px]">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={currentData}>
@@ -161,10 +160,10 @@ const ResultScreen = ({
                       x2="0"
                       y2="1"
                     >
-                      <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.4} />
+                      <stop offset="0%" stopColor="#0A9087" stopOpacity={0.4} />
                       <stop
                         offset="100%"
-                        stopColor="#3b82f6"
+                        stopColor="#0A9087"
                         stopOpacity={0.05}
                       />
                     </linearGradient>
@@ -206,11 +205,11 @@ const ResultScreen = ({
                   <Area
                     type="monotone"
                     dataKey="value"
-                    stroke="#3b82f6"
+                    stroke="#0A9087"
                     strokeWidth={2}
                     fill="url(#blueGradient)"
                     dot={false}
-                    activeDot={{ r: 4, stroke: "#3b82f6", strokeWidth: 2 }}
+                    activeDot={{ r: 4, stroke: "#0A9087", strokeWidth: 2 }}
                   />
                 </AreaChart>
               </ResponsiveContainer>

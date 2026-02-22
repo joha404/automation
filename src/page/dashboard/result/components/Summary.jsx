@@ -8,9 +8,7 @@ const Summary = ({ summaryData }) => {
   return (
     <div
       className={`h-full rounded-lg sm:p-6 p-3 shadow-xl border ${
-        theme === "dark"
-          ? "bg-darkBlack border-lightBlack"
-          : "bg-white border-lighterGrey"
+        theme === "dark" ? "bg-[#021716] " : "bg-white border-lighterGrey"
       }`}
     >
       <CommonParagraph

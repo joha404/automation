@@ -3,7 +3,7 @@ import CommonParagraph from "@/components/texts/CommonParagraph";
 const SummaryRow = ({ title, data, theme }) => (
   <div
     className={`grid grid-cols-4 items-center py-3 rounded px-2 ${
-      theme === "dark" ? "hover:bg-mediumBlack" : "hover:bg-lightestBlue"
+      theme === "dark" ? "hover:bg-[#021716]" : "hover:bg-lightestBlue"
     }`}
   >
     <CommonParagraph variant="small" className="font-medium">

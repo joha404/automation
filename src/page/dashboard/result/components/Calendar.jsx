@@ -125,7 +125,7 @@ const Calendar = ({ calendarData }) => {
     <div
       className={`h-full rounded-lg p-3 sm:p-4 lg:p-6 shadow-xl border ${
         theme === "dark"
-          ? "bg-darkBlack border-lightBlack text-lighterGrey"
+          ? "bg-[#021716] border-lightBlack text-lighterGrey"
           : "bg-white border-lighterGrey text-darkGrey"
       }`}
     >

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import m from "../../../../assets/dashboard/m.png";
 import { useTheme } from "@/hooks/custom/useTheme";
-
+import { FaFire } from "react-icons/fa6";
 const sports = [
   "All",
   "NBA",
@@ -94,9 +94,10 @@ export default function Streaks() {
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-2">
-            <span className="text-2xl drop-shadow-[0_0_6px_rgba(255,120,30,0.7)]">
-              🔥
-            </span>
+            <FaFire
+              className={` ${theme === "dark" ? "text-white " : "text-black"}`}
+            />
+
             <h2
               className={`font-logo text-xl font-extrabold tracking-tight transition-colors duration-300 ${isDark ? "text-white" : "text-[#0a1628]"}`}
             >

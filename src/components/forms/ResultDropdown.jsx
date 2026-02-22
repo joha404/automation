@@ -62,7 +62,7 @@ const ResultDropdown = ({
     } ${
       theme === "dark" ? "border-lightBlack" : "border-lighterGrey"
     } light-theme ${theme === "dark" ? "text-white placeholder:text-white" : "text-black placeholder:text-black"}`,
-    bg_black: `bg-mediumBlack px-3 sm:px-3 md:px-4 lg:px-6 xl:px-8 ${
+    bg_black: `bg-[#054844] px-3 sm:px-3 md:px-4 lg:px-6 xl:px-8 ${
       sizeClasses[size]
     } ${
       theme === "dark" ? "border-lightBlack" : "border-lightBlue"
@@ -145,7 +145,7 @@ const ResultDropdown = ({
               atLeft ? "left-0" : "right-0"
             } border rounded-lg shadow-md z-[1000] mt-1 mb-1 p-1 overflow-y-scroll max-h-[200px] thin-scrollbar ${
               theme === "dark"
-                ? "bg-mediumBlack border-gray-700"
+                ? "bg-[#054844] border-gray-700"
                 : "bg-white border-lighterGrey"
             }`}
           >
@@ -154,9 +154,9 @@ const ResultDropdown = ({
                 key={index}
                 className={`px-2 sm:px-2 md:px-2.5 lg:px-3 xl:px-5 py-1.5 sm:py-1.5 md:py-2 lg:py-2 xl:py-2.5 cursor-pointer m-1 rounded-md font-medium text-[10px] sm:text-[10px] md:text-[12px] lg:text-[14px] xl:text-[15px] transition-all duration-200 ${
                   selectedValue === option.value
-                    ? "text-gray-700 bg-lightBlue"
+                    ? "text-gray-700 bg-[#021716]"
                     : theme === "dark"
-                      ? "text-white hover:bg-lightBlue hover:text-gray-700"
+                      ? "text-white hover:bg-[#021716] hover:text-white"
                       : "text-black hover:bg-lightBlue hover:text-gray-700"
                 }`}
                 onClick={() => handleDropDown(option.value)}

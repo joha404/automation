@@ -9,7 +9,6 @@ const UnitCard = ({ title, data }) => {
   const { theme } = useTheme();
   const { sidebarOpen } = useSidebar();
 
-  // Handle missing data gracefully
   const periodDataRaw = data?.[selectedPeriod] || {};
 
   const periodData = {
@@ -35,19 +34,23 @@ const UnitCard = ({ title, data }) => {
 
   return (
     <div
-      className={`${
-        theme === "dark" ? "bg-[#012140]" : "bg-darkerBlue"
-      } rounded-2xl p-4 sm:p-5 w-full max-w-full text-white shadow-md ${
+      className={`rounded-2xl p-4 sm:p-5 w-full max-w-full shadow-md ${
         sidebarOpen
           ? "min-w-[260px] max-w-[280px]"
           : "min-w-[280px] max-w-[320px]"
+      } ${
+        theme === "dark"
+          ? "bg-[#054844] text-white"
+          : "bg-white border border-gray-100 text-gray-800 shadow-lg"
       }`}
     >
       {/* Title */}
       {data?.size && (
         <CommonParagraph
           variant="large"
-          className="font-semibold text-center mb-8 sm:mb-10 text-white"
+          className={`font-semibold text-center mb-8 sm:mb-10 ${
+            theme === "dark" ? "text-white" : "text-gray-800"
+          }`}
         >
           {data?.size ?? "0"} Percent
         </CommonParagraph>
@@ -55,14 +58,20 @@ const UnitCard = ({ title, data }) => {
       {data?.sport && (
         <CommonParagraph
           variant="large"
-          className="font-semibold text-center mb-8 sm:mb-10 text-white"
+          className={`font-semibold text-center mb-8 sm:mb-10 ${
+            theme === "dark" ? "text-white" : "text-gray-800"
+          }`}
         >
           {data?.sport ?? "0"}
         </CommonParagraph>
       )}
 
       {/* Tabs */}
-      <div className="flex gap-1 sm:gap-2 mb-6 justify-between">
+      <div
+        className={`flex gap-1 sm:gap-2 mb-6 justify-between rounded-xl p-1 ${
+          theme === "dark" ? "" : "bg-gray-100"
+        }`}
+      >
         {[
           { id: "overall", label: "overall" },
           { id: "7d", label: "7D" },
@@ -71,10 +80,14 @@ const UnitCard = ({ title, data }) => {
         ].map((tab) => (
           <button
             key={tab.id}
-            className={`capitalize rounded-md px-2 sm:px-3 py-1 text-xs sm:text-sm font-medium transition-colors flex-1 ${
-              selectedPeriod === tab.id
-                ? "bg-[#2E89FF] text-white"
-                : "text-white/80 hover:bg-white/10 "
+            className={`capitalize rounded-lg px-2 sm:px-3 py-1 text-xs sm:text-sm font-medium transition-all flex-1 ${
+              theme === "dark"
+                ? selectedPeriod === tab.id
+                  ? "bg-[#047f77] text-white"
+                  : "text-white/80 hover:bg-white/10"
+                : selectedPeriod === tab.id
+                  ? "bg-white text-[#0A9087] shadow-sm font-semibold"
+                  : "text-gray-500 hover:text-gray-700"
             }`}
             onClick={() => setSelectedPeriod(tab.id)}
           >
@@ -86,16 +99,50 @@ const UnitCard = ({ title, data }) => {
       {/* Stats Grid */}
       <div className="grid grid-cols-5 gap-2 sm:gap-3 mb-6">
         {/* Unit Won */}
-        <div className="bg-mediumBlue rounded-lg p-3 sm:p-5 text-center col-span-2">
-          <div className="text-xs mb-1 text-lightestGrey"> Won</div>
-          <div className="text-sm sm:text-base font-bold">{unitWon}%</div>
+        <div
+          className={`rounded-xl p-3 sm:p-5 text-center col-span-2 ${
+            theme === "dark"
+              ? "bg-[#076f69]"
+              : "bg-[#0A9087]/10 border border-[#0A9087]/20"
+          }`}
+        >
+          <div
+            className={`text-xs mb-1 ${
+              theme === "dark" ? "text-lightestGrey" : "text-[#0A9087]"
+            }`}
+          >
+            Won
+          </div>
+          <div
+            className={`text-sm sm:text-base font-bold ${
+              theme === "dark" ? "text-white" : "text-[#0A9087]"
+            }`}
+          >
+            {unitWon}%
+          </div>
         </div>
 
         {/* ROI */}
-        <div className="flex justify-center items-center bg-white rounded-lg p-3 sm:p-5 text-center text-gray-800 col-span-3">
+        <div
+          className={`flex justify-center items-center rounded-xl p-3 sm:p-5 text-center col-span-3 ${
+            theme === "dark"
+              ? "bg-[#033633]"
+              : "bg-gray-50 border border-gray-200"
+          }`}
+        >
           <div className="min-w-0">
-            <div className="xl:text-base text-sm mb-1 text-darkGrey">ROI</div>
-            <div className="xl:text-base text-sm font-semibold text-[#2E89FF] truncate">
+            <div
+              className={`xl:text-base text-sm mb-1 ${
+                theme === "dark" ? "text-[#0A9087]" : "text-gray-500"
+              }`}
+            >
+              ROI
+            </div>
+            <div
+              className={`xl:text-base text-sm font-semibold truncate ${
+                theme === "dark" ? "text-[#0A9087]" : "text-gray-800"
+              }`}
+            >
               {unitWon}%
             </div>
           </div>
@@ -104,14 +151,35 @@ const UnitCard = ({ title, data }) => {
 
       {/* Bottom Section */}
       <div className="flex justify-between items-center gap-3">
-        {/* Left box (W/L/P + Total Picks) */}
-        <div className="bg-[#114F8C] rounded-lg px-2 sm:px-3 py-5 sm:py-10 text-xs sm:text-sm leading-relaxed w-full">
+        {/* Left box — W/L/P + Total */}
+        <div
+          className={`rounded-xl px-2 sm:px-3 py-5 sm:py-10 text-xs sm:text-sm leading-relaxed w-full ${
+            theme === "dark"
+              ? "bg-[#0c2b29] text-white"
+              : "bg-gray-50 border border-gray-200 text-gray-700"
+          }`}
+        >
           <div className="grid grid-cols-1 gap-2 justify-center items-center text-center">
-            {stats.map((stat, idx) => (
-              <div key={idx} className="truncate">
-                {stat}
-              </div>
-            ))}
+            {stats.map((stat, idx) => {
+              const isWin = stat.startsWith("Win");
+              const isLoss = stat.startsWith("Loss");
+              return (
+                <div
+                  key={idx}
+                  className={`truncate font-medium ${
+                    theme === "dark"
+                      ? "text-white"
+                      : isWin
+                        ? "text-emerald-600"
+                        : isLoss
+                          ? "text-rose-500"
+                          : "text-gray-600"
+                  }`}
+                >
+                  {stat}
+                </div>
+              );
+            })}
           </div>
         </div>
 
