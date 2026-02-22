@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import m from "../../../../assets/dashboard/m.png";
 import { useTheme } from "@/hooks/custom/useTheme";
-
+import { FaCalendar } from "react-icons/fa";
 const sports = [
   "All",
   "NBA",
@@ -86,29 +86,9 @@ export default function UpcomingEvents() {
           className={`font-logo text-[18px] font-extrabold tracking-tight flex items-center gap-2 ${isDark ? "text-white" : "text-[#0a1628]"}`}
         >
           {/* calendar icon */}
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 20 20"
-            fill="none"
-            className="flex-shrink-0"
-          >
-            <rect
-              x="2"
-              y="4"
-              width="16"
-              height="14"
-              rx="2"
-              stroke={isDark ? "#fff" : "#0a1628"}
-              strokeWidth="1.8"
-            />
-            <path
-              d="M6 2v4M14 2v4M2 9h16"
-              stroke={isDark ? "#fff" : "#0a1628"}
-              strokeWidth="1.8"
-              strokeLinecap="round"
-            />
-          </svg>
+          <FaCalendar
+            className={` ${theme === "dark" ? "text-white " : "text-black"}`}
+          />
           Upcoming Events
         </h2>
         {/* VIEW MORE — hidden on mobile, shown on desktop */}

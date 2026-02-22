@@ -1,27 +1,14 @@
-import { useTheme } from "@/hooks/custom/useTheme";
 import Header from "./components/Header";
-import PredictionSection from "./components/PredictionSection";
-import AutomationSection from "./components/AutomationSection";
-import { useSidebar } from "@/hooks/custom/useSidebar";
 import ResultSection from "./components/ResultSection";
 import PastPrediction from "./components/PastPrediction";
 import ScreenLoader from "@/components/loaders/ScreenLoader";
 import { useGet } from "@/hooks/api/common/useGet";
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import GooglePlayAndAppStore from "./components/GooglePlayAndAppStore";
-import RollingBanner from "@/components/modals/FeastivalModal";
-import FreeTrialPopup from "@/page/auth/FreeTrialPopup";
 import FreeTrailSvg from "./components/FreeTrialSVG";
 import Streaks from "./components/Streaks";
-import Result from "../result/Result";
-import PastPredictions from "../pastPrediction/PastPredictions";
 import UpcomingEvents from "./components/UpcommingEvents";
 
 const Dashboard = () => {
-  const { theme } = useTheme();
-  const { sidebarOpen } = useSidebar();
-
   const {
     data: predictionsData,
     isLoading: predictionLoading,
@@ -30,7 +17,6 @@ const Dashboard = () => {
     queryKey: ["prediction-ultimate-dashboard"],
     secure: true,
   });
-  const predictions = predictionsData?.data || {};
 
   const [selectedMarket, setSelectedMarket] = useState("Ultimate");
   const [showPopup, setShowPopup] = useState(false);
@@ -115,7 +101,6 @@ const Dashboard = () => {
 
   return (
     <div>
-      <RollingBanner />
       <Header />
 
       <div className="fixed -right-4 z-50 top-16 lg:right-4 lg:top-16">

@@ -11,10 +11,6 @@ import ThemeProvider from "./providers/ThemeProvider";
 import SidebarProvider from "./providers/SidebarProvider";
 import { autoLogoutIfExpired } from "./utils/cookieHelper";
 import { getUTMParams } from "./utils/getUTM";
-import FlyingLayer from "./page/dashboard/dashboardHome/FlyingLayer";
-import ChineseNewYearFloating from "./page/dashboard/dashboardHome/ChineseNewYearFloating";
-import AnimatedDragon from "./page/dashboard/dashboardHome/components/Animateddragon";
-import CookieConsent from "./components/modals/CookieConsent";
 
 const queryClient = new QueryClient();
 

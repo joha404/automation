@@ -13,6 +13,7 @@ import { useSidebar } from "@/hooks/custom/useSidebar";
 import CommonParagraph from "@/components/texts/CommonParagraph";
 import CommonWrapper from "@/components/wrappers/CommonWrapper";
 import Dropdown from "@/components/forms/Dropdown";
+import { FaChartLine } from "react-icons/fa6";
 
 // ─── Dummy Data ───────────────────────────────────────────────
 const DUMMY_UNIT_DATA = {
@@ -113,19 +114,24 @@ const ResultSection = () => {
               : "bg-white border-lightestGrey"
           }`}
         >
-          <CommonParagraph variant="small" className="font-semibold py-1">
-            Results
-          </CommonParagraph>
+          <div className="flex items-center gap-2 p-2">
+            <FaChartLine
+              className={` ${theme === "dark" ? "text-white " : "text-black"}`}
+            />
+            <CommonParagraph variant="small" className="font-semibold py-1">
+              Results
+            </CommonParagraph>
+          </div>
 
           {/* ── Stats block — DESKTOP ── */}
           <div
             className={`mb-0.5 ${
-              theme === "dark" ? "bg-darkerBlack" : "bg-lightestGrey"
+              theme === "dark" ? "bg-[#020C0B]" : "bg-lightestGrey"
             } text-white rounded-xl p-2 lg:flex hidden flex-col items-center`}
           >
             <CommonParagraph
               variant="small"
-              className="text-mediumBlue xlg:mb-0.5 mb-3"
+              className="text-[#0A9087] xlg:mb-0.5 my-4"
             >
               +{unitData.headline.units} %
             </CommonParagraph>
@@ -155,10 +161,10 @@ const ResultSection = () => {
           {/* ── Stats block — MOBILE ── */}
           <div
             className={`mb-0.5 ${
-              theme === "dark" ? "bg-darkerBlack" : "bg-lightestGrey"
+              theme === "dark" ? "bg-[#020C0B]" : "bg-lightestGrey"
             } text-white rounded-xl p-0.5 lg:hidden flex flex-col items-center`}
           >
-            <CommonParagraph variant="small" className="text-mediumBlue">
+            <CommonParagraph variant="small" className="text-[#0A9087] my-1">
               +{unitData.headline.units} Units
             </CommonParagraph>
 
@@ -186,7 +192,7 @@ const ResultSection = () => {
           {/* ── Chart — DESKTOP ── */}
           <div
             className={`rounded-lg lg:block hidden p-2 ${
-              theme === "dark" ? "bg-darkerBlack" : "bg-lightestGrey"
+              theme === "dark" ? "bg-[#020C0B]" : "bg-lightestGrey"
             }`}
           >
             <div className="w-full flex lg:flex-row flex-col-reverse gap-2 lg:justify-between justify-start items-center mb-1">
@@ -268,7 +274,7 @@ const ResultSection = () => {
           {/* ── Chart — MOBILE ── */}
           <div
             className={`rounded-lg p-0.5 lg:hidden block ${
-              theme === "dark" ? "bg-darkerBlack" : "bg-lightestGrey"
+              theme === "dark" ? "bg-[#020C0B]" : "bg-lightestGrey"
             }`}
           >
             {/* Filter buttons */}

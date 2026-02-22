@@ -34,7 +34,7 @@ const Pagination = ({
         key={1}
         className={`min-w-8 h-8 rounded-md xl:text-sm text-xs flex items-center justify-center transition-all duration-200 font-medium cursor-pointer ${
           currentPage === 1
-            ? "bg-darkBlue text-white"
+            ? "bg-[#054844] text-white"
             : "bg-lighterGrey text-mediumBlack hover:bg-darkBlue hover:text-white"
         }`}
         onClick={() => {

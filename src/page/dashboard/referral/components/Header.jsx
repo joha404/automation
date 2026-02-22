@@ -18,9 +18,9 @@ const Header = () => {
       <div className="rounded-xl mx-auto font-primary">
         <div className="mx-auto p-4 md:p-6 relative">
           {/* Blue Header Section */}
-          <div className="bg-darkBlue rounded-lg p-6 md:p-8 text-center text-white xl:min-h-[40vh] lg:min-h-[50vh] h-full">
+          <div className="bg-[#0A9087] rounded-lg p-6 md:p-8 text-center text-white xl:min-h-[40vh] lg:min-h-[50vh] h-full">
             <div className="mb-4">
-              <span className="bg-blue-600 px-3 py-1 rounded-md text-xs md:text-sm inline-block">
+              <span className="bg-[#0A9087] px-3 py-1 rounded-md text-xs md:text-sm inline-block">
                 Hint: Referral rewards give users 50% off codes automatically
               </span>
             </div>
@@ -74,7 +74,7 @@ const Header = () => {
                   {copiedCode ? "Copied!" : "Copy Code"}
                 </button>
 
-                <button className="cursor-pointer border-2 border-blue-500 text-blue-500 hover:bg-blue-50 px-4 py-2 md:px-6 md:py-3 rounded-lg font-semibold transition-colors text-sm md:text-base">
+                <button className="cursor-pointer border-2 border-[#0A9087] text-[#0A9087] hover:bg-[#0A9087]/10 px-4 py-2 md:px-6 md:py-3 rounded-lg font-semibold transition-colors text-sm md:text-base">
                   Apply at Checkout
                 </button>
               </div>

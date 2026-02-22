@@ -157,7 +157,7 @@ const AllPastPrediction = () => {
       <div
         className={`rounded-xl font-primary shadow-sm border transition-colors duration-300 w-full mb-5 ${
           theme === "dark"
-            ? "bg-darkBlack border-mediumBlack"
+            ? "bg-[#021716] border-mediumBlack"
             : "bg-white border-lightestGrey"
         } `}
       >
@@ -173,7 +173,7 @@ const AllPastPrediction = () => {
       <div
         className={`rounded-xl font-primary sm:p-5 p-3 shadow-sm border transition-colors duration-300 w-full ${
           theme === "dark"
-            ? "bg-darkBlack border-mediumBlack"
+            ? "bg-[#021716] border-mediumBlack"
             : "bg-white border-lightestGrey"
         } `}
       >
@@ -194,7 +194,7 @@ const AllPastPrediction = () => {
                 <div
                   key={item.id}
                   className={`flex flex-row sm:p-5 p-2 rounded-xl transition-all duration-200 gap-5 w-full ${
-                    theme === "dark" ? "bg-darkerBlack" : "bg-lightestGrey"
+                    theme === "dark" ? "bg-[#054844]" : "bg-lightestGrey"
                   }`}
                 >
                   {/* Left section */}
@@ -301,7 +301,9 @@ const AllPastPrediction = () => {
                           <CommonParagraph
                             variant="special"
                             className={`font-medium ${
-                              theme === "dark" ? "text-white" : "text-darkBlack"
+                              theme === "dark"
+                                ? "text-[#0A9087]"
+                                : "text-[#0A9087]"
                             }`}
                           >
                             {item?.unit_size}%
@@ -344,4 +346,3 @@ const AllPastPrediction = () => {
 };
 
 export default AllPastPrediction;
-
