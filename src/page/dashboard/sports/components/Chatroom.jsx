@@ -689,7 +689,7 @@ const ChatRoom = () => {
             />
           </div>
         </div>
-
+        {/* 
         <UserList
           theme={theme}
           onlineUsers={onlineUsers}
@@ -700,7 +700,7 @@ const ChatRoom = () => {
           isMobile={true}
           showUserList={showUserList}
           setShowUserList={setShowUserList}
-        />
+        /> */}
       </div>
     </CommonWrapper>
   );

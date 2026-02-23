@@ -104,11 +104,11 @@ const CountryDropdown = ({
   const variantsObj = {
     bg_none: `bg-transparent ${sizeClasses[size]} placeholder:text-gray-400 text-mediumBlack border-2 border-lightGrey`,
     bg_white: `bg-white ${sizeClasses[size]} placeholder:text-gray-400 text-mediumBlack light-theme border-2 border-lightGrey`,
-    bg_black: `bg-darkerBlack ${sizeClasses[size]} placeholder:text-mediumGrey text-lighterGrey dark-theme border-2 border-lightBlack`,
+    bg_black: `bg-[#032422] ${sizeClasses[size]} placeholder:text-mediumGrey text-lighterGrey dark-theme border-2 border-[#03635d]`,
   };
 
   const baseClass =
-    "focus:outline-none focus:border-mediumBlue placeholder:font-normal w-full thin-scrollbar transition-colors duration-200 tracking-wide resize-none cursor-pointer flex justify-between items-center xl:text-base text-sm";
+    "focus:outline-none focus:border-[#0A9087] placeholder:font-normal w-full thin-scrollbar transition-colors duration-200 tracking-wide resize-none cursor-pointer flex justify-between items-center xl:text-base text-sm";
 
   const cn = (...classes) => classes.filter(Boolean).join(" ");
 
@@ -139,7 +139,7 @@ const CountryDropdown = ({
       {label && (
         <label>
           <CommonParagraph
-            className={`font-medium ${variant === "bg_black" ? "text-lighterGrey" : "text-darkBlack"}`}
+            className={`font-medium ${variant === "bg_black" ? "text-white" : "text-back"}`}
           >
             {label}
           </CommonParagraph>
@@ -159,10 +159,10 @@ const CountryDropdown = ({
             !selectedOption && !isOpen
               ? variant === "bg_black"
                 ? "text-mediumGrey"
-                : "text-gray-400"
+                : "text-black"
               : variant === "bg_black"
-                ? "text-lighterGrey"
-                : "text-mediumBlack"
+                ? "text-white"
+                : "text-black"
           } font-normal`}
           role="combobox"
           aria-haspopup="listbox"
@@ -197,16 +197,16 @@ const CountryDropdown = ({
             transition={{ duration: 0.2 }}
             className={`absolute ${atTop ? "bottom-full" : "top-full"} w-full min-w-[250px] ${
               atLeft ? "left-0" : "right-0"
-            } ${variant === "bg_black" ? "bg-darkerBlack border-lightBlack shadow-sm" : "bg-white border-lightGrey"} border-2 rounded-lg shadow-md z-[1000] mt-1 mb-1 p-1 overflow-y-auto max-h-[200px] thin-scrollbar`}
+            } ${variant === "bg_black" ? "bg-[#03635d]  shadow-sm" : "bg-white border-lightGrey"} border-2 rounded-lg shadow-md z-[1000] mt-1 mb-1 p-1 overflow-y-auto max-h-[200px] thin-scrollbar`}
           >
             {filteredOptions.map((option, index) => (
               <li
                 key={index}
                 className={`px-5 py-2 cursor-pointer m-1 rounded-md font-medium text-sm transition-all duration-200 flex items-center ${
                   variant === "bg_black"
-                    ? `hover:bg-lightBlack hover:text-lighterGrey ${
+                    ? `hover:bg-[#0A9087] hover:text-lighterGrey ${
                         selectedValue === option.value
-                          ? "bg-lightBlack text-lighterGrey"
+                          ? "bg-[#03635d] text-lighterGrey"
                           : "text-lighterGrey"
                       }`
                     : `hover:bg-darkBlue hover:text-white ${

@@ -56,7 +56,7 @@ export default function MobileHeroSection() {
               </svg>
             </div>
             <span className="text-lg font-bold tracking-wide text-white">
-              TECH TAKES
+              Hyper Picks
             </span>
           </div>
 
@@ -203,7 +203,7 @@ export default function MobileHeroSection() {
                           +$127,932 (3.5%)
                         </span>
                       </div>
-                    )
+                    ),
                   )}
                 </div>
               </div>

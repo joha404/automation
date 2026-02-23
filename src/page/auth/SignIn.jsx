@@ -75,7 +75,7 @@ const SignIn = () => {
   }, []);
 
   return (
-    <div>
+    <div className="bg-[#032422]">
       {/* form section */}
       <div className="w-full container">
         {/* Logo */}
@@ -95,14 +95,14 @@ const SignIn = () => {
           >
             <CommonTitle
               variant="regular"
-              className="mb-2 font-semibold xl:mt-2 mt-10 text-lightGrey"
+              className="mb-2 font-semibold xl:mt-2 mt-10 font-logo text-[#0A9087]"
             >
               Login
             </CommonTitle>
 
             <CommonParagraph
               variant="small"
-              className="font-normal text-lightGrey"
+              className="font-normal text-white font-logo"
             >
               Enter your details below to view your dashboard.
             </CommonParagraph>
@@ -160,7 +160,7 @@ const SignIn = () => {
                     type="button"
                     onClick={() => setChecked(!checked)}
                     className={`relative w-5 h-5 border-2 rounded-sm flex justify-center items-center shadow transition-all duration-300 cursor-pointer ${
-                      checked ? "border-mediumBlue" : "border-mediumGrey"
+                      checked ? "border-[#0A9087]" : "border-mediumGrey"
                     }`}
                   >
                     {checked && (
@@ -170,7 +170,7 @@ const SignIn = () => {
                         transition={{ duration: 0.3, ease: "easeOut" }}
                         className="absolute w-[14px] h-[14px] flex items-center justify-center"
                       >
-                        <GiCheckMark className="text-mediumBlue w-full h-full" />
+                        <GiCheckMark className="text-[#0A9087] w-full h-full" />
                       </motion.div>
                     )}
                   </button>
@@ -184,7 +184,7 @@ const SignIn = () => {
                   <Link to={"/forgot-password"}>
                     <CommonParagraph
                       variant="small"
-                      className=" hover:text-mediumBlue transition-colors duration-150"
+                      className=" hover:text-[#0A9087] transition-colors duration-150"
                     >
                       Forgot Password?
                     </CommonParagraph>
@@ -195,7 +195,7 @@ const SignIn = () => {
               <div className="w-full">
                 <SubmitButton
                   type="submit"
-                  variant="bg_blue"
+                  variant="bg_black"
                   isLoading={isPending}
                   loadingText="Signing In"
                   disabled={isPending}
@@ -212,7 +212,7 @@ const SignIn = () => {
                   className="text-greenDark hover:text-greenExtraDark font-semibold"
                 >
                   {" "}
-                  <span className="text-mediumBlue font-medium cursor-pointer">
+                  <span className="text-[#0A9087] font-medium cursor-pointer">
                     {" "}
                     Sign Up
                   </span>

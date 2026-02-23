@@ -189,13 +189,13 @@ const SignUp = () => {
     { value: "youtube", label: "Youtube" },
     { value: "google_search", label: "Google search" },
     { value: "friends_family", label: "Friends/family" },
-    { value: "referral_programme", label: "Tech Takes Referral program" },
+    { value: "referral_programme", label: "Hyper Picks Referral program" },
     { value: "podcast", label: "Player Instinct Podcast" },
     { value: "mouth", label: "Word of mouth" },
   ];
 
   return (
-    <div>
+    <div className="bg-[#032422]">
       <div className="w-full container">
         {/* Logo */}
         <div
@@ -214,14 +214,14 @@ const SignUp = () => {
           >
             <CommonTitle
               variant="regular"
-              className="mb-2 font-semibold xl:mt-2 mt-10 text-lightGrey"
+              className="mb-2 font-semibold xl:mt-2 mt-10 text-[#0A9087] font-logo"
             >
               Create your Account
             </CommonTitle>
 
             <CommonParagraph
               variant="small"
-              className="font-normal text-lightGrey"
+              className="font-normal text-white font-logo"
             >
               Fill in your details to access all features.
             </CommonParagraph>
@@ -242,7 +242,7 @@ const SignUp = () => {
                         previewImage
                           ? "border-solid border-mediumGrey"
                           : "border-dashed border-lightBlack"
-                      } bg-mediumBlack flex items-center justify-center overflow-hidden transition-all duration-300 ease-in-out `}
+                      } bg-[#03635d] flex items-center justify-center overflow-hidden transition-all duration-300 ease-in-out `}
                     >
                       {previewImage ? (
                         <>
@@ -252,11 +252,11 @@ const SignUp = () => {
                             className="w-full h-full object-cover transition-all duration-300 group-hover:opacity-70"
                           />
                           <div className="absolute inset-0 bg-transparent bg-opacity-10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-100 rounded-full">
-                            <FaCamera className="text-white text-3xl shadow-2xl" />
+                            <FaCamera className="text-[#0A9087] text-3xl shadow-2xl" />
                           </div>
                         </>
                       ) : (
-                        <FaCamera className="text-mediumGrey text-2xl transition-transform duration-300 group-hover:text-mediumBlue group-hover:scale-125" />
+                        <FaCamera className="text-[#027b73] text-2xl transition-transform duration-300 group-hover:text-[#0A9087] group-hover:scale-125" />
                       )}
                     </div>
                     <input
@@ -264,7 +264,7 @@ const SignUp = () => {
                       id="profileImage"
                       accept="image/*"
                       onChange={handleImageUpload}
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      className="absolute font-logo inset-0 w-full h-full opacity-0 cursor-pointer"
                       aria-label="Upload profile image"
                     />
                   </div>
@@ -327,7 +327,7 @@ const SignUp = () => {
 
                       <div className="relative flex-1">
                         <div className="absolute left-3 top-3 transform z-10">
-                          <span className="text-sm text-mediumBlue font-semibold xl:text-base">
+                          <span className="text-sm text-[#0A9087] font-semibold xl:text-base">
                             {countryCode.find(
                               (country) => country.value === selectedCountry,
                             )?.code || "+1"}
@@ -431,7 +431,7 @@ const SignUp = () => {
                     type="button"
                     onClick={() => setChecked(!checked)}
                     className={`relative min-w-5 min-h-5 border-2 rounded-sm flex justify-center items-center shadow transition-all duration-300 cursor-pointer 2xs:mt-0 mt-0.5 ${
-                      checked ? "border-mediumBlue" : "border-mediumGrey"
+                      checked ? "border-[#0A9087]" : "border-mediumGrey"
                     }`}
                   >
                     {checked && (
@@ -441,26 +441,26 @@ const SignUp = () => {
                         transition={{ duration: 0.3, ease: "easeOut" }}
                         className="absolute w-[14px] h-[14px] flex items-center justify-center"
                       >
-                        <GiCheckMark className="text-mediumBlue w-full h-full" />
+                        <GiCheckMark className="text-[#0A9087] w-full h-full" />
                       </motion.div>
                     )}
                   </button>
 
                   <CommonParagraph
                     variant="small"
-                    className="font-normal text-mediumGrey"
+                    className="font-normal text-[#0A9087] font-logo"
                   >
-                    I agree to Tech Takes{" "}
+                    I agree to Hyper Picks{" "}
                     <Link
                       to="/terms-and-conditions"
-                      className="text-lightGrey underline hover:text-mediumBlue"
+                      className="text-white font-logo underline hover:text-[#0A9087]"
                     >
                       Terms of Service
                     </Link>{" "}
                     and{" "}
                     <Link
                       to="/privacy-policy"
-                      className="text-lightGrey underline hover:text-mediumBlue"
+                      className="text-white underline hover:text-[#0A9087]"
                     >
                       Privacy Policy
                     </Link>
@@ -475,7 +475,7 @@ const SignUp = () => {
                     onClick={() => setMarketingChecked(!marketingChecked)}
                     className={`relative min-w-5 min-h-5 border-2 rounded-sm flex justify-center items-center shadow transition-all duration-300 cursor-pointer 2xs:mt-0 mt-0.5 lg:mb-3 ${
                       marketingChecked
-                        ? "border-mediumBlue"
+                        ? "border-[#0A9087]"
                         : "border-mediumGrey"
                     }`}
                   >
@@ -486,7 +486,7 @@ const SignUp = () => {
                         transition={{ duration: 0.3, ease: "easeOut" }}
                         className="absolute w-[14px] h-[14px] flex items-center justify-center"
                       >
-                        <GiCheckMark className="text-mediumBlue w-full h-full " />
+                        <GiCheckMark className="text-[#0A9087] w-full h-full " />
                       </motion.div>
                     )}
                   </button>
@@ -495,7 +495,7 @@ const SignUp = () => {
                     variant="small"
                     className="font-normal text-mediumGrey"
                   >
-                    I agree to receive marketing emails from Tech Takes,
+                    I agree to receive marketing emails from Hyper Picks,
                     including news, updates, and special offers. I understand
                     that I can unsubscribe at any time.
                   </CommonParagraph>
@@ -505,7 +505,7 @@ const SignUp = () => {
               <div className="w-full">
                 <SubmitButton
                   type="submit"
-                  variant="bg_blue"
+                  variant="bg_black"
                   isLoading={isPending}
                   loadingText="Signing Up"
                   disabled={isPending || !checked}
@@ -522,7 +522,7 @@ const SignUp = () => {
                   className="text-greenDark hover:text-greenExtraDark font-semibold"
                 >
                   {" "}
-                  <span className="text-mediumBlue font-medium cursor-pointer">
+                  <span className="text-[#0A9087] font-logo font-medium cursor-pointer">
                     {" "}
                     Sign In
                   </span>
