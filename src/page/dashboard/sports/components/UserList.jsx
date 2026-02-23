@@ -60,7 +60,7 @@ const UserList = ({
         user?.subscription_pack === "Ultimate Automation" ? (
           <p
             className={`text-xs truncate font-semibold ${
-              isOnline ? "text-blue-500" : "text-gray-400"
+              isOnline ? "text-[#0A9087]" : "text-gray-400"
             }`}
           >
             Ultimate
@@ -97,7 +97,7 @@ const UserList = ({
                   variant="medium"
                   className="font-bold mb-1 flex gap-1 justify-center items-center"
                 >
-                  <FaUserFriends className="text-lg text-mediumBlue" /> Members
+                  <FaUserFriends className="text-lg text-[#0A9087]" /> Members
                 </CommonParagraph>
               </div>
               <button
@@ -116,7 +116,7 @@ const UserList = ({
               <div
                 className={`px-3 py-2 rounded-lg text-center text-xs font-semibold shadow-md ${
                   isConnected
-                    ? "bg-green-500 text-white"
+                    ? "bg-[#0A9087] text-white"
                     : "bg-red-500 text-white"
                 }`}
               >
@@ -127,15 +127,15 @@ const UserList = ({
                 <div
                   className={`flex items-center justify-between px-4 py-1 rounded-lg ${
                     theme === "dark"
-                      ? "bg-green-500/10 border border-green-500/20"
+                      ? "bg-[#05302d] border border-green-500/20"
                       : "bg-green-50 border border-green-200"
                   }`}
                 >
                   <div className="flex items-center gap-2">
-                    <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse"></div>
+                    <div className="w-2.5 h-2.5 bg-[#0A9087] rounded-full animate-pulse"></div>
                     <span
                       className={`text-sm font-semibold ${
-                        theme === "dark" ? "text-green-400" : "text-green-700"
+                        theme === "dark" ? "text-[#0A9087]" : "text-[#0A9087]"
                       }`}
                     >
                       Online -
@@ -143,7 +143,7 @@ const UserList = ({
                   </div>
                   <span
                     className={`text-lg font-bold ${
-                      theme === "dark" ? "text-green-400" : "text-green-600"
+                      theme === "dark" ? "text-[#0A9087]" : "text-[#0A9087]"
                     }`}
                   >
                     {onlineCount || 0}
@@ -191,34 +191,16 @@ const UserList = ({
         {onlineUsers.length > 0 && (
           <div className="mb-6">
             <div className="flex items-center gap-2 mb-3 px-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <div className="w-2 h-2 bg-[#0A9087] rounded-full animate-pulse"></div>
               <CommonParagraph
                 variant="small"
-                className="font-bold text-green-500"
+                className="font-bold text-[#0A9087]"
               >
                 Online ({onlineCount})
               </CommonParagraph>
             </div>
             <div className="space-y-3">
               {onlineUsers.map((user) => renderUserItem(user, true))}
-            </div>
-          </div>
-        )}
-
-        {/* Offline Users Section */}
-        {offlineUsers.length > 0 && (
-          <div>
-            <div className="flex items-center gap-2 mb-3 px-2">
-              <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-              <CommonParagraph
-                variant="small"
-                className="font-bold text-gray-400"
-              >
-                Offline ({offlineCount})
-              </CommonParagraph>
-            </div>
-            <div className="space-y-3">
-              {offlineUsers.map((user) => renderUserItem(user, false))}
             </div>
           </div>
         )}

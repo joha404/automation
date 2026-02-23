@@ -1,11 +1,8 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { FiDownload } from "react-icons/fi";
 import CommonWrapper from "@/components/wrappers/CommonWrapper";
 import CommonTitle from "@/components/texts/CommonTitle";
 import CommonParagraph from "@/components/texts/CommonParagraph";
 import { useTheme } from "@/hooks/custom/useTheme";
-import CommingSoon from "@/shared/errorPages/CommingSoon";
 import { useGet } from "@/hooks/api/common/useGet";
 import ScreenLoader from "@/components/loaders/ScreenLoader";
 
@@ -64,11 +61,11 @@ const Billing = () => {
           : "text-green-700 bg-green-100";
       case "Deactivated":
         return theme === "dark"
-          ? "text-gray-400 bg-gray-700"
+          ? "text-white bg-black"
           : "text-gray-600 bg-gray-100";
       default:
         return theme === "dark"
-          ? "text-gray-400 bg-gray-700"
+          ? "text-white bg-black"
           : "text-gray-600 bg-gray-100";
     }
   };
@@ -88,7 +85,7 @@ const Billing = () => {
           className={`rounded-xl shadow-sm border p-6 transition-colors duration-300
           ${
             theme === "dark"
-              ? "bg-darkBlack border-mediumBlack"
+              ? "bg-[#054844] border-[#032a28]"
               : "bg-white border-gray-200"
           }`}
         >
@@ -109,7 +106,7 @@ const Billing = () => {
         className={`rounded-xl shadow-sm border p-6 transition-colors duration-300
     ${
       theme === "dark"
-        ? "bg-darkBlack border-mediumBlack"
+        ? "bg-[#054844] border-[#032a28]"
         : "bg-white border-gray-200"
     }`}
       >
@@ -128,7 +125,7 @@ const Billing = () => {
         {billingHistory.length === 0 ? (
           <div className="text-center py-8">
             <CommonParagraph
-              className={theme === "dark" ? "text-gray-400" : "text-gray-500"}
+              className={theme === "dark" ? "text-white" : "text-black"}
             >
               No subscription history found.
             </CommonParagraph>
@@ -142,33 +139,35 @@ const Billing = () => {
                   <thead>
                     <tr
                       className={`border-b ${
-                        theme === "dark" ? "border-gray-700" : "border-gray-200"
+                        theme === "dark"
+                          ? "border-[#032a28]"
+                          : "border-gray-200"
                       }`}
                     >
                       <th
-                        className={`pb-3 font-medium text-xs uppercase tracking-wide ${
-                          theme === "dark" ? "text-gray-400" : "text-gray-500"
+                        className={`pb-3 font-medium text-xs font-logo uppercase tracking-wide ${
+                          theme === "dark" ? "text-white" : "text-black"
                         }`}
                       >
                         Duration
                       </th>
                       <th
-                        className={`pb-3 font-medium text-xs uppercase tracking-wide ${
-                          theme === "dark" ? "text-gray-400" : "text-gray-500"
+                        className={`pb-3 font-medium text-xs font-logo uppercase tracking-wide ${
+                          theme === "dark" ? "text-white" : "text-black"
                         }`}
                       >
                         Plan Name
                       </th>
                       <th
-                        className={`pb-3 font-medium text-xs uppercase tracking-wide ${
-                          theme === "dark" ? "text-gray-400" : "text-gray-500"
+                        className={`pb-3 font-medium text-xs font-logo uppercase tracking-wide ${
+                          theme === "dark" ? "text-white" : "text-black"
                         }`}
                       >
                         Amount
                       </th>
                       <th
-                        className={`pb-3 font-medium text-xs uppercase tracking-wide ${
-                          theme === "dark" ? "text-gray-400" : "text-gray-500"
+                        className={`pb-3 font-medium text-xs font-logo uppercase tracking-wide ${
+                          theme === "dark" ? "text-white" : "text-black"
                         } text-right`}
                       >
                         Status
@@ -179,37 +178,37 @@ const Billing = () => {
                     {displayedHistory.map((item) => (
                       <tr
                         key={item.id}
-                        className={`text-sm ${
+                        className={`text-sm font-logo ${
                           theme === "dark"
                             ? "border-gray-800"
                             : "border-gray-100"
                         } border-b`}
                       >
                         <td
-                          className={`py-4 text-sm ${
-                            theme === "dark" ? "text-gray-300" : "text-gray-700"
+                          className={`py-4 text-sm font-logo ${
+                            theme === "dark" ? "text-white" : "text-black"
                           }`}
                         >
                           {item.startDate} - {item.endDate}
                         </td>
                         <td
-                          className={`py-4 text-sm ${
-                            theme === "dark" ? "text-gray-300" : "text-gray-700"
+                          className={`py-4 text-sm font-logo ${
+                            theme === "dark" ? "text-white" : "text-black"
                           }`}
                         >
                           {item.plan}
                         </td>
                         <td
-                          className={`py-4 font-medium text-sm ${
-                            theme === "dark" ? "text-white" : "text-gray-900"
+                          className={`py-4 font-medium text-sm font-logo ${
+                            theme === "dark" ? "text-white" : "text-black"
                           }`}
                         >
                           {item.price}
                         </td>
                         <td className="py-4 text-right">
                           <span
-                            className={`px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                              item.status
+                            className={`px-2.5 py-1 rounded-full text-xs font-logo font-medium ${getStatusColor(
+                              item.status,
                             )}`}
                           >
                             {item.status}
@@ -226,11 +225,11 @@ const Billing = () => {
               <div className="mt-6 text-center">
                 <button
                   onClick={() => setShowAll(!showAll)}
-                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors
+                  className={`px-4 py-2 text-sm font-logo font-medium rounded-md transition-colors
                     ${
                       theme === "dark"
-                        ? "text-lightGrey hover:bg-gray-800"
-                        : "text-gray-600 hover:bg-gray-100"
+                        ? "text-white hover:bg-[#013633]"
+                        : "text-black hover:bg-[#054844]"
                     }`}
                 >
                   {showAll

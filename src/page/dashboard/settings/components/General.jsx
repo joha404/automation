@@ -128,7 +128,7 @@ const General = () => {
         {/* Left Box - Image Upload */}
         <div
           className={`w-full lg:w-2/5 p-10 flex flex-col items-center justify-center rounded-2xl shadow-xl ${
-            theme === "dark" ? "bg-mediumBlack" : "bg-white"
+            theme === "dark" ? "bg-[#054844]" : "bg-white"
           } mb-6`}
         >
           <div className="w-full flex flex-col items-center xlg:py-20">
@@ -139,7 +139,7 @@ const General = () => {
                     ? "border-solid border-mediumGrey"
                     : "border-dashed border-lightBlack"
                 } ${
-                  theme === "dark" ? "bg-darkerBlack" : "bg-lighterGrey"
+                  theme === "dark" ? "bg-[#01312e]" : "bg-lighterGrey"
                 } flex items-center justify-center overflow-hidden transition-all duration-300 ease-in-out`}
               >
                 {previewImage ? (
@@ -172,8 +172,8 @@ const General = () => {
 
             <CommonParagraph
               variant="small"
-              className={`text-center ${
-                theme === "dark" ? "text-mediumGrey" : "text-mediumGrey"
+              className={`text-center font-logo ${
+                theme === "dark" ? "text-white" : "text-black"
               }`}
             >
               Click on the camera to upload a profile picture
@@ -193,7 +193,7 @@ const General = () => {
         {/* Right Box - Form Fields */}
         <div
           className={`w-full lg:w-3/5 p-8 rounded-2xl shadow-xl ${
-            theme === "dark" ? "bg-mediumBlack" : "bg-white"
+            theme === "dark" ? "bg-[#054844]" : "bg-white"
           } mb-6`}
         >
           <form onSubmit={handleSubmit(onSubmit)} className=" xlg:py-20">
@@ -246,7 +246,7 @@ const General = () => {
                 placeholder="Country"
                 value={
                   countryCode.find(
-                    (country) => country.value === selectedCountry
+                    (country) => country.value === selectedCountry,
                   )?.label || "Country"
                 }
                 readOnly
@@ -258,9 +258,9 @@ const General = () => {
 
               <div className="relative flex-1">
                 <div className="absolute left-3 top-3 transform z-10">
-                  <span className="text-sm text-mediumBlue font-semibold xl:text-base">
+                  <span className="text-sm text-[#0A9087] font-semibold xl:text-base">
                     {countryCode.find(
-                      (country) => country.value === selectedCountry
+                      (country) => country.value === selectedCountry,
                     )?.code || "+00"}
                   </span>
                 </div>
@@ -336,7 +336,7 @@ const General = () => {
 
             <div className="w-full flex xlg:justify-end items-end">
               <SubmitButton
-                variant="bg_blue"
+                variant="bg_black"
                 type="submit"
                 isLoading={isPending}
                 loadingText="Updating Profile"

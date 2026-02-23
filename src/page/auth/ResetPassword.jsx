@@ -36,7 +36,7 @@ const ResetPassword = () => {
     `/password-reset/change-password/`,
     {
       secure: false,
-    }
+    },
   );
 
   const onSubmit = (data) => {
@@ -62,93 +62,95 @@ const ResetPassword = () => {
   }, []);
 
   return (
-    <div className="container w-full">
-      {/* <MetaText title="OTP Verification" /> */}
-      {/* Logo */}
-      <div
-        data-aos="fade-right"
-        data-aos-delay="1000"
-        className="flex xlg:justify-start justify-center mt-5  lg:mb-5"
-      >
-        <Logo />
-      </div>
-      <div className="md:max-w-xl mx-auto min-h-[80vh] h-full flex flex-col justify-center items-center">
-        {/* Main content container - properly centered */}
-        <div className="w-full flex flex-col items-center justify-center">
-          {/* Title and description */}
-          <div
-            data-aos="fade-down"
-            data-aos-delay="400"
-            className="text-center mb-8 w-full"
-          >
-            <Link
-              to="/forgot-passowrd"
-              className="flex  justify-center items-center gap-2 text-lightBlack hover:text-mediumBlue focus:text-mediumBlue focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-1 rounded transition-all duration-200 group  mb-5"
+    <div className="bg-[#032422]  min-h-screen">
+      <div className="container w-full">
+        {/* <MetaText title="OTP Verification" /> */}
+        {/* Logo */}
+        <div
+          data-aos="fade-right"
+          data-aos-delay="1000"
+          className="flex xlg:justify-start justify-center mt-5  lg:mb-5"
+        >
+          <Logo />
+        </div>
+        <div className="md:max-w-xl mx-auto min-h-[80vh] h-full flex flex-col justify-center items-center">
+          {/* Main content container - properly centered */}
+          <div className="w-full flex flex-col items-center justify-center">
+            {/* Title and description */}
+            <div
+              data-aos="fade-down"
+              data-aos-delay="400"
+              className="text-center mb-8 w-full"
             >
-              <IoIosArrowBack className="group-hover:-translate-x-1 transition-transform duration-200" />
-              <span className="text-sm font-medium">Back</span>
-            </Link>
-            <CommonTitle variant="regular" className=" mb-2 font-semibold">
-              Enter your new password
-            </CommonTitle>
-            <CommonParagraph
-              variant="small"
-              className="mb-5 font-normal  mx-auto xlg:mx-0 "
-            >
-              Please enter the email address associated with your account, and
-              we'll email you a link to reset your password.
-            </CommonParagraph>
-          </div>
+              <Link
+                to="/forgot-passowrd"
+                className="flex  justify-center items-center gap-2 text-lightBlack hover:text-mediumBlue focus:text-mediumBlue focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-1 rounded transition-all duration-200 group  mb-5"
+              >
+                <IoIosArrowBack className="group-hover:-translate-x-1 transition-transform duration-200" />
+                <span className="text-sm font-medium">Back</span>
+              </Link>
+              <CommonTitle variant="regular" className=" mb-2 font-semibold">
+                Enter your new password
+              </CommonTitle>
+              <CommonParagraph
+                variant="small"
+                className="mb-5 font-normal  mx-auto xlg:mx-0 "
+              >
+                Please enter the email address associated with your account, and
+                we'll email you a link to reset your password.
+              </CommonParagraph>
+            </div>
 
-          <div data-aos="fade-up" data-aos-delay="400" className="w-full">
-            <form onSubmit={handleSubmit(onSubmit)} className="">
-              <div className="flex flex-col justify-center items-center  mx-auto w-full gap-5">
-                <PasswordField
-                  name="new_password"
-                  type="password"
-                  placeholder="New password"
-                  validationRules={{
-                    required: "Password is required!",
-                    minLength: {
-                      value: 6,
-                      message: "Password must be at least 6 characters!",
-                    },
-                  }}
-                  register={register}
-                  register_as="new_password" // Must match name
-                  errors={errors}
-                  autoComplete="new-password" // Changed for better browser handling
-                />
+            <div data-aos="fade-up" data-aos-delay="400" className="w-full">
+              <form onSubmit={handleSubmit(onSubmit)} className="">
+                <div className="flex flex-col justify-center items-center  mx-auto w-full gap-5">
+                  <PasswordField
+                    name="new_password"
+                    type="password"
+                    placeholder="New password"
+                    validationRules={{
+                      required: "Password is required!",
+                      minLength: {
+                        value: 6,
+                        message: "Password must be at least 6 characters!",
+                      },
+                    }}
+                    register={register}
+                    register_as="new_password" // Must match name
+                    errors={errors}
+                    autoComplete="new-password" // Changed for better browser handling
+                  />
 
-                <PasswordField
-                  name="confirm_password"
-                  type="password"
-                  placeholder="Confirm password"
-                  validationRules={{
-                    required: "Confirm Password is required!",
-                    validate: (value) =>
-                      value === getValues("new_password") || // Must match new_password field name
-                      "Passwords must match",
-                  }}
-                  register={register}
-                  register_as="confirm_password" // Must match name
-                  errors={errors}
-                  autoComplete="confirm_password"
-                />
-              </div>
+                  <PasswordField
+                    name="confirm_password"
+                    type="password"
+                    placeholder="Confirm password"
+                    validationRules={{
+                      required: "Confirm Password is required!",
+                      validate: (value) =>
+                        value === getValues("new_password") || // Must match new_password field name
+                        "Passwords must match",
+                    }}
+                    register={register}
+                    register_as="confirm_password" // Must match name
+                    errors={errors}
+                    autoComplete="confirm_password"
+                  />
+                </div>
 
-              <div className="w-full xl:pt-8 pt-4">
-                <SubmitButton
-                  type="submit"
-                  variant="bg_blue"
-                  isLoading={isPending}
-                  loadingText="Updating"
-                  disabled={isPending}
-                >
-                  Update Password
-                </SubmitButton>
-              </div>
-            </form>
+                <div className="w-full xl:pt-8 pt-4">
+                  <SubmitButton
+                    type="submit"
+                    variant="bg_black"
+                    isLoading={isPending}
+                    loadingText="Updating"
+                    disabled={isPending}
+                  >
+                    Update Password
+                  </SubmitButton>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       </div>

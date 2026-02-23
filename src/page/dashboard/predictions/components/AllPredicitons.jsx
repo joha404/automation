@@ -19,6 +19,8 @@ import errorToast from "@/hooks/custom/errorToast";
 
 const AllPredictions = () => {
   const { theme } = useTheme();
+  const { sidebarOpen } = useSidebar();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [expandedPackages, setExpandedPackages] = useState({});
   const navigate = useNavigate();
 
@@ -153,7 +155,7 @@ const AllPredictions = () => {
                 variant="smaller"
                 className={`mb-1 font-semibold text-left capitalize truncate ${
                   isLocked ? "blur-sm select-none" : ""
-                } ${theme === "dark" ? "text-lightGrey" : "text-mediumBlack"}`}
+                } ${theme === "dark" ? "text-white" : "text-mediumBlack"}`}
               >
                 {isLocked
                   ? "Upgrade to unlock this prediction"
@@ -277,9 +279,7 @@ const AllPredictions = () => {
                       <CommonParagraph
                         variant="small"
                         className={`font-semibold ${
-                          theme === "dark"
-                            ? "text-lightGrey"
-                            : "text-mediumBlack"
+                          theme === "dark" ? "text-white" : "text-mediumBlack"
                         }`}
                       >
                         {pkg.package_name}

@@ -31,7 +31,7 @@ const Privacy = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-[#021716] text-white">
       <style>{`
         .legal-content h1 {
           font-size: 1.875rem;
@@ -222,18 +222,20 @@ const Privacy = () => {
                 <Logo />
               </div>
 
-              <h1 className="text-2xl md:text-3xl lg:text-4xl font-semibold mb-4 text-white">
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-semibold font-logo mb-4 text-[#0A9087]">
                 {privacyData.title || "Privacy Policy"}
               </h1>
 
               <div className="flex flex-col sm:flex-row justify-center items-center gap-2 sm:gap-6 text-sm text-gray-400">
                 <div className="flex items-center gap-2">
-                  <span className="font-medium text-mediumBlue">Version:</span>
+                  <span className="font-medium font-logo text-[#0A9087]">
+                    Version:
+                  </span>
                   <span>{privacyData.version || "-"}</span>
                 </div>
                 <div className="hidden sm:block w-1 h-1 rounded-full bg-gray-600"></div>
                 <div className="flex items-center gap-2">
-                  <span className="font-medium text-mediumBlue">
+                  <span className="font-medium font-logo text-[#0A9087]">
                     Effective Date:
                   </span>
                   <span>
@@ -245,7 +247,7 @@ const Privacy = () => {
               </div>
             </div>
 
-            <div className="bg-gray-900 rounded-lg p-6 md:p-8">
+            <div className="bg-[#054844] rounded-lg p-6 md:p-8">
               <div
                 className="legal-content break-words"
                 dangerouslySetInnerHTML={{
@@ -271,7 +273,7 @@ const Privacy = () => {
             <div className="mt-8 text-center">
               <button
                 onClick={() => window.history.back()}
-                className="px-6 py-3 bg-mediumBlue text-white rounded-lg hover:bg-darkBlue transition-all duration-300 font-medium"
+                className="px-6 py-3 bg-[#054844] text-white rounded-lg hover:bg-[#08726C] cursor-pointer transition-all duration-300 font-medium"
               >
                 Go Back
               </button>

@@ -31,7 +31,7 @@ const Terms = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-[#021716] text-white">
       <style>{`
         .legal-content h1 {
           font-size: 1.875rem;
@@ -222,18 +222,18 @@ const Terms = () => {
                 <Logo />
               </div>
 
-              <h1 className="text-2xl md:text-3xl lg:text-4xl font-semibold mb-4 text-white">
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-semibold font-logo mb-4 text-[#0A9087]">
                 {termsData.title || "Terms & Conditions"}
               </h1>
 
               <div className="flex flex-col sm:flex-row justify-center items-center gap-2 sm:gap-6 text-sm text-gray-400">
-                <div className="flex items-center gap-2">
-                  <span className="font-medium text-mediumBlue">Version:</span>
+                <div className="flex items-center gap-2 font-logo">
+                  <span className="font-medium text-[#0A9087]">Version:</span>
                   <span>{termsData.version || "-"}</span>
                 </div>
                 <div className="hidden sm:block w-1 h-1 rounded-full bg-gray-600"></div>
-                <div className="flex items-center gap-2">
-                  <span className="font-medium text-mediumBlue">
+                <div className="flex items-center font-logo gap-2">
+                  <span className="font-medium text-[#0A9087]">
                     Effective Date:
                   </span>
                   <span>
@@ -245,7 +245,7 @@ const Terms = () => {
               </div>
             </div>
 
-            <div className="bg-gray-900 rounded-lg p-6 md:p-8">
+            <div className="bg-[#054844] rounded-lg p-6 md:p-8">
               <div
                 className="legal-content break-words"
                 dangerouslySetInnerHTML={{
@@ -269,7 +269,7 @@ const Terms = () => {
             <div className="mt-8 text-center">
               <button
                 onClick={() => window.history.back()}
-                className="px-6 py-3 bg-mediumBlue text-white rounded-lg hover:bg-darkBlue transition-all duration-300 font-medium"
+                className="px-6 py-3 bg-[#0A9087] text-white rounded-lg cursor-pointer hover:bg-[#08726C] transition-all duration-300 font-medium"
               >
                 Go Back
               </button>

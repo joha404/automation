@@ -13,8 +13,8 @@ const CommonParagraph = ({ className = "", variant = "regular", children }) => {
     special: "md:text-sm text-xs",
   };
 
-  const baseClass = `tracking-wide ${
-    theme === "dark" ? "text-lighterGrey" : "text-darkerGrey"
+  const baseClass = `tracking-wide font-logo ${
+    theme === "dark" ? "text-white" : "text-black "
   }`;
   return (
     <p className={cn(baseClass, className, variants[variant])}>{children}</p>

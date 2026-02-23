@@ -11,10 +11,10 @@ const Policy = () => {
 
   const textClass = theme === "dark" ? "text-white" : "text-gray-900";
   const mutedTextClass = theme === "dark" ? "text-gray-400" : "text-gray-600";
-  const cardBg = theme === "dark" ? "bg-mediumBlack" : "bg-white";
+  const cardBg = theme === "dark" ? "bg-[#054844]" : "bg-white";
   const borderClass = theme === "dark" ? "border-gray-700" : "border-gray-200";
   const hoverClass =
-    theme === "dark" ? "hover:bg-gray-700" : "hover:bg-gray-50";
+    theme === "dark" ? "hover:bg-[#023c38]" : "hover:bg-gray-100";
 
   const policies = [
     {
@@ -55,10 +55,12 @@ const Policy = () => {
           transition={{ duration: 0.5 }}
           className="text-center mb-12"
         >
-          <h1 className={`text-4xl md:text-5xl font-bold mb-4 ${textClass}`}>
-            Tech Takes Compliance
+          <h1
+            className={`text-4xl md:text-5xl font-bold mb-4 text-[#0A9087] font-logo`}
+          >
+            Hyper Picks Compliance
           </h1>
-          <p className={`text-lg ${mutedTextClass}`}>
+          <p className={`text-lg font-logo text-white `}>
             Review our terms, privacy practices, and automation guidelines
           </p>
         </motion.div>
@@ -97,7 +99,7 @@ const Policy = () => {
                 </p>
 
                 {/* View Details */}
-                <div className="mt-4 flex items-center text-sm font-medium text-blue-500 group-hover:gap-2 transition-all duration-300">
+                <div className="mt-4 flex items-center text-sm font-medium text-[#0A9087] hover:text-[#023c38] group-hover:gap-2 transition-all duration-300">
                   <span>View Details</span>
                   <svg
                     className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300"

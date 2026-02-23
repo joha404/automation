@@ -106,7 +106,7 @@ const MessageInput = ({
         }`}
       >
         <div className="flex items-center gap-2 flex-1 min-w-0">
-          <FaReply className="flex-shrink-0 text-blue-500" size={14} />
+          <FaReply className="flex-shrink-0 text-[#0A9087]" size={14} />
           <div className="flex-1 min-w-0">
             <CommonParagraph variant="small" className="font-semibold truncate">
               Replying to {replyingTo.sender}
@@ -156,7 +156,7 @@ const MessageInput = ({
 
       <div
         className={`flex items-center md:gap-3 gap-0.5 md:p-4 p-2 rounded-2xl shadow-lg ${
-          theme === "dark" ? "bg-gray-900" : "bg-white"
+          theme === "dark" ? "bg-[#021e1b]" : "bg-white"
         } ${!canSendMessages ? "opacity-60" : ""} transition-all duration-300 ${
           replyingTo || selectedImage ? "rounded-t-none" : ""
         }`}
@@ -182,7 +182,7 @@ const MessageInput = ({
                 ? "hover:bg-gray-700 text-gray-400 hover:text-gray-200"
                 : "hover:bg-gray-200 text-gray-600 hover:text-gray-800"
             } disabled:opacity-50 disabled:cursor-not-allowed shadow-md ${
-              showGifPicker ? "bg-mediumBlue text-white" : ""
+              showGifPicker ? "bg-[#0A9087] text-white" : ""
             } ${replyingTo ? "ring-2 ring-yellow-500" : ""}`}
             title={
               replyingTo
@@ -294,7 +294,7 @@ const MessageInput = ({
           className={`p-3 rounded-xl transition-all duration-200 shadow-lg ${
             message.trim() || fileInputRef.current?.files[0] || selectedImage
               ? isConnected && canSendMessages && !isUploading
-                ? "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white transform hover:scale-105"
+                ? "bg-[#0A9087]  text-white transform hover:scale-105"
                 : "bg-gray-700 text-gray-500 cursor-not-allowed"
               : theme === "dark"
                 ? "bg-gray-700 text-gray-500 cursor-not-allowed"

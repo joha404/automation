@@ -67,7 +67,7 @@ const Subscriptions = () => {
   const [selectedCheckoutId, setSelectedCheckoutId] = useState(null);
   const [selectedCancelId, setSelectedCancelId] = useState(null);
 
-  // 🔥 FIXED: AddToCart fires ONLY on page load (once)
+  //  FIXED: AddToCart fires ONLY on page load (once)
   useEffect(() => {
     if (
       !planLoading &&
@@ -239,7 +239,7 @@ const Subscriptions = () => {
   // Handle Contact Us for Enterprise API
   const handleContactUs = () => {
     window.location.href =
-      "mailto:customersupport@techtakes.ai?subject=Tech Takes Enterprise API Demo Request";
+      "mailto:customersupport@techtakes.ai?subject=Hyper Picks Enterprise API Demo Request";
   };
 
   // Normalize region names to handle typos and inconsistencies
@@ -364,7 +364,7 @@ const Subscriptions = () => {
   // Add Enterprise API card only for Ultimate Access tab
   const isUltimateAccessTab = activeTab === "Ultimate Access";
   const enterpriseCard = {
-    region: "Tech Takes Enterprise API",
+    region: "Hyper Picks Enterprise API",
     isEnterprise: true,
     features: [
       { text: "Real-time sports betting API.", included: true },
@@ -385,9 +385,7 @@ const Subscriptions = () => {
       <CommonWrapper>
         <div
           className={`rounded-xl font-primary xl:p-5 lg:p-3 p-2 shadow-sm border h-full ${
-            theme === "dark"
-              ? "bg-darkBlack border-mediumBlack"
-              : "bg-white border-lightestGrey"
+            theme === "dark" ? "bg-[#021716] " : "bg-white border-lightestGrey"
           }`}
         >
           {/* Animated Tabs */}
@@ -398,8 +396,8 @@ const Subscriptions = () => {
                 <motion.div
                   className={`absolute bottom-0 h-0.5 ${
                     theme === "dark"
-                      ? "border-b-2 border-lightBlue"
-                      : "border-b-2 border-mediumBlue"
+                      ? "border-b-2 border-[#0A9087]"
+                      : "border-b-2 border-[#0A9087]"
                   }`}
                   style={{
                     width: `calc(100% / ${tabs.length})`,
@@ -422,8 +420,8 @@ const Subscriptions = () => {
                     className={`relative z-10 px-6 py-3 text-sm font-medium transition-colors duration-200 whitespace-nowrap cursor-pointer ${
                       activeTab === tab.id
                         ? theme === "dark"
-                          ? "text-lightBlue"
-                          : "text-darkBlue"
+                          ? "text-[#0A9087]"
+                          : "text-[#0A9087]"
                         : theme === "dark"
                           ? "text-gray-400 hover:text-gray-200"
                           : "text-darkerGrey hover:text-gray-700"
@@ -459,8 +457,8 @@ const Subscriptions = () => {
                       className={`px-6 py-3 text-sm font-medium transition-colors duration-200 whitespace-nowrap cursor-pointer border-b-2 ${
                         activeTab === tab.id
                           ? theme === "dark"
-                            ? "border-b-mediumBlue text-white shadow-md"
-                            : "border-b-mediumBlue text-white shadow-md"
+                            ? "border-b-[#0A9087] text-[#0A9087] shadow-md"
+                            : "border-b-[#0A9087] text-[#0A9087] shadow-md"
                           : theme === "dark"
                             ? "text-gray-400 border-b-mediumBlack hover:text-gray-200 "
                             : "text-darkerGrey border-b-gray-100 hover:text-gray-70"
@@ -480,7 +478,7 @@ const Subscriptions = () => {
               <CommonTitle
                 variant="small"
                 className={`${
-                  theme === "dark" ? "text-white" : "text-darkerGrey"
+                  theme === "dark" ? "text-[#0A9087]" : "text-[#0A9087]"
                 }`}
               >
                 {currentPlans?.title}
@@ -501,7 +499,7 @@ const Subscriptions = () => {
                 <div
                   className={`relative p-1.5 rounded-full shadow-lg transition-all duration-300 ${
                     theme === "dark"
-                      ? "bg-gradient-to-r from-mediumBlack to-darkBlack border border-slate-600 shadow-slate-900/30"
+                      ? "bg-[#054844] border border-slate-600 shadow-slate-900/30"
                       : "bg-gradient-to-r from-white to-gray-50 border border-gray-200 shadow-gray-900/10"
                   } hover:shadow-xl`}
                 >
@@ -520,7 +518,7 @@ const Subscriptions = () => {
                       {isMonthly && (
                         <motion.div
                           layoutId="activeTab"
-                          className="absolute inset-0 rounded-full bg-gradient-to-r from-mediumBlue to-darkBlue shadow-lg"
+                          className="absolute inset-0 rounded-full bg-[#0A9087] shadow-lg"
                           transition={{
                             type: "spring",
                             stiffness: 400,
@@ -651,7 +649,7 @@ const Subscriptions = () => {
                         key={`enterprise-api-${index}`}
                         className={`group relative rounded-2xl p-8 border transition-all duration-400 ease-in flex flex-col h-full transform scale-95 hover:scale-100 ${
                           theme === "dark"
-                            ? "bg-gradient-to-br from-darkBlack to-mediumBlack hover:from-mediumBlack hover:to-darkerBlack border-lightBlack hover:border-darkerGrey shadow-xl "
+                            ? "bg-[#054844] hover:from-mediumBlack hover:to-darkerBlack border-lightBlack hover:border-darkerGrey shadow-xl "
                             : "bg-gradient-to-br from-white to-extraLightBlue hover:from-extraLightBlue hover:to-white border-gray-200 hover:border-gray-300 shadow-lg hover:shadow-2xl shadow-gray-900/10"
                         }`}
                       >
@@ -671,10 +669,8 @@ const Subscriptions = () => {
                           <div className="mb-4">
                             <CommonTitle
                               variant="regular"
-                              className={`font-extrabold text-2xl ${
-                                theme === "dark"
-                                  ? "text-white"
-                                  : "text-gray-900"
+                              className={`font-extrabold font-logo text-2xl ${
+                                theme === "dark" ? "text-white" : "text-black"
                               }`}
                             >
                               Contact Us for a Demo
@@ -735,11 +731,13 @@ const Subscriptions = () => {
                         <div className="mt-auto pt-6">
                           <button
                             onClick={handleContactUs}
-                            className={`w-full px-6 py-3 cursor-pointer rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 ${
-                              theme === "dark"
-                                ? "bg-gradient-to-r from-mediumBlue to-darkBlue text-white hover:from-darkBlue hover:to-mediumBlue shadow-lg hover:shadow-xl"
-                                : "bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 shadow-lg hover:shadow-xl"
-                            }`}
+                            className={`w-full px-6 py-3 cursor-pointer rounded-xl font-semibold 
+                              
+                              transition-all duration-200 transform hover:scale-105 ${
+                                theme === "dark"
+                                  ? "bg-[#0A9087] text-white hover:from-darkBlue hover:to-mediumBlue shadow-lg hover:shadow-xl"
+                                  : "bg-[#0A9087] text-white hover:from-blue-600 hover:to-blue-700 shadow-lg hover:shadow-xl"
+                              }`}
                           >
                             Contact Us
                           </button>
@@ -786,7 +784,7 @@ const Subscriptions = () => {
                       key={`${plan.region}-${index}-${packageId}`}
                       className={`group relative rounded-2xl p-8 border transition-all duration-400 ease-in flex flex-col h-full transform scale-95 hover:scale-100 ${
                         theme === "dark"
-                          ? "bg-gradient-to-br from-darkBlack to-mediumBlack hover:from-mediumBlack hover:to-darkerBlack border-lightBlack hover:border-darkerGrey shadow-xl "
+                          ? "bg-[#054844] hover:from-mediumBlack hover:to-darkerBlack border-lightBlack hover:border-darkerGrey shadow-xl "
                           : "bg-gradient-to-br from-white to-extraLightBlue hover:from-extraLightBlue hover:to-white border-gray-200 hover:border-gray-300 shadow-lg hover:shadow-2xl shadow-gray-900/10"
                       }`}
                     >
@@ -990,7 +988,7 @@ const Subscriptions = () => {
                               </SubmitButton>
                             ) : (
                               <SubmitButton
-                                variant="bg_blue"
+                                variant="bg_black"
                                 isLoading={
                                   isCheckoutPending &&
                                   selectedCheckoutId === packageId
@@ -1014,7 +1012,7 @@ const Subscriptions = () => {
                             )
                           ) : (
                             <SubmitButton
-                              variant="bg_blue"
+                              variant="bg_black"
                               isLoading={
                                 (referalPending ||
                                   checkoutInitiated ||
@@ -1094,7 +1092,7 @@ const Subscriptions = () => {
                         <div
                           className={`group relative rounded-2xl p-6 border transition-all duration-400 ease-in flex flex-col h-full ${
                             theme === "dark"
-                              ? "bg-gradient-to-br from-darkBlack to-mediumBlack border-lightBlack shadow-xl"
+                              ? "bg-[#054844] border-lightBlack shadow-xl"
                               : "bg-gradient-to-br from-white to-extraLightBlue border-gray-200 shadow-lg shadow-gray-900/10"
                           }`}
                         >
@@ -1129,7 +1127,9 @@ const Subscriptions = () => {
                           <div className="relative mb-6">
                             <div
                               className={`h-px ${
-                                theme === "dark" ? "bg-gray-700" : "bg-gray-200"
+                                theme === "dark"
+                                  ? "bg-[#0A9087]"
+                                  : "bg-gray-200"
                               }`}
                             ></div>
                             <div
@@ -1138,8 +1138,8 @@ const Subscriptions = () => {
                               <div
                                 className={`w-24 h-px ${
                                   theme === "dark"
-                                    ? "bg-gradient-to-r from-blue-500 to-purple-500"
-                                    : "bg-gradient-to-r from-blue-400 to-purple-400"
+                                    ? "bg-[#013e3a]"
+                                    : "bg-[#013e3a]"
                                 }`}
                               ></div>
                             </div>
@@ -1179,9 +1179,11 @@ const Subscriptions = () => {
                           <div className="mt-auto pt-4">
                             <button
                               onClick={handleContactUs}
-                              className={`w-full px-6 py-3 rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 ${
+                              className={`w-full px-6 py-3 cursor-pointer rounded-xl font-semibold 
+                              
+                              transition-all duration-200 transform hover:scale-105 ${
                                 theme === "dark"
-                                  ? "bg-gradient-to-r from-mediumBlue to-darkBlue text-white hover:from-darkBlue hover:to-mediumBlue shadow-lg hover:shadow-xl"
+                                  ? "bg-[#0A9087] text-white hover:from-darkBlue hover:to-mediumBlue shadow-lg hover:shadow-xl"
                                   : "bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 shadow-lg hover:shadow-xl"
                               }`}
                             >
@@ -1231,7 +1233,7 @@ const Subscriptions = () => {
                       <div
                         className={`group relative rounded-2xl p-6 border transition-all duration-400 ease-in flex flex-col h-full ${
                           theme === "dark"
-                            ? "bg-gradient-to-br from-darkBlack to-mediumBlack border-lightBlack shadow-xl"
+                            ? "bg-[#054844]  shadow-xl"
                             : "bg-gradient-to-br from-white to-extraLightBlue border-gray-200 shadow-lg shadow-gray-900/10"
                         }`}
                       >
@@ -1346,7 +1348,7 @@ const Subscriptions = () => {
                         <div className="relative mb-6">
                           <div
                             className={`h-px ${
-                              theme === "dark" ? "bg-gray-700" : "bg-gray-200"
+                              theme === "dark" ? "bg-[#0A9087]" : "bg-gray-200"
                             }`}
                           ></div>
                           <div
@@ -1355,8 +1357,8 @@ const Subscriptions = () => {
                             <div
                               className={`w-24 h-px ${
                                 theme === "dark"
-                                  ? "bg-gradient-to-r from-blue-500 to-purple-500"
-                                  : "bg-gradient-to-r from-blue-400 to-purple-400"
+                                  ? "bg-[#013e3a]"
+                                  : "bg-[#013e3a]"
                               }`}
                             ></div>
                           </div>
@@ -1437,7 +1439,6 @@ const Subscriptions = () => {
                               </SubmitButton>
                             ) : (
                               <SubmitButton
-                                variant="bg_blue"
                                 isLoading={
                                   isCheckoutPending &&
                                   selectedCheckoutId === packageId

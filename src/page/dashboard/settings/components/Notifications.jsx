@@ -30,41 +30,6 @@ const Notification = () => {
       description: "Receive important account notifications",
       enabled: false,
     },
-    // {
-    //   id: 2,
-    //   key: "text",
-    //   title: "Text Messages",
-    //   description: "Receive SMS notifications",
-    //   enabled: false,
-    // },
-    // {
-    //   id: 3,
-    //   key: "new_predictions",
-    //   title: "New Predictions",
-    //   description: "Get notified about new predictions",
-    //   enabled: false,
-    // },
-    // {
-    //   id: 4,
-    //   key: "results",
-    //   title: "Results",
-    //   description: "Important regulatory compliance results and scores",
-    //   enabled: false,
-    // },
-    // {
-    //   id: 5,
-    //   key: "news_announcements",
-    //   title: "News & Announcements",
-    //   description: "Latest news and important announcements",
-    //   enabled: false,
-    // },
-    // {
-    //   id: 6,
-    //   key: "live_content",
-    //   title: "Live Content",
-    //   description: "Receive notification for live content",
-    //   enabled: false,
-    // },
   ]);
 
   // Use the PUT hook for updating notifications
@@ -72,7 +37,7 @@ const Notification = () => {
     "/notifications/",
     {
       secure: true,
-    }
+    },
   );
 
   // Update notifications state when API data is fetched
@@ -84,7 +49,7 @@ const Notification = () => {
         prevNotifications.map((item) => ({
           ...item,
           enabled: settings[item.key] || false,
-        }))
+        })),
       );
     }
   }, [notificationData]);
@@ -105,7 +70,7 @@ const Notification = () => {
             onSuccess: (response) => {
               successToast(
                 response?.message ||
-                  "Notification setting updated successfully!"
+                  "Notification setting updated successfully!",
               );
 
               // Refetch the latest settings to ensure sync
@@ -113,14 +78,14 @@ const Notification = () => {
             },
             onError: (error) => {
               errorToast(
-                error?.message || "Failed to update notification setting"
+                error?.message || "Failed to update notification setting",
               );
 
               // Revert the UI change if API call fails
               setNotifications((prevNotifications) =>
                 prevNotifications.map((i) =>
-                  i.id === id ? { ...i, enabled: !updatedItem.enabled } : i
-                )
+                  i.id === id ? { ...i, enabled: !updatedItem.enabled } : i,
+                ),
               );
             },
           });
@@ -128,7 +93,7 @@ const Notification = () => {
           return updatedItem;
         }
         return item;
-      })
+      }),
     );
   };
 
@@ -148,7 +113,7 @@ const Notification = () => {
           prevNotifications.map((item) => ({
             ...item,
             enabled: enableAll,
-          }))
+          })),
         );
 
         // Refetch to ensure sync with server
@@ -174,60 +139,14 @@ const Notification = () => {
     <div
       className={`rounded-xl font-primary md:p-10 p-5 shadow-sm border h-full ${
         theme === "dark"
-          ? "bg-darkBlack border-mediumBlack"
+          ? "bg-[#054844] border-mediumBlack"
           : "bg-white border-lightestGrey"
       }`}
     >
-      {/* Header */}
-      {/* <div
-        className={`pb-5 border-b transition-colors duration-300
-        ${theme === "dark" ? "border-darkerGrey" : "border-gray-100"}`}
-      >
-        <CommonParagraph
-          variant="large"
-          className={`text-xl font-semibold 
-          ${theme === "dark" ? "text-white" : "text-mediumBlack"}`}
-        >
-          Notification Preferences
-        </CommonParagraph>
-        <CommonParagraph
-          variant="small"
-          className={`mt-1 
-          ${theme === "dark" ? "text-white/60" : "text-darkGrey"}`}
-        >
-          Choose which notifications you'd like to receive
-        </CommonParagraph>
-
-        <div className="flex gap-2 mt-3">
-          <button
-            onClick={() => updateAllNotifications(true)}
-            disabled={isUpdating}
-            className={`px-3 py-1 text-sm rounded transition-colors ${
-              theme === "dark"
-                ? "bg-green-600 hover:bg-green-700 text-white"
-                : "bg-green-500 hover:bg-green-600 text-white"
-            } disabled:opacity-50`}
-          >
-            Enable All
-          </button>
-          <button
-            onClick={() => updateAllNotifications(false)}
-            disabled={isUpdating}
-            className={`px-3 py-1 text-sm rounded transition-colors ${
-              theme === "dark"
-                ? "bg-rose-600 hover:bg-rose-700 text-white"
-                : "bg-rose-500 hover:bg-rose-600 text-white"
-            } disabled:opacity-50`}
-          >
-            Disable All
-          </button>
-        </div>
-      </div> */}
-
       {/* Notification List */}
       <div
         className={`divide-y transition-colors duration-300 
-        ${theme === "dark" ? "divide-darkerGrey" : "divide-gray-100"}`}
+        ${theme === "dark" ? "divide-[#054844]" : "divide-gray-100"}`}
       >
         {notifications.map((item) => (
           <div key={item.id} className="py-4">
@@ -261,8 +180,8 @@ const Notification = () => {
       {/* Loading State for Updates */}
       {isUpdating && (
         <div
-          className={`text-center py-2 ${
-            theme === "dark" ? "text-white/60" : "text-darkGrey"
+          className={`text-center font-logo py-2 ${
+            theme === "dark" ? "text-white" : "text-black"
           }`}
         >
           Updating preferences...
