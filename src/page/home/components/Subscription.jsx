@@ -1,346 +1,470 @@
-import React, { useState, useRef } from "react";
+import React, { useRef, useState } from "react";
+import { motion } from "framer-motion";
 
 const CheckIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
     <circle cx="12" cy="12" r="11" fill="#069087" />
     <path
       d="M7 12.5l3.5 3.5 6.5-7"
       stroke="white"
-      strokeWidth="2"
+      strokeWidth="2.2"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
   </svg>
 );
 
-const CrossIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-    <circle cx="12" cy="12" r="11" fill="#1e3332" />
-    <path
-      d="M8.5 8.5l7 7M15.5 8.5l-7 7"
-      stroke="#4a6b65"
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
-  </svg>
-);
+const fadeUp = {
+  hidden: { opacity: 0, y: 28 },
+  visible: (d = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: d },
+  }),
+};
 
-const plans = [
+const cardVariant = {
+  hidden: { opacity: 0, y: 36, scale: 0.97 },
+  visible: (d = 0) => ({
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1], delay: d },
+  }),
+};
+
+const features = [
+  "Results Tracking",
+  "All standard predictions",
+  "Play of the day",
+  "Player props",
+];
+
+const allPlans = [
   {
-    id: "live",
-    name: "LIVE",
-    price: { monthly: 34.99, annually: 26.24 },
-    perDay: { monthly: 1.15, annually: 0.86 },
-    features: [
-      { label: "Live betting", included: true },
-      { label: "Full automation", included: false },
-      { label: "All standard predictions", included: false },
-      { label: "Play of the day", included: false },
-      { label: "Player props", included: false },
-    ],
+    id: "quarterly",
+    name: "QUARTERLY",
+    badge: "MOST POPULAR",
+    saveBadge: "SAVE $20",
+    price: "$129.99",
+    period: "/quarter",
+    sub: "($43.33/mo)",
+    featured: true,
   },
   {
-    id: "potd",
-    name: "PLAY OF THE DAY",
-    price: { monthly: 24.99, annually: 18.74 },
-    perDay: { monthly: 0.83, annually: 0.62 },
-    features: [
-      { label: "Play of the day", included: true },
-      { label: "Full automation", included: false },
-      { label: "All standard predictions", included: false },
-      { label: "Live betting", included: false },
-      { label: "Player props", included: false },
-    ],
+    id: "weekly",
+    name: "WEEKLY",
+    price: "$14.99",
+    period: "/week",
+    sub: null,
   },
   {
-    id: "props",
-    name: "PLAYER PROPS",
-    price: { monthly: 24.99, annually: 18.74 },
-    perDay: { monthly: 0.83, annually: 0.62 },
-    features: [
-      { label: "Player props", included: true },
-      { label: "Full automation", included: false },
-      { label: "All standard predictions", included: false },
-      { label: "Live betting", included: false },
-      { label: "Play of the day", included: false },
-    ],
+    id: "monthly",
+    name: "MONTHLY",
+    price: "$49.99",
+    period: "/month",
+    sub: null,
+  },
+  {
+    id: "annually",
+    name: "ANNUALLY",
+    price: "$449.99",
+    period: "/year",
+    sub: "($37.50/mo)",
+    saveBadge: "SAVE $150",
   },
 ];
 
-export default function Subscription() {
-  const [billing, setBilling] = useState("monthly");
+const smallPlans = allPlans.filter((p) => !p.featured);
+
+function MobileSlider() {
   const [activeSlide, setActiveSlide] = useState(0);
   const touchStartX = useRef(null);
-
-  const ultimatePrice = billing === "monthly" ? 49.99 : 37.49;
-  const ultimatePerDay = billing === "monthly" ? 1.64 : 1.23;
-
-  const allMobileCards = [
-    {
-      id: "ultimate",
-      name: "ULTIMATE PREDICTIONS",
-      subtitle: "OUR BEST PLAN",
-      price: ultimatePrice,
-      perDay: ultimatePerDay,
-      features: [
-        { label: "All standard predictions", included: true },
-        { label: "Live betting", included: true },
-        { label: "Play of the day", included: true },
-        { label: "Player props", included: true },
-      ],
-    },
-    ...plans.map((p) => ({
-      id: p.id,
-      name: p.name,
-      subtitle: null,
-      price: billing === "monthly" ? p.price.monthly : p.price.annually,
-      perDay: billing === "monthly" ? p.perDay.monthly : p.perDay.annually,
-      features: p.features,
-    })),
-  ];
 
   const handleTouchStart = (e) => {
     touchStartX.current = e.touches[0].clientX;
   };
   const handleTouchEnd = (e) => {
     const diff = touchStartX.current - e.changedTouches[0].clientX;
-    if (diff > 50)
-      setActiveSlide((p) => Math.min(p + 1, allMobileCards.length - 1));
-    if (diff < -50) setActiveSlide((p) => Math.max(p - 1, 0));
+    if (diff > 45) setActiveSlide((p) => Math.min(p + 1, allPlans.length - 1));
+    if (diff < -45) setActiveSlide((p) => Math.max(p - 1, 0));
   };
 
   return (
-    <div className="bg-[#020C0B] relative overflow-hidden py-16 sm:py-24 min-h-screen">
-      {/* BG glow */}
-
-      {/* Vertical dashed line desktop */}
-      <div className="hidden sm:block absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-px border-l border-dashed border-[#0A9087]/20 pointer-events-none" />
-
-      <div className="relative max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8">
-        {/* Heading */}
-        <div className="text-center mb-8">
-          <h2 className="font-logo font-extrabold uppercase text-white text-[18px] lg:text-[36px] tracking-wide mb-2">
-            PRECISION PLANS
-          </h2>
-          <p className="font-logo font-normal text-white/50 text-[14px] sm:text-[15px]">
-            Quick, simple, and straight to the point
-          </p>
-        </div>
-
-        {/* Toggle */}
-        <div className="flex justify-center mb-3">
-          <div className="flex rounded-full border border-[#0A9087]/40 overflow-hidden">
-            <button
-              onClick={() => setBilling("monthly")}
-              className={`font-logo font-extrabold text-[16px]  tracking-widest uppercase px-8 py-3 transition-all duration-300 cursor-pointer ${
-                billing === "monthly"
-                  ? "bg-[#0A9087] text-white"
-                  : "bg-transparent text-white/60 hover:text-white"
-              }`}
-            >
-              MONTHLY
-            </button>
-            <button
-              onClick={() => setBilling("annually")}
-              className={`font-logo font-extrabold text-[16px]  tracking-widest uppercase px-8 py-3 transition-all duration-300 cursor-pointer ${
-                billing === "annually"
-                  ? "bg-[#0A9087] text-white"
-                  : "bg-transparent text-white/60 hover:text-white"
-              }`}
-            >
-              ANNUALLY
-            </button>
-          </div>
-        </div>
-
-        <p className="text-center font-logo font-normal text-white/40 text-[12px] mb-10">
-          Switch to annual and save 25%
-        </p>
-
-        {/* ══ DESKTOP ══ */}
-        <div className="hidden sm:block">
-          {/* Ultimate Featured Card */}
-          <div
-            className=" border-[#0A9087] h-[248px] p-7 mb-5 flex items-center  *:
-           rotate-0 opacity-100 pt-[50px] pr-[108px] pb-[50px] pl-[108px] gap-[128px] rounded-[16px] border-[1px] bg-[linear-gradient(198.19deg,rgba(133,143,149,0.39)-28.51%,rgba(133,143,149,0)67.29%)]
-"
-          >
-            {/* Left: name + price */}
-            <div className="w-52 flex-shrink-0">
-              <p className="font-logo font-extrabold text-[14px] tracking-widest uppercase text-white mb-0.5">
-                ULTIMATE PREDICTIONS
-              </p>
-              <p className="font-logo font-normal text-[14px] tracking-widest uppercase text-white/35 mb-4 letter-spacing-[1px]">
-                OUR BEST PLAN
-              </p>
-              <div className="flex items-baseline gap-1">
-                <span className="font-logo font-semibold text-white text-[39px] leading-none letter-spacing-[3px]">
-                  ${ultimatePrice.toFixed(2)}
-                </span>
-                <span className="font-logo font-medium text-white/50 text-[19px] letter-spacing-[3px]">
-                  /month
-                </span>
-              </div>
-              <div className="mt-2">
-                <span className="font-logo font-bold bg-[#032422] text-[10px] text-[#0A9087] px-2.5 py-1 rounded-full">
-                  ${ultimatePerDay.toFixed(2)} /day
-                </span>
-              </div>
-            </div>
-
-            {/* Features */}
-            <div className="flex-1 flex flex-col gap-3">
-              {[
-                "All standard predictions",
-                "Live betting",
-                "Play of the day",
-                "Player props",
-              ].map((f) => (
-                <div key={f} className="flex items-center gap-2">
-                  <CheckIcon />
-                  <span className="font-logo font-normal text-[#ECF6F4] text-[18px]">
-                    {f}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            {/* CTA */}
-            <div className="flex-shrink-0">
-              <button className="w-[155px] h-[46px] rounded-full bg-[#0A9087] hover:bg-[#087a72] font-logo font-extrabold text-white text-[13px] tracking-widest uppercase transition-all duration-300 cursor-pointer">
-                SELECT PLAN
-              </button>
-            </div>
-          </div>
-
-          {/* 3 smaller cards */}
-          <div className="grid grid-cols-3 gap-5">
-            {plans.map((plan) => {
-              const price =
-                billing === "monthly"
-                  ? plan.price.monthly
-                  : plan.price.annually;
-              const perDay =
-                billing === "monthly"
-                  ? plan.perDay.monthly
-                  : plan.perDay.annually;
-              return (
+    <div className="block sm:hidden">
+      <div
+        className="overflow-hidden"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
+        <div
+          className="flex transition-transform duration-500"
+          style={{
+            transform: `translateX(-${activeSlide * 100}%)`,
+            transitionTimingFunction: "cubic-bezier(0.22,1,0.36,1)",
+          }}
+        >
+          {allPlans.map((plan) => (
+            <div key={plan.id} className="min-w-full px-2">
+              <div
+                className="rounded-2xl relative overflow-hidden flex flex-col"
+                style={{
+                  background: plan.featured
+                    ? "linear-gradient(201.03deg, #4D5456 -21.17%, #020C0B 62.19%)"
+                    : "linear-gradient(175deg, rgba(28,52,47,0.8) 0%, rgba(8,22,20,0.96) 100%)",
+                  border: plan.featured
+                    ? "1px solid #0A9087"
+                    : "1px solid rgba(255,255,255,0.1)",
+                  minHeight: "420px",
+                }}
+              >
+                {/* Glow */}
                 <div
-                  key={plan.id}
-                  className=" rotate-0 h-[446px] opacity-100 pt-[25px] pr-[58px] pb-[25px] pl-[58px] gap-[10px] rounded-[16px]  border-[1px] bg-[linear-gradient(201.03deg,rgba(133,143,149,0.39)-21.17%,rgba(133,143,149,0)62.19%)] p-6 flex flex-col border-[#0A9087]"
-                >
-                  <p className="font-logo font-bold letter-spacing-[1px] text-[14px] tracking-widest uppercase text-[#ECF6F4] mb-4 text-center">
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    background:
+                      "radial-gradient(ellipse 70% 50% at 50% 0%, rgba(10,144,135,0.12) 0%, transparent 70%)",
+                  }}
+                />
+
+                <div className="relative flex flex-col flex-1 p-6">
+                  {/* Badges */}
+                  <div className="flex items-center justify-center gap-2 mb-3 flex-wrap">
+                    {plan.badge && (
+                      <span
+                        className="text-[11px] font-extrabold px-3 py-1 rounded-md tracking-widest uppercase"
+                        style={{
+                          background: "rgba(10,144,135,0.25)",
+                          color: "#0ee8d8",
+                        }}
+                      >
+                        {plan.badge}
+                      </span>
+                    )}
+                    {plan.saveBadge && (
+                      <span
+                        className="text-[11px] font-extrabold px-2 py-0.5 rounded"
+                        style={{
+                          background: "rgba(10,144,135,0.2)",
+                          color: "#0ee8d8",
+                        }}
+                      >
+                        {plan.saveBadge}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Plan name */}
+                  <p className="text-white font-extrabold text-[15px] tracking-widest uppercase text-center mb-4">
                     {plan.name}
                   </p>
-                  <div className="flex items-baseline gap-1 mb-1">
-                    <span className="font-logo font-semibold text-white text-[39px] leading-none letter-spacing-[2px]">
-                      ${price.toFixed(2)}
+
+                  {/* Price */}
+                  <div className="flex items-baseline gap-1 justify-center mb-1">
+                    <span
+                      className="text-white font-extrabold leading-none"
+                      style={{ fontSize: "44px" }}
+                    >
+                      {plan.price}
                     </span>
-                    <span className="font-logo font-normal text-[#ECF6F4] text-[18px]">
-                      /month
+                    <span className="text-white/45 text-[16px] font-medium">
+                      {plan.period}
                     </span>
                   </div>
-                  <div className="mb-5 text-center">
-                    <span className="font-logo font-bold text-[#0A9087] text-[12px] bg-[#032422] px-2 py-0.5 rounded-full">
-                      ${perDay.toFixed(2)} /day
-                    </span>
-                  </div>
-                  <div className="flex flex-col gap-3 flex-1 mb-6">
-                    {plan.features.map((f) => (
-                      <div key={f.label} className="flex items-center gap-2.5">
-                        {f.included ? <CheckIcon /> : <CrossIcon />}
-                        <span
-                          className={`font-logo font-normal text-[16px] ${f.included ? "text-white/80" : "text-white/35"}`}
-                        >
-                          {f.label}
+                  {plan.sub && (
+                    <p className="text-white/35 text-[13px] text-center mb-2">
+                      {plan.sub}
+                    </p>
+                  )}
+
+                  {/* Features */}
+                  <div className="flex flex-col gap-3 flex-1 mt-5 mb-6">
+                    {features.map((f, i) => (
+                      <motion.div
+                        key={f}
+                        className="flex items-center gap-2"
+                        initial={{ opacity: 0, x: -8 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.07, duration: 0.35 }}
+                      >
+                        <CheckIcon />
+                        <span className="text-white/80 text-[15px] font-medium">
+                          {f}
                         </span>
-                      </div>
+                      </motion.div>
                     ))}
                   </div>
-                  <button className="w-full h-[54px] rounded-full bg-[#0A9087] hover:bg-[#087a72] hover:shadow-[0_0_20px_rgba(10,144,135,0.4)] font-logo font-bold text-white text-[16px]  tracking-widest uppercase transition-all duration-300 cursor-pointer">
-                    SELECT PLAN
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        </div>
 
-        {/* ══ MOBILE SLIDER ══ */}
-        <div className="block sm:hidden">
-          <div
-            className="overflow-hidden"
-            onTouchStart={handleTouchStart}
-            onTouchEnd={handleTouchEnd}
-          >
-            <div
-              className="flex transition-transform duration-500 ease-in-out"
-              style={{ transform: `translateX(-${activeSlide * 100}%)` }}
-            >
-              {allMobileCards.map((card) => (
-                <div key={card.id} className="min-w-full px-1">
-                  <div className="rounded-2xl border border-[#0A9087]/30 bg-[#032422] p-6 flex flex-col">
-                    <div className="text-center mb-6">
-                      <p className="font-logo font-extrabold text-[14px] tracking-widest uppercase text-white mb-1">
-                        {card.name}
-                      </p>
-                      {card.subtitle && (
-                        <p className="font-logo font-medium text-[14px] tracking-widest uppercase text-white/35">
-                          {card.subtitle}
-                        </p>
-                      )}
-                    </div>
-                    <div className="flex items-baseline gap-1 mb-1">
-                      <span className="font-logo font-extrabold text-white text-[39px] leading-none">
-                        ${card.price.toFixed(2)}
-                      </span>
-                      <span className="font-logo font-medium text-white/50 text-[18px]">
-                        /month
-                      </span>
-                    </div>
-                    <div className="mb-6">
-                      <span className="font-logo font-semibold text-[#0A9087] text-[12px] bg-[#0A9087]/10 px-2.5 py-1 rounded-full">
-                        ${card.perDay.toFixed(2)} /day
-                      </span>
-                    </div>
-                    <div className="flex flex-col gap-3 flex-1 mb-7">
-                      {card.features.map((f) => (
-                        <div
-                          key={f.label}
-                          className="flex items-center gap-2.5"
-                        >
-                          {f.included ? <CheckIcon /> : <CrossIcon />}
-                          <span
-                            className={`font-logo font-medium text-[16px] ${f.included ? "text-white/80" : "text-white/35"}`}
-                          >
-                            {f.label}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                    <button className="w-full h-[48px] rounded-full bg-[#0A9087] hover:bg-[#087a72] hover:shadow-[0_0_25px_rgba(10,144,135,0.5)] font-logo font-extrabold text-white text-[14px] tracking-widest uppercase transition-all duration-300 cursor-pointer">
-                      SELECT PLAN
-                    </button>
-                  </div>
+                  {/* Button */}
+                  <motion.button
+                    className="w-full h-[48px] rounded-full font-extrabold text-white text-[13px] tracking-widest uppercase cursor-pointer"
+                    style={{ background: "#0A9087" }}
+                    whileHover={{
+                      scale: 1.04,
+                      backgroundColor: "#087a72",
+                      boxShadow: "0 0 22px rgba(10,144,135,0.5)",
+                    }}
+                    whileTap={{ scale: 0.96 }}
+                    transition={{ duration: 0.18 }}
+                  >
+                    SELECT PLAN
+                  </motion.button>
                 </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Dots */}
+      <div className="flex justify-center items-center gap-2 mt-5">
+        {allPlans.map((_, i) => (
+          <motion.button
+            key={i}
+            onClick={() => setActiveSlide(i)}
+            className="rounded-full cursor-pointer"
+            style={{
+              width: i === activeSlide ? "24px" : "10px",
+              height: "10px",
+              background:
+                i === activeSlide ? "#0A9087" : "rgba(255,255,255,0.2)",
+              transition: "all 0.3s ease",
+            }}
+            whileTap={{ scale: 0.85 }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default function Subscription() {
+  return (
+    <div className="bg-[#040e0d] min-h-screen py-16 px-4">
+      {/* Heading */}
+      <motion.div
+        className="text-center mb-12"
+        variants={fadeUp}
+        initial="hidden"
+        animate="visible"
+        custom={0}
+      >
+        <h1
+          className="text-white font-extrabold uppercase tracking-widest mb-2"
+          style={{
+            fontSize: "clamp(26px, 4vw, 40px)",
+            letterSpacing: "0.18em",
+          }}
+        >
+          SUBSCRIPTIONS
+        </h1>
+        <p className="text-white/55 text-[15px]">
+          Quick, simple, and straight to the point
+        </p>
+      </motion.div>
+
+      {/* ── MOBILE SLIDER ── */}
+      <MobileSlider />
+
+      {/* ── DESKTOP ── */}
+      <div className="hidden sm:block max-w-7xl mx-auto">
+        {/* Featured Quarterly Card */}
+        <motion.div
+          className="rounded-2xl lg:h-[279px] mb-5 relative overflow-hidden"
+          style={{
+            background:
+              "linear-gradient(201.03deg, #4D5456 -21.17%, #020C0B 62.19%)",
+            border: "1px solid #0A9087",
+          }}
+          variants={cardVariant}
+          initial="hidden"
+          animate="visible"
+          custom={0.05}
+          whileHover={{ scale: 1.012, transition: { duration: 0.25 } }}
+        >
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                "radial-gradient(ellipse 55% 60% at 15% 10%, rgba(10,144,135,0.13) 0%, transparent 70%)",
+            }}
+          />
+
+          <div className="relative flex flex-row items-center h-full gap-6 px-10 py-8">
+            {/* Left */}
+            <div className="flex-shrink-0 min-w-[240px]">
+              <div className="mb-4">
+                <span
+                  className="font-extrabold text-[12px] tracking-widest uppercase px-4 py-2 rounded-md text-white"
+                  style={{ background: "#0A9087" }}
+                >
+                  MOST POPULAR
+                </span>
+              </div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-white font-logo font-bold text-[12px] tracking-widest uppercase">
+                  QUARTERLY
+                </span>
+                <span
+                  className="text-[11px] font-bold px-2 py-0.5 rounded"
+                  style={{
+                    background: "#00C08026",
+                    color: "#00C080",
+                  }}
+                >
+                  SAVE $20
+                </span>
+              </div>
+              <div className="flex items-baseline gap-1">
+                <span
+                  className="text-white font-extrabold leading-none"
+                  style={{ fontSize: "48px" }}
+                >
+                  $129.99
+                </span>
+                <span className="text-white/45 text-[17px] font-medium">
+                  /quarter
+                </span>
+              </div>
+              <p className="text-white/35 text-center text-[13px] mt-1">
+                ($43.33/mo)
+              </p>
+            </div>
+
+            {/* Middle */}
+            <div className="flex-1 flex flex-col gap-3 pl-8">
+              {features.map((f, i) => (
+                <motion.div
+                  key={f}
+                  className="flex items-center gap-2.5"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 + i * 0.07, duration: 0.38 }}
+                >
+                  <CheckIcon />
+                  <span className="text-[#e2f0ee] text-[15px] font-medium">
+                    {f}
+                  </span>
+                </motion.div>
               ))}
             </div>
-          </div>
 
-          {/* Dots */}
-          <div className="flex justify-center items-center gap-2 mt-6">
-            {allMobileCards.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setActiveSlide(i)}
-                className={`rounded-full transition-all duration-300 ${
-                  i === activeSlide
-                    ? "w-6 h-2.5 bg-[#0A9087]"
-                    : "w-2.5 h-2.5 bg-white/20 hover:bg-white/40"
-                }`}
-              />
-            ))}
+            {/* Right CTA */}
+            <div className="flex-shrink-0 pl-8">
+              <motion.button
+                className="cursor-pointer w-[210px] h-[48px] px-[30px] rounded-full border border-[#0A9087] font-bold text-[15px] text-white flex justify-center items-center"
+                style={{
+                  background:
+                    "linear-gradient(3.11deg, #020C0B -44.12%, #055651 149.92%)",
+                }}
+                whileHover={{
+                  scale: 1.06,
+                  boxShadow: "0 0 22px rgba(10,144,135,0.55)",
+                }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ duration: 0.18 }}
+              >
+                SELECT PLAN
+              </motion.button>
+            </div>
           </div>
+        </motion.div>
+        {/* 3 smaller cards */}
+        <div className="flex flex-wrap justify-center gap-16 my-16">
+          {smallPlans.map((plan, idx) => (
+            <motion.div
+              key={plan.id}
+              className="rounded-2xl h-full lg:h-[446px] w-full lg:w-[350px] flex flex-col relative overflow-hidden"
+              style={{
+                background:
+                  "linear-gradient(201.03deg, #4D5456 -21.17%, #020C0B 62.19%)",
+                border: "1px solid #858F95",
+              }}
+              variants={cardVariant}
+              initial="hidden"
+              animate="visible"
+              custom={0.15 + idx * 0.1}
+              whileHover={{ scale: 1.03, transition: { duration: 0.22 } }}
+            >
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background:
+                    "radial-gradient(ellipse 70% 50% at 50% 0%, rgba(10,144,135,0.09) 0%, transparent 70%)",
+                }}
+              />
+
+              <div className="relative flex flex-col flex-1 px-10 pt-10 pb-8">
+                {/* Name + Badge */}
+                <div className="flex items-center justify-center gap-2 mb-4">
+                  <p className="text-white font-bold font-logo text-[16px] tracking-widest uppercase">
+                    {plan.name}
+                  </p>
+                  {plan.saveBadge && (
+                    <span className="h-[25px] py-[5px] font-logo font-bold text-[12px] px-[10px] rounded-full bg-[#C27AFF33] text-[#C27AFF]">
+                      {plan.saveBadge}
+                    </span>
+                  )}
+                </div>
+
+                {/* Price */}
+                <div className="flex items-baseline justify-center gap-1 mb-1">
+                  <span
+                    className="text-white font-normal font-logo leading-none"
+                    style={{ fontSize: "48px" }}
+                  >
+                    {plan.price}
+                  </span>
+                  <span className="text-white/45 font-logo text-[16px] font-normal">
+                    {plan.period}
+                  </span>
+                </div>
+                {plan.sub && (
+                  <p className="text-white/35 text-center text-[12px] mb-2">
+                    {plan.sub}
+                  </p>
+                )}
+
+                {/* Features */}
+                <div className="flex flex-col gap-3 flex-1 mt-8 mb-8">
+                  {features.map((f, i) => (
+                    <motion.div
+                      key={f}
+                      className="flex items-center gap-2.5"
+                      initial={{ opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{
+                        delay: 0.3 + idx * 0.1 + i * 0.06,
+                        duration: 0.35,
+                      }}
+                    >
+                      <CheckIcon />
+                      <span className="text-white/80 text-[15px] font-medium">
+                        {f}
+                      </span>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Button */}
+                <motion.button
+                  className="cursor-pointer w-full h-[48px] px-[30px] rounded-full border border-[#0A9087] font-logo font-bold text-[16px] text-white flex justify-center items-center"
+                  style={{
+                    background:
+                      "linear-gradient(3.11deg, #020C0B -44.12%, #055651 149.92%)",
+                  }}
+                  whileHover={{
+                    scale: 1.04,
+                    boxShadow: "0 0 22px rgba(10,144,135,0.55)",
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ duration: 0.18 }}
+                >
+                  SELECT PLAN
+                </motion.button>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </div>

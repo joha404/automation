@@ -33,7 +33,6 @@ import Logo from "@/page/dashboard/logo/Logo";
 import Offer from "@/page/dashboard/offer/Offer";
 import Festival from "@/page/home/Festival";
 import AutomationPolicy from "@/shared/AutomationPolicy";
-import MarchMadnessBracket from "@/page/home/components/MarchMadnessBracket";
 
 const router = createBrowserRouter([
   {
@@ -320,10 +319,7 @@ const router = createBrowserRouter([
     path: "/privacy-policy",
     element: <Privacy />,
   },
-  {
-    path: "/march",
-    element: <MarchMadnessBracket />,
-  },
+
   {
     path: "/logo",
     element: <Logo />,

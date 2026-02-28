@@ -7,6 +7,8 @@ import { useState, useEffect } from "react";
 import FreeTrailSvg from "./components/FreeTrialSVG";
 import Streaks from "./components/Streaks";
 import UpcomingEvents from "./components/UpcommingEvents";
+import PredictionSection from "@/page/home/components/PredictionSection";
+import PredictionComponent from "./components/PredictionComponent";
 
 const Dashboard = () => {
   const {
@@ -102,12 +104,9 @@ const Dashboard = () => {
   return (
     <div>
       <Header />
-
-      <div className="fixed -right-4 z-50 top-16 lg:right-4 lg:top-16">
-        <FreeTrailSvg onSvgClick={handleSvgClick} />
-      </div>
-      <Streaks />
-      <UpcomingEvents />
+      <PredictionComponent />
+      {/* <Streaks /> */}
+      {/* <UpcomingEvents /> */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
         <ResultSection />
         <PastPrediction />
