@@ -236,12 +236,6 @@ const Subscriptions = () => {
     return planRegion === "Ultimate Automation";
   };
 
-  // Handle Contact Us for Enterprise API
-  const handleContactUs = () => {
-    window.location.href =
-      "mailto:customersupport@techtakes.ai?subject=Hyper Picks Enterprise API Demo Request";
-  };
-
   // Normalize region names to handle typos and inconsistencies
   const normalizeRegionName = (region) => {
     return region
@@ -361,22 +355,8 @@ const Subscriptions = () => {
       return false;
     }) || [];
 
-  // Add Enterprise API card only for Ultimate Access tab
-  const isUltimateAccessTab = activeTab === "Ultimate Access";
-  const enterpriseCard = {
-    region: "Hyper Picks Enterprise API",
-    isEnterprise: true,
-    features: [
-      { text: "Real-time sports betting API.", included: true },
-      { text: "High-accuracy prediction models.", included: true },
-      { text: "Custom models, SLAs, white-label.", included: true },
-    ],
-  };
-
-  // Combine regular plans with enterprise card
-  const allPlans = isUltimateAccessTab
-    ? [...filteredPlans, enterpriseCard]
-    : filteredPlans;
+  // ✅ Enterprise card removed — use filteredPlans directly
+  const allPlans = filteredPlans;
 
   const planCount = allPlans.length;
 
@@ -637,124 +617,19 @@ const Subscriptions = () => {
                 className="w-full max-w-6xl mx-auto"
                 style={{
                   display: "grid",
-                  gap: "1rem",
-                  gridTemplateColumns: `repeat(${Math.min(planCount, 4)}, minmax(0, 1fr))`,
+                  gap: "1.5rem",
+                  gridTemplateColumns:
+                    planCount === 1
+                      ? "minmax(0, 480px)"
+                      : planCount === 2
+                        ? "repeat(2, minmax(0, 1fr))"
+                        : planCount === 3
+                          ? "repeat(3, minmax(0, 1fr))"
+                          : "repeat(4, minmax(0, 1fr))",
+                  justifyContent: planCount === 1 ? "center" : "unset",
                 }}
               >
                 {allPlans.map((plan, index) => {
-                  // Check if this is the Enterprise API card
-                  if (plan.isEnterprise) {
-                    return (
-                      <div
-                        key={`enterprise-api-${index}`}
-                        className={`group relative rounded-2xl p-8 border transition-all duration-400 ease-in flex flex-col h-full transform scale-95 hover:scale-100 ${
-                          theme === "dark"
-                            ? "bg-[#054844] hover:from-mediumBlack hover:to-darkerBlack border-lightBlack hover:border-darkerGrey shadow-xl "
-                            : "bg-gradient-to-br from-white to-extraLightBlue hover:from-extraLightBlue hover:to-white border-gray-200 hover:border-gray-300 shadow-lg hover:shadow-2xl shadow-gray-900/10"
-                        }`}
-                      >
-                        {/* Plan Header */}
-                        <div className="text-center mb-8 relative z-10">
-                          <CommonParagraph
-                            variant="small"
-                            className={`font-bold mb-3 uppercase tracking-widest text-xs ${
-                              theme === "dark"
-                                ? "text-lightBlue"
-                                : "text-darkerBlue"
-                            }`}
-                          >
-                            {plan.region}
-                          </CommonParagraph>
-
-                          <div className="mb-4">
-                            <CommonTitle
-                              variant="regular"
-                              className={`font-extrabold font-logo text-2xl ${
-                                theme === "dark" ? "text-white" : "text-black"
-                              }`}
-                            >
-                              Contact Us for a Demo
-                            </CommonTitle>
-                          </div>
-                        </div>
-
-                        {/* Elegant Divider */}
-                        <div className="relative mb-8">
-                          <div
-                            className={`h-px ${
-                              theme === "dark" ? "bg-gray-700" : "bg-gray-200"
-                            }`}
-                          ></div>
-                          <div
-                            className={`absolute inset-0 flex justify-center`}
-                          >
-                            <div
-                              className={`w-24 h-px ${
-                                theme === "dark"
-                                  ? "bg-gradient-to-r from-blue-500 to-purple-500"
-                                  : "bg-gradient-to-r from-blue-400 to-purple-400"
-                              }`}
-                            ></div>
-                          </div>
-                        </div>
-
-                        {/* Features */}
-                        <div className="flex-grow space-y-4 mb-8">
-                          {plan.features.map((feature, featureIndex) => (
-                            <div
-                              key={featureIndex}
-                              className="flex items-start group/feature"
-                            >
-                              <div
-                                className={`flex-shrink-0 flex items-center justify-center mr-4 w-6 h-6 rounded-full transition-all duration-300 ${
-                                  theme === "dark"
-                                    ? "text-emerald-400 bg-emerald-500/20 group-hover/feature:bg-emerald-500/30"
-                                    : "text-emerald-600 bg-emerald-50 group-hover/feature:bg-emerald-100"
-                                }`}
-                              >
-                                <GiCheckMark className="w-3 h-3" />
-                              </div>
-                              <CommonParagraph
-                                className={`leading-relaxed transition-all duration-300 ${
-                                  theme === "dark"
-                                    ? "text-lighterGrey group-hover/feature:text-white"
-                                    : "text-lightBlack group-hover/feature:text-gray-900"
-                                }`}
-                              >
-                                {feature.text}
-                              </CommonParagraph>
-                            </div>
-                          ))}
-                        </div>
-
-                        {/* CTA Button */}
-                        <div className="mt-auto pt-6">
-                          <button
-                            onClick={handleContactUs}
-                            className={`w-full px-6 py-3 cursor-pointer rounded-xl font-semibold 
-                              
-                              transition-all duration-200 transform hover:scale-105 ${
-                                theme === "dark"
-                                  ? "bg-[#0A9087] text-white hover:from-darkBlue hover:to-mediumBlue shadow-lg hover:shadow-xl"
-                                  : "bg-[#0A9087] text-white hover:from-blue-600 hover:to-blue-700 shadow-lg hover:shadow-xl"
-                              }`}
-                          >
-                            Contact Us
-                          </button>
-                        </div>
-
-                        {/* Subtle Glow Effect */}
-                        <div
-                          className={`absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none ${
-                            theme === "dark"
-                              ? "bg-gradient-to-br from-blue-500/5 to-purple-700/3"
-                              : "bg-gradient-to-br from-blue-500/3 to-purple-500/3"
-                          }`}
-                        ></div>
-                      </div>
-                    );
-                  }
-
                   // Regular plan cards
                   const packageId = isMonthly
                     ? plan.monthlyPackageId
@@ -1085,125 +960,6 @@ const Subscriptions = () => {
                 className="mobile-plans-swiper !overflow-visible"
               >
                 {allPlans.map((plan, index) => {
-                  // Check if this is the Enterprise API card
-                  if (plan.isEnterprise) {
-                    return (
-                      <SwiperSlide key={`enterprise-api-mobile-${index}`}>
-                        <div
-                          className={`group relative rounded-2xl p-6 border transition-all duration-400 ease-in flex flex-col h-full ${
-                            theme === "dark"
-                              ? "bg-[#054844] border-lightBlack shadow-xl"
-                              : "bg-gradient-to-br from-white to-extraLightBlue border-gray-200 shadow-lg shadow-gray-900/10"
-                          }`}
-                        >
-                          {/* Plan Header */}
-                          <div className="text-center mb-6 relative z-10">
-                            <CommonParagraph
-                              variant="small"
-                              className={`font-bold mb-3 uppercase tracking-widest text-xs ${
-                                theme === "dark"
-                                  ? "text-lightBlue"
-                                  : "text-darkerBlue"
-                              }`}
-                            >
-                              {plan.region}
-                            </CommonParagraph>
-
-                            <div className="mb-4">
-                              <CommonTitle
-                                variant="regular"
-                                className={`font-extrabold text-xl ${
-                                  theme === "dark"
-                                    ? "text-white"
-                                    : "text-gray-900"
-                                }`}
-                              >
-                                Contact Us for a Demo
-                              </CommonTitle>
-                            </div>
-                          </div>
-
-                          {/* Elegant Divider */}
-                          <div className="relative mb-6">
-                            <div
-                              className={`h-px ${
-                                theme === "dark"
-                                  ? "bg-[#0A9087]"
-                                  : "bg-gray-200"
-                              }`}
-                            ></div>
-                            <div
-                              className={`absolute inset-0 flex justify-center`}
-                            >
-                              <div
-                                className={`w-24 h-px ${
-                                  theme === "dark"
-                                    ? "bg-[#013e3a]"
-                                    : "bg-[#013e3a]"
-                                }`}
-                              ></div>
-                            </div>
-                          </div>
-
-                          {/* Features */}
-                          <div className="flex-grow space-y-3 mb-6">
-                            {plan.features.map((feature, featureIndex) => (
-                              <div
-                                key={featureIndex}
-                                className="flex items-start"
-                              >
-                                <div
-                                  className={`flex-shrink-0 flex items-center justify-center mr-3 w-5 h-5 rounded-full transition-all duration-300 ${
-                                    theme === "dark"
-                                      ? "text-emerald-400 bg-emerald-500/20"
-                                      : "text-emerald-600 bg-emerald-50"
-                                  }`}
-                                >
-                                  <GiCheckMark className="w-3 h-3" />
-                                </div>
-                                <CommonParagraph
-                                  variant="small"
-                                  className={`leading-relaxed ${
-                                    theme === "dark"
-                                      ? "text-lighterGrey"
-                                      : "text-lightBlack"
-                                  }`}
-                                >
-                                  {feature.text}
-                                </CommonParagraph>
-                              </div>
-                            ))}
-                          </div>
-
-                          {/* CTA Button */}
-                          <div className="mt-auto pt-4">
-                            <button
-                              onClick={handleContactUs}
-                              className={`w-full px-6 py-3 cursor-pointer rounded-xl font-semibold 
-                              
-                              transition-all duration-200 transform hover:scale-105 ${
-                                theme === "dark"
-                                  ? "bg-[#0A9087] text-white hover:from-darkBlue hover:to-mediumBlue shadow-lg hover:shadow-xl"
-                                  : "bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 shadow-lg hover:shadow-xl"
-                              }`}
-                            >
-                              Contact Us
-                            </button>
-                          </div>
-
-                          {/* Subtle Glow Effect */}
-                          <div
-                            className={`absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none ${
-                              theme === "dark"
-                                ? "bg-gradient-to-br from-blue-500/5 to-purple-700/3"
-                                : "bg-gradient-to-br from-blue-500/3 to-purple-500/3"
-                            }`}
-                          ></div>
-                        </div>
-                      </SwiperSlide>
-                    );
-                  }
-
                   // Regular plan cards (mobile)
                   const packageId = isMonthly
                     ? plan.monthlyPackageId

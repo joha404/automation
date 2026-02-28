@@ -11,7 +11,7 @@ const Logo = () => {
             <img
               src={logo}
               alt="logo"
-              className="h-full w-auto object-contain"
+              className="h-full w-[70%] object-contain"
             />
           </div>
         </div>

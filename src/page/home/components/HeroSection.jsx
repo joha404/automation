@@ -103,9 +103,9 @@ const HeroSection = ({ data }) => {
                 <Link
                   onClick={handleJoinNowClick}
                   to="/sign-up"
-                  className="w-[215px] h-[44px] rounded-full border border-[#0A9087] [background:linear-gradient(0deg,rgba(10,144,135,0)_8%,#032A27_314.44%)] font-logo text-white font-bold text-[16px] leading-none text-center flex justify-center items-center cursor-pointer hover:brightness-125 transition-all duration-300 shadow-[0_0_20px_rgba(10,144,135,0.3)]"
+                  className="w-[178px] h-[44px] rounded-full border border-[#0A9087] [background:linear-gradient(0deg,rgba(10,144,135,0)_8%,#032A27_314.44%)] font-logo text-white font-bold text-[16px] leading-none text-center flex justify-center items-center cursor-pointer hover:brightness-125 transition-all duration-300 shadow-[0_0_20px_rgba(10,144,135,0.3)]"
                 >
-                  START FREE TRIAL
+                  SIGN UP NOW
                 </Link>
               </div>
 
