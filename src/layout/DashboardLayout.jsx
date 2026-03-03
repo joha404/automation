@@ -67,8 +67,8 @@ const DashboardLayout = () => {
 
   return (
     <div
-      className={`flex h-screen flex-col relative ${
-        theme === "dark" ? "bg-[#020C0B]" : "bg-extraLightBlue"
+      className={`flex h-screen flex-col relative rounded-[16px] border-none ${
+        theme === "dark" ? "bg-[#021716]" : "bg-extraLightBlue"
       }`}
     >
       <PixelTracker />

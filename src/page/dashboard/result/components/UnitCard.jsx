@@ -40,7 +40,7 @@ const UnitCard = ({ title, data }) => {
           : "min-w-[280px] max-w-[320px]"
       } ${
         theme === "dark"
-          ? "bg-[#054844] text-white"
+          ? "bg-[#032422] text-white"
           : "bg-white border border-gray-100 text-gray-800 shadow-lg"
       }`}
     >
@@ -58,7 +58,7 @@ const UnitCard = ({ title, data }) => {
       {data?.sport && (
         <CommonParagraph
           variant="large"
-          className={`font-semibold text-center mb-8 sm:mb-10 ${
+          className={` text-center text-base font-bold font-logo mb-8 sm:mb-10 ${
             theme === "dark" ? "text-white" : "text-gray-800"
           }`}
         >
@@ -80,10 +80,10 @@ const UnitCard = ({ title, data }) => {
         ].map((tab) => (
           <button
             key={tab.id}
-            className={`capitalize rounded-lg px-2 sm:px-3 py-1 text-xs sm:text-sm font-medium transition-all flex-1 ${
+            className={`capitalize rounded-full h-auto lg:h-[30px] px-2 sm:px-3 py-1 font-logo text-xs sm:text-sm font-normal transition-all flex-1 ${
               theme === "dark"
                 ? selectedPeriod === tab.id
-                  ? "bg-[#047f77] text-white"
+                  ? "bg-[#0A9087] text-white"
                   : "text-white/80 hover:bg-white/10"
                 : selectedPeriod === tab.id
                   ? "bg-white text-[#0A9087] shadow-sm font-semibold"
@@ -100,14 +100,14 @@ const UnitCard = ({ title, data }) => {
       <div className="grid grid-cols-5 gap-2 sm:gap-3 mb-6">
         {/* Unit Won */}
         <div
-          className={`rounded-xl p-3 sm:p-5 text-center col-span-2 ${
+          className={`rounded-[10px] p-3 sm:p-5 text-center col-span-2 ${
             theme === "dark"
-              ? "bg-[#076f69]"
+              ? "bg-[#054844]"
               : "bg-[#0A9087]/10 border border-[#0A9087]/20"
           }`}
         >
           <div
-            className={`text-xs mb-1 ${
+            className={`text-xs mb-1 font-logo font-normal  ${
               theme === "dark" ? "text-lightestGrey" : "text-[#0A9087]"
             }`}
           >
@@ -126,20 +126,20 @@ const UnitCard = ({ title, data }) => {
         <div
           className={`flex justify-center items-center rounded-xl p-3 sm:p-5 text-center col-span-3 ${
             theme === "dark"
-              ? "bg-[#033633]"
+              ? "bg-[#033533]"
               : "bg-gray-50 border border-gray-200"
           }`}
         >
           <div className="min-w-0">
             <div
-              className={`xl:text-base text-sm mb-1 ${
+              className={` text-xs font-logo font-normal mb-1 ${
                 theme === "dark" ? "text-[#0A9087]" : "text-gray-500"
               }`}
             >
               ROI
             </div>
             <div
-              className={`xl:text-base text-sm font-semibold truncate ${
+              className={`xl:text-base text-base font-logo font-bold truncate ${
                 theme === "dark" ? "text-[#0A9087]" : "text-gray-800"
               }`}
             >
@@ -155,7 +155,7 @@ const UnitCard = ({ title, data }) => {
         <div
           className={`rounded-xl px-2 sm:px-3 py-5 sm:py-10 text-xs sm:text-sm leading-relaxed w-full ${
             theme === "dark"
-              ? "bg-[#0c2b29] text-white"
+              ? "bg-[#021716] text-white"
               : "bg-gray-50 border border-gray-200 text-gray-700"
           }`}
         >
@@ -163,10 +163,18 @@ const UnitCard = ({ title, data }) => {
             {stats.map((stat, idx) => {
               const isWin = stat.startsWith("Win");
               const isLoss = stat.startsWith("Loss");
+
+              // Split label and value (e.g. "Win Rate: 75%" → ["Win Rate", "75%"])
+              const colonIndex = stat.lastIndexOf(":");
+              const label =
+                colonIndex !== -1 ? stat.slice(0, colonIndex).trim() : stat;
+              const value =
+                colonIndex !== -1 ? stat.slice(colonIndex + 1).trim() : null;
+
               return (
                 <div
                   key={idx}
-                  className={`truncate font-medium ${
+                  className={`truncate font-logo ${
                     theme === "dark"
                       ? "text-white"
                       : isWin
@@ -176,7 +184,14 @@ const UnitCard = ({ title, data }) => {
                           : "text-gray-600"
                   }`}
                 >
-                  {stat}
+                  {value ? (
+                    <>
+                      <span className="font-normal opacity-70">{label}: </span>
+                      <span className="font-bold">{value}</span>
+                    </>
+                  ) : (
+                    <span className="font-medium">{stat}</span>
+                  )}
                 </div>
               );
             })}
