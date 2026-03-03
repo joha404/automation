@@ -98,7 +98,93 @@ const UnitSize = ({ unitData, sportsData }) => {
           : "bg-white border-lightestGrey"
       } `}
     >
+      <h1
+        className={`font-logo font-bold text-[20px] my-8 ${
+          theme === "dark" ? "text-white" : "text-black"
+        }`}
+      >
+        Result
+      </h1>
       <div className="mx-auto">
+        <div>
+          <div className="flex justify-between items-center mb-6">
+            <h2
+              className={`text-xl md:text-2xl font-bold font-logo ${
+                theme === "dark" ? "text-white" : "text-gray-900"
+              }`}
+            >
+              Sports Type
+            </h2>
+            <div className="flex">
+              <button
+                ref={sportsPrevRef}
+                className={`cursor-pointer w-8 h-8 flex items-center justify-center transition-colors ${
+                  sportsSliderPosition.isBeginning
+                    ? theme === "dark"
+                      ? "text-lightGrey cursor-not-allowed"
+                      : "text-gray-400 cursor-not-allowed"
+                    : theme === "dark"
+                      ? "text-white hover:text-darkGrey"
+                      : "text-gray-800 hover:text-gray-50"
+                }`}
+                disabled={sportsSliderPosition.isBeginning}
+              >
+                <IoIosArrowBack size={18} />
+              </button>
+              <button
+                ref={sportsNextRef}
+                className={`cursor-pointer w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
+                  sportsSliderPosition.isEnd
+                    ? theme === "dark"
+                      ? "text-gray-600 cursor-not-allowed"
+                      : "text-gray-400 cursor-not-allowed"
+                    : theme === "dark"
+                      ? "text-white hover:text-darkGrey"
+                      : "text-gray-800 hover:text-gray-50"
+                }`}
+                disabled={sportsSliderPosition.isEnd}
+              >
+                <IoIosArrowForward size={18} />
+              </button>
+            </div>
+          </div>
+
+          <Swiper
+            modules={[Navigation]}
+            spaceBetween={sidebarOpen ? 15 : 20}
+            slidesPerView={1}
+            breakpoints={getSportsBreakpoints()}
+            navigation={{
+              prevEl: sportsPrevRef.current,
+              nextEl: sportsNextRef.current,
+            }}
+            onInit={(swiper) => {
+              // Override the navigation elements after initialization
+              swiper.params.navigation.prevEl = sportsPrevRef.current;
+              swiper.params.navigation.nextEl = sportsNextRef.current;
+              swiper.navigation.init();
+              swiper.navigation.update();
+
+              // Set initial position state
+              setSportsSliderPosition({
+                isBeginning: swiper.isBeginning,
+                isEnd: swiper.isEnd,
+              });
+            }}
+            onSlideChange={(swiper) => {
+              setSportsSliderPosition({
+                isBeginning: swiper.isBeginning,
+                isEnd: swiper.isEnd,
+              });
+            }}
+          >
+            {sortedSportsData?.map((item, i) => (
+              <SwiperSlide key={i}>
+                <UnitCard title={item.sport} data={item} />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
         {/* Unit Size */}
         <div className="mb-12 md:mb-16">
           <div className="flex justify-between items-center mb-5">
@@ -177,85 +263,6 @@ const UnitSize = ({ unitData, sportsData }) => {
         </div>
 
         {/* Sports Type */}
-        <div>
-          <div className="flex justify-between items-center mb-6">
-            <h2
-              className={`text-xl md:text-2xl font-semibold ${
-                theme === "dark" ? "text-white" : "text-gray-900"
-              }`}
-            >
-              Sports Type
-            </h2>
-            <div className="flex">
-              <button
-                ref={sportsPrevRef}
-                className={`cursor-pointer w-8 h-8 flex items-center justify-center transition-colors ${
-                  sportsSliderPosition.isBeginning
-                    ? theme === "dark"
-                      ? "text-lightGrey cursor-not-allowed"
-                      : "text-gray-400 cursor-not-allowed"
-                    : theme === "dark"
-                      ? "text-white hover:text-darkGrey"
-                      : "text-gray-800 hover:text-gray-50"
-                }`}
-                disabled={sportsSliderPosition.isBeginning}
-              >
-                <IoIosArrowBack size={18} />
-              </button>
-              <button
-                ref={sportsNextRef}
-                className={`cursor-pointer w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
-                  sportsSliderPosition.isEnd
-                    ? theme === "dark"
-                      ? "text-gray-600 cursor-not-allowed"
-                      : "text-gray-400 cursor-not-allowed"
-                    : theme === "dark"
-                      ? "text-white hover:text-darkGrey"
-                      : "text-gray-800 hover:text-gray-50"
-                }`}
-                disabled={sportsSliderPosition.isEnd}
-              >
-                <IoIosArrowForward size={18} />
-              </button>
-            </div>
-          </div>
-
-          <Swiper
-            modules={[Navigation]}
-            spaceBetween={sidebarOpen ? 15 : 20}
-            slidesPerView={1}
-            breakpoints={getSportsBreakpoints()}
-            navigation={{
-              prevEl: sportsPrevRef.current,
-              nextEl: sportsNextRef.current,
-            }}
-            onInit={(swiper) => {
-              // Override the navigation elements after initialization
-              swiper.params.navigation.prevEl = sportsPrevRef.current;
-              swiper.params.navigation.nextEl = sportsNextRef.current;
-              swiper.navigation.init();
-              swiper.navigation.update();
-
-              // Set initial position state
-              setSportsSliderPosition({
-                isBeginning: swiper.isBeginning,
-                isEnd: swiper.isEnd,
-              });
-            }}
-            onSlideChange={(swiper) => {
-              setSportsSliderPosition({
-                isBeginning: swiper.isBeginning,
-                isEnd: swiper.isEnd,
-              });
-            }}
-          >
-            {sortedSportsData?.map((item, i) => (
-              <SwiperSlide key={i}>
-                <UnitCard title={item.sport} data={item} />
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </div>
       </div>
     </div>
   );

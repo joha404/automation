@@ -47,7 +47,7 @@ const CircularProgress = ({
           cy={center}
           r={radius}
           fill="none"
-          stroke="rgba(255, 255, 255, 0.2)"
+          stroke="#033533"
           strokeWidth={strokeWidth}
         />
 
@@ -68,8 +68,8 @@ const CircularProgress = ({
 
       {/* Text content - properly centered and responsive */}
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-[#0A9087]">
-        <div className="text-xs font-medium leading-tight">Win</div>
-        <div className="font-bold" style={{ fontSize: size * 0.18 }}>
+        <div className="text-xs font-normal font-logo leading-tight">Win</div>
+        <div className="font-bold font-logo" style={{ fontSize: size * 0.18 }}>
           {progress}%
         </div>
       </div>

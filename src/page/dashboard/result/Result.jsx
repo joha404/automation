@@ -218,35 +218,6 @@ const Result = () => {
 
   return (
     <div>
-      <ResultScreen
-        chartData={chartPointsData?.chartPoints}
-        data={data}
-        selectedMarket={selectedMarket}
-        setSelectedMarket={setSelectedMarket}
-        markets={markets}
-      />
-      <CommonWrapper>
-        <div className="">
-          <div className=" mx-auto">
-            {/* <h1 className="text-3xl sm:text-4xl font-bold text-white mb-6 sm:mb-8">
-              Additional Materials
-            </h1> */}
-
-            <div className="grid grid-cols-1 xl:grid-cols-8 gap-4 sm:gap-6">
-              {/* System History Summary */}
-              <div className="xl:col-span-3">
-                <Summary summaryData={calendarData?.calendar_summary} />
-              </div>
-
-              {/* Calendar */}
-              <div className="xl:col-span-5">
-                <Calendar calendarData={calendarData?.calendar_daily || {}} />
-              </div>
-            </div>
-          </div>
-        </div>
-      </CommonWrapper>
-
       <UnitSize unitData={finalUnitSizes} sportsData={finalSportsData} />
     </div>
   );

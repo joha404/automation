@@ -251,7 +251,7 @@ export default function AllPredictions() {
 
         return (
           <div
-            className="bg-[#032422] gap-4 my-3 sm:my-4 mx-2 sm:mx-4 rounded-lg"
+            className="bg-[#021716] gap-4 my-3 sm:my-4 mx-2 sm:mx-4 rounded-lg"
             key={pkg.package_name}
           >
             {/* Section Header */}
@@ -261,12 +261,12 @@ export default function AllPredictions() {
             >
               <div>
                 <p
-                  className={`font-bold text-[14px] sm:text-[15px] ${isDark ? "text-white" : "text-[#0a1f1e]"}`}
+                  className={` text-[16px] font-logo font-bold sm:text-[20px] ${isDark ? "text-white" : "text-[#0a1f1e]"}`}
                 >
                   {pkg.package_name}
                 </p>
                 <p
-                  className={`text-[11px] sm:text-[12px] mt-0.5 ${isDark ? "text-white/40" : "text-[#0a1f1e]/40"}`}
+                  className={`text-[12px] font-logo font-normal sm:text-[14px] mt-0.5 ${isDark ? "text-[#92A8C1]" : "text-[#0a1f1e]/40"}`}
                 >
                   {pkg.active_count} Active Prediction
                   {pkg.active_count !== 1 ? "s" : ""}
@@ -289,7 +289,7 @@ export default function AllPredictions() {
                 {pkg.predictions.map((p) => (
                   <div
                     key={p.id}
-                    className="flex items-start sm:items-center bg-[#032422] mb-2 rounded-xl gap-2 sm:gap-3 px-3 sm:px-4 py-3 cursor-pointer transition-colors"
+                    className="flex items-start sm:items-center bg-[#032422] mb-3 rounded-xl gap-2 sm:gap-3 px-3 sm:px-4 py-3 cursor-pointer transition-colors"
                     onMouseEnter={(e) =>
                       (e.currentTarget.style.background = isDark
                         ? "rgba(10,144,135,0.08)"
@@ -307,7 +307,7 @@ export default function AllPredictions() {
                     {/* Main Info */}
                     <div className="flex-1 min-w-0">
                       <p
-                        className={`font-semibold text-[13px] sm:text-[14px] leading-tight mb-1 ${isDark ? "text-white" : "text-[#0a1f1e]"}`}
+                        className={` text-[14px] sm:text-[16px] font-logo font-bold leading-tight mb-1 ${isDark ? "text-white" : "text-[#0a1f1e]"}`}
                       >
                         {p.title}
                       </p>
@@ -316,7 +316,7 @@ export default function AllPredictions() {
                         <div className="flex items-center gap-1 min-w-0">
                           <BsLightningChargeFill className="text-[10px] text-yellow-500 flex-shrink-0" />
                           <span
-                            className={`text-[11px] sm:text-[12px] truncate ${isDark ? "text-white/45" : "text-[#0a1f1e]/50"}`}
+                            className={`text-[12px] font-logo font-normal sm:text-[14px] truncate ${isDark ? "text-white/45" : "text-[#0a1f1e]/50"}`}
                           >
                             {p.game}
                           </span>
@@ -326,7 +326,7 @@ export default function AllPredictions() {
                             className={`text-[10px] flex-shrink-0 ${isDark ? "text-white/40" : "text-[#0a1f1e]/40"}`}
                           />
                           <span
-                            className={`text-[11px] sm:text-[12px] whitespace-nowrap ${isDark ? "text-white/45" : "text-[#0a1f1e]/50"}`}
+                            className={`text-[12px] sm:text-[14px] font-logo font-normal whitespace-nowrap ${isDark ? "text-white/45" : "text-[#0a1f1e]/50"}`}
                           >
                             {formatDate(p.date_time)}
                           </span>
@@ -337,14 +337,14 @@ export default function AllPredictions() {
                     {/* Bet Type + Bet Size — stacked on mobile */}
                     <div className="flex flex-col xs:flex-row sm:flex-row items-end xs:items-center sm:items-center gap-2 sm:gap-4 flex-shrink-0">
                       {/* Bet Type */}
-                      <div className="text-right">
+                      <div className="text-center">
                         <p
-                          className={`text-[10px] sm:text-[11px] mb-0.5 ${isDark ? "text-white/40" : "text-[#0a1f1e]/40"}`}
+                          className={`text-[12px] font-logo font-normal sm:text-[14px] mb-1 ${isDark ? "text-white/40" : "text-[#0a1f1e]/40"}`}
                         >
                           Bet Type
                         </p>
                         <p
-                          className="font-bold text-[13px] sm:text-[14px]"
+                          className="font-bold text-[13px] font-logo sm:text-[16px]"
                           style={{ color: getBetTypeColor(p.bet_type) }}
                         >
                           {p.bet_type}
@@ -352,18 +352,18 @@ export default function AllPredictions() {
                       </div>
 
                       {/* Bet Size */}
-                      <div className="text-right">
+                      <div className="text-center ">
                         <p
-                          className={`text-[10px] sm:text-[11px] mb-0.5 ${isDark ? "text-white/40" : "text-[#0a1f1e]/40"}`}
+                          className={`text-[12px] sm:text-[14px] font-normal font-logo mb-1 ${isDark ? "text-white/40" : "text-[#0a1f1e]/40"}`}
                         >
                           Bet Size
                         </p>
                         <span
-                          className="text-[11px] sm:text-[13px] font-bold px-2 sm:px-3 py-0.5 sm:py-1 rounded-md whitespace-nowrap"
+                          className="text-[14px] sm:text-[16px] font-logo font-bold px-2 sm:px-3 py-0.5 sm:py-1 rounded-md whitespace-nowrap"
                           style={{
                             background: "rgba(10,144,135,0.15)",
-                            color: "#0A9087",
-                            border: "1px solid rgba(10,144,135,0.3)",
+                            color: "#41C551",
+                            border: "1px solid #41C551",
                           }}
                         >
                           {p.bet_size}
