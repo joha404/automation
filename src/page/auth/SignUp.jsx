@@ -109,10 +109,10 @@ const SignUp = () => {
     setValue("create_option", optionValue);
   };
 
-  const formatPhoneNumber = (code, number) => {
-    if (!number) return "";
-    return number.startsWith(code) ? number : `${code}${number}`;
-  };
+  // const formatPhoneNumber = (code, number) => {
+  //   if (!number) return "";
+  //   return number.startsWith(code) ? number : `${code}${number}`;
+  // };
 
   const onSubmit = (data) => {
     // Find the selected country object to get the code
@@ -137,12 +137,8 @@ const SignUp = () => {
 
     formData.append("opt_in", marketingChecked ? "true" : "false");
     formData.append("create_option", selectedOption);
-
     if (profileImage) {
       formData.append("profile_img", profileImage);
-    } else {
-      errorToast("Please upload a profile image.");
-      return;
     }
 
     // Log form data for debugging
