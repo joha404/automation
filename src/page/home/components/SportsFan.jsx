@@ -3,27 +3,6 @@ import { motion, AnimatePresence, useInView } from "framer-motion";
 import ratting from "../../../assets/home/rating.png";
 import correct from "../../../assets/home/icon/correct.png";
 
-const reviews = [
-  {
-    title: "Absolutely Game-Changing!",
-    text: "I've tried a lot of prediction platforms, but this one completely blew me away. The AI predictions are incredibly accurate and the insights are easy to understand, even for someone who isn't a data expert.",
-    name: "Alex R.",
-    date: "JAN 12, 2026",
-  },
-  {
-    title: "Best AI Tool for Sports Fans",
-    text: "This platform has totally transformed how I follow sports. The models are super smart, and I love how the interface is clean and user-friendly.",
-    name: "Jordan M.",
-    date: "JAN 10, 2026",
-  },
-  {
-    title: "Unbeatable Value and Accuracy",
-    text: "As someone who loves sports and numbers, this is the perfect blend of both. The insights are always data-driven, updated regularly, and easy to act on.",
-    name: "Chris L.",
-    date: "NOV 8, 2025",
-  },
-];
-
 // ── Variants ──
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -32,11 +11,6 @@ const fadeUp = {
     y: 0,
     transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1], delay },
   }),
-};
-
-const gridStagger = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.13, delayChildren: 0.1 } },
 };
 
 const cardVariant = {
@@ -58,7 +32,19 @@ const dividerVariant = {
   },
 };
 
-// Scroll-triggered wrapper
+// ✅ Format "2026-03-04" → "MAR 4, 2026"
+const formatDate = (dateStr) => {
+  if (!dateStr) return "";
+  const date = new Date(dateStr);
+  return date
+    .toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    })
+    .toUpperCase();
+};
+
 function InView({ children, variants, delay, className }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-70px" });
@@ -93,7 +79,7 @@ function ReviewCard({ review, index }) {
         transition: { duration: 0.25 },
       }}
     >
-      {/* Rating */}
+      {/* Rating — render stars based on review.rating */}
       <motion.div
         className="flex justify-start mb-4"
         initial={{ opacity: 0, x: -10 }}
@@ -113,7 +99,7 @@ function ReviewCard({ review, index }) {
         {review.title}
       </motion.h3>
 
-      {/* Teal divider — grows from left */}
+      {/* Teal divider */}
       <motion.div
         className="h-[2px] w-8 bg-[#0A9087] rounded-full mb-2 lg:mb-4 origin-left"
         variants={dividerVariant}
@@ -121,14 +107,14 @@ function ReviewCard({ review, index }) {
         animate={isInView ? "visible" : "hidden"}
       />
 
-      {/* Review text */}
+      {/* Review text — ✅ API uses "content" not "text" */}
       <motion.p
         className="text-white/70 font-logo font-normal text-[12px] lg:text-[14px] leading-[18px] lg:leading-[24px] flex-grow"
         initial={{ opacity: 0 }}
         animate={isInView ? { opacity: 1 } : {}}
         transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
       >
-        {review.text}
+        {review.content}
       </motion.p>
 
       {/* Footer */}
@@ -138,8 +124,9 @@ function ReviewCard({ review, index }) {
         animate={isInView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.4, delay: 0.4 + index * 0.1 }}
       >
+        {/* ✅ API uses "user_name" not "name" */}
         <h4 className="font-logo text-white font-bold text-[14px] mb-2">
-          {review.name}
+          {review.user_name}
         </h4>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5">
@@ -152,8 +139,9 @@ function ReviewCard({ review, index }) {
               Verified Customer
             </p>
           </div>
+          {/* ✅ API uses "date_posted" — format it */}
           <p className="font-logo font-medium text-[10px] sm:text-[11px] leading-none text-white/40">
-            {review.date}
+            {formatDate(review.date_posted)}
           </p>
         </div>
       </motion.div>
@@ -161,7 +149,10 @@ function ReviewCard({ review, index }) {
   );
 }
 
-export default function SportsFan() {
+export default function SportsFan({ data }) {
+  // ✅ Use API data, fallback to empty array
+  const reviews = data ?? [];
+
   const [activeIndex, setActiveIndex] = useState(0);
   const touchStartX = useRef(null);
   const intervalRef = useRef(null);
@@ -178,13 +169,14 @@ export default function SportsFan() {
   };
 
   useEffect(() => {
-    startAutoSlide();
+    if (reviews.length > 0) startAutoSlide();
     return () => clearInterval(intervalRef.current);
-  }, []);
+  }, [reviews.length]);
 
   const handleTouchStart = (e) => {
     touchStartX.current = e.touches[0].clientX;
   };
+
   const handleTouchEnd = (e) => {
     const diff = touchStartX.current - e.changedTouches[0].clientX;
     if (diff > 50 && activeIndex < reviews.length - 1) {
@@ -201,6 +193,8 @@ export default function SportsFan() {
     setActiveIndex(index);
     resetAutoSlide();
   };
+
+  if (reviews.length === 0) return null;
 
   return (
     <div className="bg-[#021716] relative overflow-hidden py-16 sm:py-24">
@@ -260,7 +254,7 @@ export default function SportsFan() {
         {/* ── Desktop Grid ── */}
         <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {reviews.map((review, index) => (
-            <ReviewCard key={index} review={review} index={index} />
+            <ReviewCard key={review.id} review={review} index={index} />
           ))}
         </div>
 

@@ -2,39 +2,6 @@ import React, { useState, useRef } from "react";
 import { ChevronDown } from "lucide-react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 
-const faqs = [
-  {
-    question: "How does HyperPicks.ai work?",
-    answer:
-      "HyperPicks.ai uses advanced machine learning models trained on millions of historical games, player stats, injuries, weather, and betting line movements to generate high-confidence predictions for every major sport.",
-  },
-  {
-    question: "How much money do I need?",
-    answer:
-      "You can start with any bankroll, but we recommend at least $250. Having more gives you the flexibility to place larger bets and take advantage of more opportunities each day.",
-  },
-  {
-    question: "Will this work in my location?",
-    answer:
-      "HyperPicks.ai works globally. As long as you have access to a sportsbook in your region, our predictions are fully applicable. We support users across the US, Canada, UK, Australia, and many more countries.",
-  },
-  {
-    question: "What is included in the basic plan?",
-    answer:
-      "The basic plan includes daily AI-powered picks for major sports, access to our prediction dashboard, win/loss tracking, and email alerts. Premium plans unlock live betting signals, automation, and priority support.",
-  },
-  {
-    question: "How do I cancel my subscription?",
-    answer:
-      "You can cancel anytime from your account settings under Billing. There are no cancellation fees and your access continues until the end of your billing period.",
-  },
-  {
-    question: "Can I get a refund?",
-    answer:
-      "We offer a 7-day money-back guarantee for new subscribers. If you're not satisfied within the first week, contact our support team and we'll process a full refund — no questions asked.",
-  },
-];
-
 // ── Variants ──
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
@@ -117,8 +84,9 @@ function FAQItem({ faq, index, isOpen, onToggle }) {
   );
 }
 
-export default function FAQ() {
+export default function FAQ({ data }) {
   const [openIndex, setOpenIndex] = useState(1);
+  const faqs = [...(data ?? [])].sort((a, b) => a.order - b.order);
 
   const handleToggle = (index) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -163,7 +131,7 @@ export default function FAQ() {
           >
             {faqs.map((faq, index) => (
               <FAQItem
-                key={index}
+                key={faq.id} // ✅ use stable id
                 faq={faq}
                 index={index}
                 isOpen={openIndex === index}

@@ -15,7 +15,7 @@ const Dashboard = () => {
     data: predictionsData,
     isLoading: predictionLoading,
     refetch: predictionRefetch,
-  } = useGet("/predictions/ultimate-automation-pending/", {
+  } = useGet("/predictions/", {
     queryKey: ["prediction-ultimate-dashboard"],
     secure: true,
   });
@@ -104,11 +104,9 @@ const Dashboard = () => {
   return (
     <div>
       <Header />
-      <PredictionComponent />
-      {/* <Streaks /> */}
-      {/* <UpcomingEvents /> */}
+      <PredictionComponent data={predictionsData} />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
-        <ResultSection />
+        <ResultSection data={results} />
         <PastPrediction />
       </div>
     </div>
