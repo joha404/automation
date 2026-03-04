@@ -4,20 +4,17 @@ import { Link } from "react-router-dom";
 import ScreenLoader from "../loaders/ScreenLoader";
 
 const DepositLogo = () => {
-
   // Use the GET hook to fetch home
-    const {
-      data: cms,
-      isLoading,
-      refetch,
-    } = useGet("/cms/pages/", {
-      secure: false,
-      queryKey: ["logo"],
-    });
-  
-  
-    const cmsData = cms?.data.hero?.[0]?.hero || {};
+  const {
+    data: cms,
+    isLoading,
+    refetch,
+  } = useGet("/cms/", {
+    secure: false,
+    queryKey: ["logo"],
+  });
 
+  const cmsData = cms?.data.hero?.[0]?.hero || {};
 
   if (isLoading) {
     return (
@@ -27,11 +24,8 @@ const DepositLogo = () => {
     );
   }
 
-  
   return (
-    <div
-      className=""
-    >
+    <div className="">
       <Link to="/">
         <div className="flex items-center sm:gap-2 gap-1 xl:w-40 xl:h-40 w-32 h-32 relative overflow-hidden shadow-lg mx-auto">
           {/* Logo Image */}

@@ -234,7 +234,8 @@ function PredictionRow({ p, i, t }) {
   );
 }
 
-export default function PredictionComponent() {
+export default function PredictionComponent({ data }) {
+  const predictionData = data?.data?.package_sections || [];
   const [activeTab, setActiveTab] = useState("All Predictions");
   const { theme } = useTheme();
   const t = tokens[theme] ?? tokens.dark;
@@ -279,22 +280,30 @@ export default function PredictionComponent() {
 
       {/* Rows */}
       <div className="flex flex-col">
-        {predictions.map((p, i) => (
-          <PredictionRow key={p.id} p={p} i={i} t={t} />
-        ))}
+        {predictionData.length === 0 ? (
+          <p className="text-center py-4 text-sm font-logo text-white/40">
+            No predictions available
+          </p>
+        ) : (
+          predictionData.map((p, i) => (
+            <PredictionRow key={p.id} p={p} i={i} t={t} />
+          ))
+        )}
       </div>
 
       {/* View All */}
-      <div className="text-center mt-2">
-        <button
-          className="font-semibold text-[13px] font-logo sm:text-[14px] cursor-pointer tracking-wide"
-          style={{ color: t.viewAll, transition: "opacity 0.15s ease" }}
-          onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.5")}
-          onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
-        >
-          VIEW ALL
-        </button>
-      </div>
+      {predictionData.length > 0 && (
+        <div className="text-center mt-2">
+          <button
+            className="font-semibold text-[13px] font-logo sm:text-[14px] cursor-pointer tracking-wide"
+            style={{ color: t.viewAll, transition: "opacity 0.15s ease" }}
+            onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.5")}
+            onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+          >
+            VIEW ALL
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -23,11 +23,13 @@ export const useGet = (endpoint, options = {}) => {
     queryKey: finalQueryKey,
     queryFn: async () => {
       const res = await axios.get(endpoint, { params });
-      if (res?.data?.success !== true) {
+
+      if (res?.data?.success === false) {
         errorToast(res?.data?.message || "Request failed!");
-        return;
+        throw new Error(res?.data?.message || "Request failed!");
       }
-      return res?.data;
+
+      return res?.data ?? res?.data;
     },
     onError: (error) => {
       const message = error.response?.data?.message || error.message;

@@ -9,16 +9,11 @@ import FAQ from "./components/FAQ";
 
 const Home = () => {
   // Use the GET hook to fetch home
-  const {
-    data: cms,
-    isLoading,
-    refetch,
-  } = useGet("/cms/pages/", {
+  const { data: cms, isLoading } = useGet("/cms/all/", {
     secure: false,
     queryKey: ["homepage"],
   });
-
-  const cmsData = cms?.data || {};
+  const cmsData = cms || {};
 
   if (isLoading) {
     return (
@@ -30,12 +25,12 @@ const Home = () => {
 
   return (
     <div>
-      <HeroSection data={cmsData?.hero?.[0]?.hero} />
-      <PredictionSection />
-      <Subscription />
-      <SportsFan />
-      <FAQ />
-      <Footer data={cmsData?.footer?.[0]} />
+      <HeroSection data={cmsData?.hero} />
+      <PredictionSection data={cmsData} />
+      <Subscription data={cmsData?.subscription_plans} />
+      <SportsFan data={cmsData?.testimonials} />
+      <FAQ data={cmsData?.faqs} />
+      <Footer data={cmsData?.settings} />
     </div>
   );
 };

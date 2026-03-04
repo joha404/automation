@@ -31,7 +31,6 @@ import Success from "@/shared/errorPages/Success";
 import Cancel from "@/shared/errorPages/Cancel";
 import Logo from "@/page/dashboard/logo/Logo";
 import Offer from "@/page/dashboard/offer/Offer";
-import Festival from "@/page/home/Festival";
 import AutomationPolicy from "@/shared/AutomationPolicy";
 
 const router = createBrowserRouter([
@@ -221,16 +220,7 @@ const router = createBrowserRouter([
       </>
     ),
   },
-  {
-    path: "/wrapped",
-    element: (
-      <>
-        {/* <MetaPixelWrapper /> */}
 
-        <Festival />
-      </>
-    ),
-  },
   {
     path: "/sign-up",
     element: (

@@ -17,7 +17,6 @@ import mobile from "../../../assets/home/mobile.png";
 const HeroSection = ({ data }) => {
   const user = useSelector((state) => state.user.user);
   const logout = useLogout();
-
   useEffect(() => {
     AOS.init({ duration: 800, once: true });
   }, []);
@@ -88,24 +87,25 @@ const HeroSection = ({ data }) => {
               data-aos="fade-up"
             >
               <h1 className="font-bold text-[36px] text-center lg:text-left sm:text-4xl lg:text-[47.78px] leading-tight lg:leading-[75px] tracking-tight font-logo text-[#0A9087]">
-                SMARTER PICKS.
+                {data.title_line1 ? data.title_line1 : " SMARTER PICKS."}
               </h1>
               <h1 className="font-logo font-extrabold text-center lg:text-left text-[40px] sm:text-6xl lg:text-[83.39px] leading-tight lg:leading-[75px] tracking-tight text-white mb-2 lg:mb-6">
-                BIGGER WINS.
+                {data.title_line2 ? data.title_line2 : " BIGGER WINS."}
               </h1>
 
               <p className="font-logo text-center lg:text-left text-gray-300 font-normal text-[14px] lg:text-[18px] leading-relaxed lg:leading-[28px] mb-8 max-w-[415px]">
-                AI-powered predictions for every major sport. Get the edge you
-                need for better picks.
+                {data.description
+                  ? data.description
+                  : "  AI-powered predictions for every major sport. Get the edge you need for better picks."}
               </p>
 
               <div className="w-full flex items-center justify-center lg:justify-start">
                 <Link
                   onClick={handleJoinNowClick}
-                  to="/sign-up"
+                  to={data.cta_url1 ? data.cta_url : "/sign-up"}
                   className="w-[178px] h-[44px] rounded-full border border-[#0A9087] [background:linear-gradient(0deg,rgba(10,144,135,0)_8%,#032A27_314.44%)] font-logo text-white font-bold text-[16px] leading-none text-center flex justify-center items-center cursor-pointer hover:brightness-125 transition-all duration-300 shadow-[0_0_20px_rgba(10,144,135,0.3)]"
                 >
-                  SIGN UP NOW
+                  {data.cta_text ? data.cta_text : " SIGN UP NOW "}
                 </Link>
               </div>
 
@@ -139,7 +139,7 @@ const HeroSection = ({ data }) => {
               <div className="relative">
                 <div className="absolute inset-0 rounded-full bg-[#0A9087]/20 blur-3xl scale-75" />
                 <img
-                  src={mobile}
+                  src={data?.hero_image ?? mobile}
                   alt="Mobile Preview"
                   className="relative z-10 w-[280px] sm:w-[380px] lg:w-[500px] xl:w-[564px] h-auto object-contain drop-shadow-2xl"
                 />

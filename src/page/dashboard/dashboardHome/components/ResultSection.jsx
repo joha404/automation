@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import {
   AreaChart,
@@ -10,99 +10,127 @@ import {
 } from "recharts";
 import { useTheme } from "@/hooks/custom/useTheme";
 import { useSidebar } from "@/hooks/custom/useSidebar";
+import { useGet } from "@/hooks/api/common/useGet";
 import CommonParagraph from "@/components/texts/CommonParagraph";
 import CommonWrapper from "@/components/wrappers/CommonWrapper";
 import Dropdown from "@/components/forms/Dropdown";
+import ScreenLoader from "@/components/loaders/ScreenLoader";
 import { FaChartLine } from "react-icons/fa6";
 
-// ─── Dummy Data ───────────────────────────────────────────────
-const DUMMY_UNIT_DATA = {
-  headline: { units: "24.50" },
-  summary: {
-    total_picks: "312",
-    wins: "187",
-    losses: "112",
-    pushes: "13",
-    win_pct: "62.54",
-  },
+// ── Filter chart data by date range ──────────────────────────
+const filterByRange = (chartPoints = [], filter) => {
+  if (!chartPoints.length) return [];
+
+  const now = new Date();
+
+  const cutoff =
+    {
+      "1W": new Date(now - 7 * 24 * 60 * 60 * 1000),
+      "1M": new Date(now - 30 * 24 * 60 * 60 * 1000),
+      "3M": new Date(now - 90 * 24 * 60 * 60 * 1000),
+      "1Y": new Date(now - 365 * 24 * 60 * 60 * 1000),
+      AT: null,
+    }[filter] ?? null;
+
+  const filtered = cutoff
+    ? chartPoints.filter((p) => new Date(p.date) >= cutoff)
+    : chartPoints;
+
+  // For large datasets, sample to max 60 points to keep chart clean
+  if (filtered.length <= 60) return filtered;
+  const step = Math.ceil(filtered.length / 60);
+  return filtered.filter((_, i) => i % step === 0 || i === filtered.length - 1);
 };
 
-const DUMMY_MARKETS = ["Spread", "Moneyline", "Over/Under", "Props"];
-
-const DUMMY_CHART_DATA = {
-  AT: [
-    { date: "Jan", cumulative_units: 0 },
-    { date: "Feb", cumulative_units: 18 },
-    { date: "Mar", cumulative_units: 35 },
-    { date: "Apr", cumulative_units: 28 },
-    { date: "May", cumulative_units: 52 },
-    { date: "Jun", cumulative_units: 70 },
-    { date: "Jul", cumulative_units: 65 },
-    { date: "Aug", cumulative_units: 90 },
-    { date: "Sep", cumulative_units: 110 },
-    { date: "Oct", cumulative_units: 145 },
-    { date: "Nov", cumulative_units: 175 },
-    { date: "Dec", cumulative_units: 210 },
-  ],
-  "1W": [
-    { date: "Mon", cumulative_units: 200 },
-    { date: "Tue", cumulative_units: 205 },
-    { date: "Wed", cumulative_units: 202 },
-    { date: "Thu", cumulative_units: 210 },
-    { date: "Fri", cumulative_units: 208 },
-    { date: "Sat", cumulative_units: 215 },
-    { date: "Sun", cumulative_units: 210 },
-  ],
-  "1M": [
-    { date: "W1", cumulative_units: 180 },
-    { date: "W2", cumulative_units: 190 },
-    { date: "W3", cumulative_units: 200 },
-    { date: "W4", cumulative_units: 210 },
-  ],
-  "3M": [
-    { date: "Oct", cumulative_units: 145 },
-    { date: "Nov", cumulative_units: 175 },
-    { date: "Dec", cumulative_units: 210 },
-  ],
-  "1Y": [
-    { date: "Jan", cumulative_units: 0 },
-    { date: "Mar", cumulative_units: 35 },
-    { date: "May", cumulative_units: 52 },
-    { date: "Jul", cumulative_units: 65 },
-    { date: "Sep", cumulative_units: 110 },
-    { date: "Nov", cumulative_units: 175 },
-    { date: "Dec", cumulative_units: 210 },
-  ],
+// ── Format date label for X axis ─────────────────────────────
+const formatDateLabel = (dateStr, filter) => {
+  const d = new Date(dateStr);
+  if (filter === "1W")
+    return d.toLocaleDateString("en-US", { weekday: "short" });
+  if (filter === "1M")
+    return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  if (filter === "3M")
+    return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  return d.toLocaleDateString("en-US", { month: "short", year: "2-digit" });
 };
+
 // ─────────────────────────────────────────────────────────────
 
-const ResultSection = () => {
-  const [selectedMarket, setSelectedMarket] = useState("Spread");
+const ResultSection = ({ data: propData }) => {
+  const [selectedMarket, setSelectedMarket] = useState("Ultimate");
   const [filter, setFilter] = useState("AT");
   const { theme } = useTheme();
   const { sidebarOpen } = useSidebar();
 
-  const unitData = DUMMY_UNIT_DATA;
-  const markets = DUMMY_MARKETS;
-  const chartData = DUMMY_CHART_DATA[filter] || DUMMY_CHART_DATA["AT"];
+  // ✅ Fetch chart data
+  const { data: chartResponse, isLoading: chartLoading } = useGet(
+    "/ultimate/chart/",
+    { queryKey: ["resultSection-chart"] },
+  );
 
-  const statsData = [
-    { label: "Total", value: unitData.summary.total_picks },
-    { label: "Wins", value: unitData.summary.wins },
-    { label: "Losses", value: unitData.summary.losses },
-    { label: "Pushes", value: unitData.summary.pushes },
-    { label: "Win %", value: unitData.summary.win_pct },
+  // ✅ Fetch summary/unit data
+  const { data: summaryResponse, isLoading: summaryLoading } = useGet(
+    "/ultimate/",
+    { queryKey: ["resultSection-summary"] },
+  );
+
+  const isLoading = chartLoading || summaryLoading;
+
+  // ✅ Unwrap — confirmed pattern: response = { status, data: { chartPoints, ... } }
+  const chartInner = chartResponse?.data || chartResponse || {};
+  const summaryInner = summaryResponse?.data || summaryResponse || {};
+
+  const chartPoints = chartInner?.chartPoints || [];
+  const headline = summaryInner?.headline || {};
+  const summary = summaryInner?.summary || {};
+  const markets = summaryInner?.filters?.markets || [
+    "Ultimate",
+    "Live",
+    "Play of the Day",
+    "Futures",
+    "Player Props",
   ];
 
-  const currentData = chartData.map((point) => ({
-    date: point.date,
-    value: point.cumulative_units,
+  // ✅ Filter chart points by selected time range
+  const filteredPoints = useMemo(
+    () => filterByRange(chartPoints, filter),
+    [chartPoints, filter],
+  );
+
+  // ✅ Map to recharts format
+  const currentData = filteredPoints.map((p) => ({
+    date: formatDateLabel(p.date, filter),
+    value: p.cumulative_units,
   }));
 
-  const marketOptions = markets.map((market) => ({
-    value: market,
-    label: market,
-  }));
+  const statsData = [
+    { label: "Total", value: summary.total_picks ?? "—" },
+    { label: "Wins", value: summary.wins ?? "—" },
+    { label: "Losses", value: summary.losses ?? "—" },
+    { label: "Pushes", value: summary.pushes ?? "—" },
+    {
+      label: "Win %",
+      value: summary.win_pct != null ? `${summary.win_pct}%` : "—",
+    },
+  ];
+
+  const marketOptions = markets.map((m) => ({ value: m, label: m }));
+
+  const headlineUnits =
+    headline?.units != null
+      ? (Number(headline.units) >= 0 ? "+" : "") +
+        Number(headline.units).toFixed(2)
+      : "—";
+
+  if (isLoading) {
+    return (
+      <CommonWrapper variant="bottomSmall" className="lg:my-0 py-1">
+        <div className="flex w-full justify-center py-8">
+          <ScreenLoader />
+        </div>
+      </CommonWrapper>
+    );
+  }
 
   return (
     <CommonWrapper variant="bottomSmall" className="lg:my-0 py-1">
@@ -116,7 +144,7 @@ const ResultSection = () => {
         >
           <div className="flex items-center gap-2 p-2">
             <FaChartLine
-              className={` ${theme === "dark" ? "text-white " : "text-black"}`}
+              className={`${theme === "dark" ? "text-white" : "text-black"}`}
             />
             <CommonParagraph variant="small" className="font-semibold py-1">
               Results
@@ -133,7 +161,7 @@ const ResultSection = () => {
               variant="small"
               className="text-[#0A9087] xlg:mb-0.5 my-4"
             >
-              +{unitData.headline.units} %
+              {headlineUnits} %
             </CommonParagraph>
 
             <div className="flex flex-wrap justify-center gap-1 text-xs w-full">
@@ -165,7 +193,7 @@ const ResultSection = () => {
             } text-white rounded-xl p-0.5 lg:hidden flex flex-col items-center`}
           >
             <CommonParagraph variant="small" className="text-[#0A9087] my-1">
-              +{unitData.headline.units} Units
+              {headlineUnits} Units
             </CommonParagraph>
 
             <div className="grid grid-cols-4 justify-center gap-1 text-xs w-full">
@@ -243,8 +271,7 @@ const ResultSection = () => {
                     tickLine={false}
                     tick={{ fill: "#4a7a70", fontSize: 11 }}
                     width={40}
-                    domain={[0, "dataMax + 10%"]}
-                    ticks={[0, 80, 160, 240]}
+                    domain={["dataMin - 10", "dataMax + 10"]}
                   />
                   <Tooltip
                     contentStyle={{
@@ -256,6 +283,10 @@ const ResultSection = () => {
                     }}
                     labelStyle={{ fontWeight: 500, color: "#fff" }}
                     itemStyle={{ color: "#00e5c8" }}
+                    formatter={(value) => [
+                      `${value > 0 ? "+" : ""}${value.toFixed(2)}`,
+                      "Units",
+                    ]}
                   />
                   <Area
                     type="monotone"
@@ -277,7 +308,6 @@ const ResultSection = () => {
               theme === "dark" ? "bg-[#020C0B]" : "bg-lightestGrey"
             }`}
           >
-            {/* Filter buttons */}
             <div className="w-full flex flex-col-reverse gap-2 justify-start items-start">
               <div
                 className={`flex gap-1 flex-wrap border rounded-md shadow-lg p-0.5 ${
@@ -337,6 +367,7 @@ const ResultSection = () => {
                     tickLine={false}
                     tick={{ fill: "#4a7a70", fontSize: 9 }}
                     width={28}
+                    domain={["dataMin - 10", "dataMax + 10"]}
                   />
                   <Tooltip
                     contentStyle={{
@@ -348,6 +379,10 @@ const ResultSection = () => {
                     }}
                     labelStyle={{ fontWeight: 500, color: "#fff" }}
                     itemStyle={{ color: "#00e5c8" }}
+                    formatter={(value) => [
+                      `${value > 0 ? "+" : ""}${value.toFixed(2)}`,
+                      "Units",
+                    ]}
                   />
                   <Area
                     type="monotone"

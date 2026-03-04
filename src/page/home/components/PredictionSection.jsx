@@ -1,6 +1,5 @@
 import React from "react";
-import { motion } from "framer-motion";
-import { useInView } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import prediction1 from "../../../assets/home/prediction/prediction1.png";
 import prediction2 from "../../../assets/home/prediction/prediction2.png";
@@ -9,50 +8,18 @@ import prediction4 from "../../../assets/home/prediction/prediction4.png";
 import prediction5 from "../../../assets/home/prediction/prediction5.png";
 import prediction6 from "../../../assets/home/prediction/prediction6.png";
 
-const stats = [
-  { value: "8,000+", label: "Data Points" },
-  { value: "31,000+", label: "Picks Analyzed" },
-  { value: "24/7", label: "Predictions" },
+const predictionImages = [
+  prediction1,
+  prediction2,
+  prediction3,
+  prediction4,
+  prediction5,
+  prediction6,
 ];
 
-const features = [
-  {
-    img: prediction1,
-    title: "Real Time Updates",
-    desc: "Injury news, line movements, and weather—factored in automatically.",
-  },
-  {
-    img: prediction2,
-    title: "AI-Powered Predictions",
-    desc: "Our models analyze thousands of data points to find value the market misses.",
-  },
-  {
-    img: prediction3,
-    title: "Full Automation",
-    desc: "Set your preferences. Let the AI place bets for you. Never miss a play.",
-  },
-  {
-    img: prediction4,
-    title: "Live Betting",
-    desc: "In-game predictions that spot opportunities as the action unfolds.",
-  },
-  {
-    img: prediction5,
-    title: "Personalized Dashboard",
-    desc: "Track every prediction, every result, all in one place.",
-  },
-  {
-    img: prediction6,
-    title: "Results",
-    desc: "Filter by sport, bet type, date range. Know what's working and where the wins are coming from.",
-  },
-];
-
-// Reusable hook-based scroll trigger wrapper
 function AnimateWhenVisible({ children, variants, delay = 0, className }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
-
   return (
     <motion.div
       ref={ref}
@@ -67,7 +34,6 @@ function AnimateWhenVisible({ children, variants, delay = 0, className }) {
   );
 }
 
-// Variants
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
   visible: (delay = 0) => ({
@@ -99,10 +65,7 @@ const statItemVariant = {
 const cardContainerVariant = {
   hidden: {},
   visible: {
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.1,
-    },
+    transition: { staggerChildren: 0.1, delayChildren: 0.1 },
   },
 };
 
@@ -116,63 +79,7 @@ const cardVariant = {
   },
 };
 
-// Scroll-triggered card grid component
-function FeatureGrid() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-60px" });
-
-  return (
-    <motion.div
-      ref={ref}
-      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-14"
-      variants={cardContainerVariant}
-      initial="hidden"
-      animate={isInView ? "visible" : "hidden"}
-    >
-      {features.map((feature, index) => (
-        <motion.div
-          key={index}
-          className="group relative p-4 sm:p-6 transition-all duration-400 overflow-hidden"
-          variants={cardVariant}
-          whileHover={{
-            scale: 1.03,
-            transition: { duration: 0.25, ease: "easeOut" },
-          }}
-        >
-          <div className="flex flex-row sm:flex-col items-start gap-4 sm:gap-0">
-            {/* Icon */}
-            <motion.div
-              className="relative flex-shrink-0 w-[37px] h-[37px] lg:w-12 lg:h-12 rounded-xl bg-gradient-to-br from-[#0A9087] to-[#065e57] flex justify-center items-center shadow-[0_4px_20px_rgba(10,144,135,0.4)] group-hover:shadow-[0_4px_30px_rgba(10,144,135,0.6)] transition-shadow duration-300 sm:mb-5"
-              whileHover={{
-                rotate: [0, -8, 8, 0],
-                transition: { duration: 0.4 },
-              }}
-            >
-              <img
-                src={feature.img}
-                alt={feature.title}
-                className="w-5 h-5 lg:w-6 lg:h-6 object-contain"
-              />
-            </motion.div>
-
-            {/* Text content */}
-            <div className="flex flex-col">
-              <h3 className="font-logo text-white font-bold text-[16px] sm:text-[20px] leading-tight mb-1 sm:mb-3">
-                {feature.title}
-              </h3>
-              <p className="text-white font-logo font-normal text-[14px] sm:text-[16px] leading-[20px] sm:leading-[22px]">
-                {feature.desc}
-              </p>
-            </div>
-          </div>
-        </motion.div>
-      ))}
-    </motion.div>
-  );
-}
-
-// Stats bar with scroll trigger
-function StatsBar() {
+function StatsBar({ stats = [] }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-40px" });
 
@@ -216,14 +123,86 @@ function StatsBar() {
   );
 }
 
-export default function PredictionSection() {
+function FeatureGrid({ features = [] }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-60px" });
+
+  return (
+    <motion.div
+      ref={ref}
+      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-14"
+      variants={cardContainerVariant}
+      initial="hidden"
+      animate={isInView ? "visible" : "hidden"}
+    >
+      {features.map((feature, index) => (
+        <motion.div
+          key={feature.id ?? index}
+          className="group relative p-4 sm:p-6 transition-all duration-400 overflow-hidden"
+          variants={cardVariant}
+          whileHover={{
+            scale: 1.03,
+            transition: { duration: 0.25, ease: "easeOut" },
+          }}
+        >
+          <div className="flex flex-row sm:flex-col items-start gap-4 sm:gap-0">
+            <motion.div
+              className="relative flex-shrink-0 w-[37px] h-[37px] lg:w-12 lg:h-12 rounded-xl bg-gradient-to-br from-[#0A9087] to-[#065e57] flex justify-center items-center shadow-[0_4px_20px_rgba(10,144,135,0.4)] group-hover:shadow-[0_4px_30px_rgba(10,144,135,0.6)] transition-shadow duration-300 sm:mb-5"
+              whileHover={{
+                rotate: [0, -8, 8, 0],
+                transition: { duration: 0.4 },
+              }}
+            >
+              <img
+                src={
+                  feature.icon ??
+                  predictionImages[index % predictionImages.length]
+                }
+                alt={feature.title}
+                className="w-5 h-5 lg:w-6 lg:h-6 object-contain"
+              />
+            </motion.div>
+
+            <div className="flex flex-col">
+              <h3 className="font-logo text-white font-bold text-[16px] sm:text-[20px] leading-tight mb-1 sm:mb-3">
+                {feature.title}
+              </h3>
+              <p className="text-white font-logo font-normal text-[14px] sm:text-[16px] leading-[20px] sm:leading-[22px]">
+                {feature.description}
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      ))}
+    </motion.div>
+  );
+}
+
+export default function PredictionSection({ data }) {
+  const statsData = data?.stats
+    ? [
+        {
+          value: `${data.stats.daily_picks_count?.toLocaleString()}+`,
+          label: data.stats.daily_picks_label,
+        },
+        {
+          value: `${data.stats.picks_analyzed_count?.toLocaleString()}+`,
+          label: data.stats.picks_analyzed_label,
+        },
+        {
+          value: data.stats.predictions_value,
+          label: data.stats.predictions_label,
+        },
+      ]
+    : [];
+
+  const features = data?.features ?? [];
+
   return (
     <div className="min-h-screen bg-[#032422] relative overflow-visible z-10">
       <div className="relative max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-12 pb-10">
-        {/* Stats Bar */}
-        <StatsBar />
+        <StatsBar stats={statsData} />
 
-        {/* Heading */}
         <AnimateWhenVisible
           variants={fadeUp}
           delay={0}
@@ -234,10 +213,8 @@ export default function PredictionSection() {
           </h2>
         </AnimateWhenVisible>
 
-        {/* Feature Cards */}
-        <FeatureGrid />
+        <FeatureGrid features={features} />
 
-        {/* CTA Button */}
         <AnimateWhenVisible
           variants={fadeUp}
           delay={0.2}

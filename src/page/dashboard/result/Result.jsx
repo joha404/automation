@@ -1,23 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import ResultScreen from "./components/ResultScreen";
 import UnitSize from "./components/UnitSize";
 import { useGet } from "@/hooks/api/common/useGet";
 import ScreenLoader from "@/components/loaders/ScreenLoader";
-import Summary from "./components/Summary";
-import Calendar from "./components/Calendar";
-import CommonWrapper from "@/components/wrappers/CommonWrapper";
 
 const Result = () => {
   const [selectedMarket, setSelectedMarket] = useState("Ultimate");
-
-  const marketEndpoints = {
-    Ultimate: "/ultimate/chart/",
-    Core: "/core/chart/",
-    Live: "/live/chart/",
-    "Player Props": "/player-props/chart/",
-    "Play of the Day": "/play-of-the-day/chart/",
-    Futures: "/futures/chart/",
-  };
 
   const unitSizeEndpoints = {
     Ultimate: "/ultimate/",
@@ -28,60 +16,14 @@ const Result = () => {
     Futures: "/futures/",
   };
 
-  const calendarEndpoints = {
-    Ultimate: "/ultimate/calendar/",
-    Core: "/core/calendar/",
-    Live: "/live/calendar/",
-    "Player Props": "/player-props/calendar/",
-    "Play of the Day": "/play-of-the-day/calendar/",
-    Futures: "/futures/calendar/",
-  };
-
-  const chartEndpoint = marketEndpoints[selectedMarket] || "/ultimate/chart/";
   const unitSizeEndpoint = unitSizeEndpoints[selectedMarket] || "/ultimate/";
-  const calendarEndpoint =
-    calendarEndpoints[selectedMarket] || "/ultimate/calendar/";
 
-  // Main chart data API call
-  const {
-    data: results,
-    isLoading: chartLoading,
-    refetch: refetchChart,
-  } = useGet(chartEndpoint, {
-    queryKey: ["result", selectedMarket],
-  });
+  const { data: unitSizeData, isLoading: unitSizeLoading } = useGet(
+    unitSizeEndpoint,
+    { queryKey: ["unitSize", selectedMarket] },
+  );
 
-  // Separate unit size API call
-  const {
-    data: unitSizeResults,
-    isLoading: unitSizeLoading,
-    refetch: refetchUnitSize,
-  } = useGet(unitSizeEndpoint, {
-    queryKey: ["unitSize", selectedMarket],
-  });
-
-  const {
-    data: calendarResults,
-    isLoading: calendarLoading,
-    refetch: refetchCalendar,
-  } = useGet(calendarEndpoint, {
-    queryKey: ["calendar", selectedMarket],
-  });
-
-  // Refetch both when market changes
-  useEffect(() => {
-    refetchChart();
-    refetchUnitSize();
-    refetchCalendar();
-  }, [selectedMarket, refetchChart, refetchUnitSize, refetchCalendar]);
-
-  const data = unitSizeResults?.data || {};
-  const chartPointsData = results?.data || {};
-  const unitSizeData = unitSizeResults?.data || {};
-  const calendarData = calendarResults?.data || {};
-
-  // Combined loading state
-  const isLoading = chartLoading || unitSizeLoading || calendarLoading;
+  const isLoading = unitSizeLoading;
 
   if (isLoading) {
     return (
@@ -91,134 +33,27 @@ const Result = () => {
     );
   }
 
-  // Markets from API response or default fallback
-  const markets = data.markets || [
+  const innerData = unitSizeData?.data || {};
+
+  const markets = innerData?.filters?.markets || [
     "Ultimate",
     "Live",
     "Play of the Day",
     "Futures",
     "Player Props",
   ];
-
-  // Default structure when no data is available
-  const getDefaultUnitSizes = () => {
-    return [
-      {
-        size: "1 Unit",
-        count: 0,
-        wins: 0,
-        losses: 0,
-        pushes: 0,
-        profit: "0.00",
-        win_pct: "0.00",
-      },
-      {
-        size: "2 Units",
-        count: 0,
-        wins: 0,
-        losses: 0,
-        pushes: 0,
-        profit: "0.00",
-        win_pct: "0.00",
-      },
-      {
-        size: "3 Units",
-        count: 0,
-        wins: 0,
-        losses: 0,
-        pushes: 0,
-        profit: "0.00",
-        win_pct: "0.00",
-      },
-      {
-        size: "4 Units",
-        count: 0,
-        wins: 0,
-        losses: 0,
-        pushes: 0,
-        profit: "0.00",
-        win_pct: "0.00",
-      },
-      {
-        size: "5 Units",
-        count: 0,
-        wins: 0,
-        losses: 0,
-        pushes: 0,
-        profit: "0.00",
-        win_pct: "0.00",
-      },
-    ];
-  };
-
-  const getDefaultSportsData = () => {
-    return [
-      {
-        sport: "NFL",
-        count: 0,
-        wins: 0,
-        losses: 0,
-        pushes: 0,
-        profit: "0.00",
-        win_pct: "0.00",
-      },
-      {
-        sport: "NBA",
-        count: 0,
-        wins: 0,
-        losses: 0,
-        pushes: 0,
-        profit: "0.00",
-        win_pct: "0.00",
-      },
-      {
-        sport: "MLB",
-        count: 0,
-        wins: 0,
-        losses: 0,
-        pushes: 0,
-        profit: "0.00",
-        win_pct: "0.00",
-      },
-      {
-        sport: "NHL",
-        count: 0,
-        wins: 0,
-        losses: 0,
-        pushes: 0,
-        profit: "0.00",
-        win_pct: "0.00",
-      },
-      {
-        sport: "Soccer",
-        count: 0,
-        wins: 0,
-        losses: 0,
-        pushes: 0,
-        profit: "0.00",
-        win_pct: "0.00",
-      },
-    ];
-  };
-
-  // Use API data if available, otherwise use default structure
-  const finalUnitSizes =
-    unitSizeData?.unit_sizes && unitSizeData.unit_sizes.length > 0
-      ? unitSizeData.unit_sizes
-      : data?.unit_sizes && data.unit_sizes.length > 0
-        ? data.unit_sizes
-        : getDefaultUnitSizes();
-
-  const finalSportsData =
-    unitSizeData?.sports && unitSizeData.sports.length > 0
-      ? unitSizeData.sports
-      : data?.sports && data.sports.length > 0
-        ? data.sports
-        : getDefaultSportsData();
+  const unitSizes = innerData?.unit_sizes || [];
+  const sportsData = innerData?.sports || [];
 
   return (
     <div>
-      <UnitSize unitData={finalUnitSizes} sportsData={finalSportsData} />
+      <ResultScreen
+        data={innerData}
+        selectedMarket={selectedMarket}
+        setSelectedMarket={setSelectedMarket}
+        markets={markets}
+      />
+      <UnitSize unitData={unitSizes} sportsData={sportsData} />
     </div>
   );
 };

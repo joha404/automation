@@ -33,51 +33,21 @@ const cardVariant = {
   }),
 };
 
-const features = [
-  "Results Tracking",
-  "All standard predictions",
-  "Play of the day",
-  "Player props",
-];
+// ✅ Build period label from billing_period
+const getPeriodLabel = (billing_period) => {
+  switch (billing_period) {
+    case "weekly":
+      return "/week";
+    case "monthly":
+      return "/month";
+    case "annually":
+      return "/year";
+    default:
+      return `/${billing_period}`;
+  }
+};
 
-const allPlans = [
-  {
-    id: "quarterly",
-    name: "QUARTERLY",
-    badge: "MOST POPULAR",
-    saveBadge: "SAVE $20",
-    price: "$129.99",
-    period: "/quarter",
-    sub: "($43.33/mo)",
-    featured: true,
-  },
-  {
-    id: "weekly",
-    name: "WEEKLY",
-    price: "$14.99",
-    period: "/week",
-    sub: null,
-  },
-  {
-    id: "monthly",
-    name: "MONTHLY",
-    price: "$49.99",
-    period: "/month",
-    sub: null,
-  },
-  {
-    id: "annually",
-    name: "ANNUALLY",
-    price: "$449.99",
-    period: "/year",
-    sub: "($37.50/mo)",
-    saveBadge: "SAVE $150",
-  },
-];
-
-const smallPlans = allPlans.filter((p) => !p.featured);
-
-function MobileSlider() {
+function MobileSlider({ plans = [] }) {
   const [activeSlide, setActiveSlide] = useState(0);
   const touchStartX = useRef(null);
 
@@ -86,7 +56,7 @@ function MobileSlider() {
   };
   const handleTouchEnd = (e) => {
     const diff = touchStartX.current - e.changedTouches[0].clientX;
-    if (diff > 45) setActiveSlide((p) => Math.min(p + 1, allPlans.length - 1));
+    if (diff > 45) setActiveSlide((p) => Math.min(p + 1, plans.length - 1));
     if (diff < -45) setActiveSlide((p) => Math.max(p - 1, 0));
   };
 
@@ -104,21 +74,20 @@ function MobileSlider() {
             transitionTimingFunction: "cubic-bezier(0.22,1,0.36,1)",
           }}
         >
-          {allPlans.map((plan) => (
+          {plans.map((plan) => (
             <div key={plan.id} className="min-w-full px-2">
               <div
                 className="rounded-2xl relative overflow-hidden flex flex-col"
                 style={{
-                  background: plan.featured
+                  background: plan.is_most_popular
                     ? "linear-gradient(201.03deg, #4D5456 -21.17%, #020C0B 62.19%)"
                     : "linear-gradient(175deg, rgba(28,52,47,0.8) 0%, rgba(8,22,20,0.96) 100%)",
-                  border: plan.featured
+                  border: plan.is_most_popular
                     ? "1px solid #0A9087"
                     : "1px solid rgba(255,255,255,0.1)",
                   minHeight: "420px",
                 }}
               >
-                {/* Glow */}
                 <div
                   className="absolute inset-0 pointer-events-none"
                   style={{
@@ -130,7 +99,7 @@ function MobileSlider() {
                 <div className="relative flex flex-col flex-1 p-6">
                   {/* Badges */}
                   <div className="flex items-center justify-center gap-2 mb-3 flex-wrap">
-                    {plan.badge && (
+                    {plan.is_most_popular && (
                       <span
                         className="text-[11px] font-extrabold px-3 py-1 rounded-md tracking-widest uppercase"
                         style={{
@@ -138,10 +107,10 @@ function MobileSlider() {
                           color: "#0ee8d8",
                         }}
                       >
-                        {plan.badge}
+                        MOST POPULAR
                       </span>
                     )}
-                    {plan.saveBadge && (
+                    {plan.badge_text ? (
                       <span
                         className="text-[11px] font-extrabold px-2 py-0.5 rounded"
                         style={{
@@ -149,9 +118,9 @@ function MobileSlider() {
                           color: "#0ee8d8",
                         }}
                       >
-                        {plan.saveBadge}
+                        {plan.badge_text}
                       </span>
-                    )}
+                    ) : null}
                   </div>
 
                   {/* Plan name */}
@@ -165,23 +134,23 @@ function MobileSlider() {
                       className="text-white font-extrabold leading-none"
                       style={{ fontSize: "44px" }}
                     >
-                      {plan.price}
+                      ${plan.price}
                     </span>
                     <span className="text-white/45 text-[16px] font-medium">
-                      {plan.period}
+                      {getPeriodLabel(plan.billing_period)}
                     </span>
                   </div>
-                  {plan.sub && (
-                    <p className="text-white/35 text-[13px] text-center mb-2">
-                      {plan.sub}
+                  {plan.original_price && (
+                    <p className="text-white/35 text-[13px] text-center mb-2 line-through">
+                      ${plan.original_price}
                     </p>
                   )}
 
                   {/* Features */}
                   <div className="flex flex-col gap-3 flex-1 mt-5 mb-6">
-                    {features.map((f, i) => (
+                    {plan.features.map((f, i) => (
                       <motion.div
-                        key={f}
+                        key={f.name}
                         className="flex items-center gap-2"
                         initial={{ opacity: 0, x: -8 }}
                         animate={{ opacity: 1, x: 0 }}
@@ -189,7 +158,7 @@ function MobileSlider() {
                       >
                         <CheckIcon />
                         <span className="text-white/80 text-[15px] font-medium">
-                          {f}
+                          {f.name}
                         </span>
                       </motion.div>
                     ))}
@@ -218,7 +187,7 @@ function MobileSlider() {
 
       {/* Dots */}
       <div className="flex justify-center items-center gap-2 mt-5">
-        {allPlans.map((_, i) => (
+        {plans.map((_, i) => (
           <motion.button
             key={i}
             onClick={() => setActiveSlide(i)}
@@ -238,7 +207,12 @@ function MobileSlider() {
   );
 }
 
-export default function Subscription() {
+export default function Subscription({ data }) {
+  // ✅ Use API data, sorted by order
+  const plans = [...(data ?? [])].sort((a, b) => a.order - b.order);
+  const featuredPlan = plans.find((p) => p.is_most_popular);
+  const smallPlans = plans.filter((p) => !p.is_most_popular);
+
   return (
     <div className="bg-[#040e0d] min-h-screen py-16 px-4">
       {/* Heading */}
@@ -264,112 +238,116 @@ export default function Subscription() {
       </motion.div>
 
       {/* ── MOBILE SLIDER ── */}
-      <MobileSlider />
+      <MobileSlider plans={plans} />
 
       {/* ── DESKTOP ── */}
       <div className="hidden sm:block max-w-7xl mx-auto">
-        {/* Featured Quarterly Card */}
-        <motion.div
-          className="rounded-2xl lg:h-[279px] mb-5 relative overflow-hidden"
-          style={{
-            background:
-              "linear-gradient(201.03deg, #4D5456 -21.17%, #020C0B 62.19%)",
-            border: "1px solid #0A9087",
-          }}
-          variants={cardVariant}
-          initial="hidden"
-          animate="visible"
-          custom={0.05}
-          whileHover={{ scale: 1.012, transition: { duration: 0.25 } }}
-        >
-          <div
-            className="absolute inset-0 pointer-events-none"
+        {/* Featured Card */}
+        {featuredPlan && (
+          <motion.div
+            className="rounded-2xl lg:h-[279px] mb-5 relative overflow-hidden"
             style={{
               background:
-                "radial-gradient(ellipse 55% 60% at 15% 10%, rgba(10,144,135,0.13) 0%, transparent 70%)",
+                "linear-gradient(201.03deg, #4D5456 -21.17%, #020C0B 62.19%)",
+              border: "1px solid #0A9087",
             }}
-          />
+            variants={cardVariant}
+            initial="hidden"
+            animate="visible"
+            custom={0.05}
+            whileHover={{ scale: 1.012, transition: { duration: 0.25 } }}
+          >
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background:
+                  "radial-gradient(ellipse 55% 60% at 15% 10%, rgba(10,144,135,0.13) 0%, transparent 70%)",
+              }}
+            />
 
-          <div className="relative flex flex-row items-center h-full gap-6 px-10 py-8">
-            {/* Left */}
-            <div className="flex-shrink-0 min-w-[240px]">
-              <div className="mb-4">
-                <span
-                  className="font-extrabold text-[12px] tracking-widest uppercase px-4 py-2 rounded-md text-white"
-                  style={{ background: "#0A9087" }}
-                >
-                  MOST POPULAR
-                </span>
-              </div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-white font-logo font-bold text-[12px] tracking-widest uppercase">
-                  QUARTERLY
-                </span>
-                <span
-                  className="text-[11px] font-bold px-2 py-0.5 rounded"
-                  style={{
-                    background: "#00C08026",
-                    color: "#00C080",
-                  }}
-                >
-                  SAVE $20
-                </span>
-              </div>
-              <div className="flex items-baseline gap-1">
-                <span
-                  className="text-white font-extrabold leading-none"
-                  style={{ fontSize: "48px" }}
-                >
-                  $129.99
-                </span>
-                <span className="text-white/45 text-[17px] font-medium">
-                  /quarter
-                </span>
-              </div>
-              <p className="text-white/35 text-center text-[13px] mt-1">
-                ($43.33/mo)
-              </p>
-            </div>
-
-            {/* Middle */}
-            <div className="flex-1 flex flex-col gap-3 pl-8">
-              {features.map((f, i) => (
-                <motion.div
-                  key={f}
-                  className="flex items-center gap-2.5"
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.2 + i * 0.07, duration: 0.38 }}
-                >
-                  <CheckIcon />
-                  <span className="text-[#e2f0ee] text-[15px] font-medium">
-                    {f}
+            <div className="relative flex flex-row items-center h-full gap-6 px-10 py-8">
+              {/* Left */}
+              <div className="flex-shrink-0 min-w-[240px]">
+                <div className="mb-4">
+                  <span
+                    className="font-extrabold text-[12px] tracking-widest uppercase px-4 py-2 rounded-md text-white"
+                    style={{ background: "#0A9087" }}
+                  >
+                    MOST POPULAR
                   </span>
-                </motion.div>
-              ))}
-            </div>
+                </div>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-white font-logo font-bold text-[12px] tracking-widest uppercase">
+                    {featuredPlan.name}
+                  </span>
+                  {featuredPlan.badge_text ? (
+                    <span
+                      className="text-[11px] font-bold px-2 py-0.5 rounded"
+                      style={{ background: "#00C08026", color: "#00C080" }}
+                    >
+                      {featuredPlan.badge_text}
+                    </span>
+                  ) : null}
+                </div>
+                <div className="flex items-baseline gap-1">
+                  <span
+                    className="text-white font-extrabold leading-none"
+                    style={{ fontSize: "48px" }}
+                  >
+                    ${featuredPlan.price}
+                  </span>
+                  <span className="text-white/45 text-[17px] font-medium">
+                    {getPeriodLabel(featuredPlan.billing_period)}
+                  </span>
+                </div>
+                {featuredPlan.original_price && (
+                  <p className="text-white/35 text-center text-[13px] mt-1 line-through">
+                    ${featuredPlan.original_price}
+                  </p>
+                )}
+              </div>
 
-            {/* Right CTA */}
-            <div className="flex-shrink-0 pl-8">
-              <motion.button
-                className="cursor-pointer w-[210px] h-[48px] px-[30px] rounded-full border border-[#0A9087] font-bold text-[15px] text-white flex justify-center items-center"
-                style={{
-                  background:
-                    "linear-gradient(3.11deg, #020C0B -44.12%, #055651 149.92%)",
-                }}
-                whileHover={{
-                  scale: 1.06,
-                  boxShadow: "0 0 22px rgba(10,144,135,0.55)",
-                }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ duration: 0.18 }}
-              >
-                SELECT PLAN
-              </motion.button>
+              {/* Middle — features */}
+              <div className="flex-1 flex flex-col gap-3 pl-8">
+                {featuredPlan.features.map((f, i) => (
+                  <motion.div
+                    key={f.name}
+                    className="flex items-center gap-2.5"
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.2 + i * 0.07, duration: 0.38 }}
+                  >
+                    <CheckIcon />
+                    <span className="text-[#e2f0ee] text-[15px] font-medium">
+                      {f.name}
+                    </span>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Right CTA */}
+              <div className="flex-shrink-0 pl-8">
+                <motion.button
+                  className="cursor-pointer w-[210px] h-[48px] px-[30px] rounded-full border border-[#0A9087] font-bold text-[15px] text-white flex justify-center items-center"
+                  style={{
+                    background:
+                      "linear-gradient(3.11deg, #020C0B -44.12%, #055651 149.92%)",
+                  }}
+                  whileHover={{
+                    scale: 1.06,
+                    boxShadow: "0 0 22px rgba(10,144,135,0.55)",
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ duration: 0.18 }}
+                >
+                  SELECT PLAN
+                </motion.button>
+              </div>
             </div>
-          </div>
-        </motion.div>
-        {/* 3 smaller cards */}
+          </motion.div>
+        )}
+
+        {/* Smaller cards */}
         <div className="flex flex-wrap justify-center gap-16 my-16">
           {smallPlans.map((plan, idx) => (
             <motion.div
@@ -400,11 +378,11 @@ export default function Subscription() {
                   <p className="text-white font-bold font-logo text-[16px] tracking-widest uppercase">
                     {plan.name}
                   </p>
-                  {plan.saveBadge && (
+                  {plan.badge_text ? (
                     <span className="h-[25px] py-[5px] font-logo font-bold text-[12px] px-[10px] rounded-full bg-[#C27AFF33] text-[#C27AFF]">
-                      {plan.saveBadge}
+                      {plan.badge_text}
                     </span>
-                  )}
+                  ) : null}
                 </div>
 
                 {/* Price */}
@@ -413,23 +391,23 @@ export default function Subscription() {
                     className="text-white font-normal font-logo leading-none"
                     style={{ fontSize: "48px" }}
                   >
-                    {plan.price}
+                    ${plan.price}
                   </span>
                   <span className="text-white/45 font-logo text-[16px] font-normal">
-                    {plan.period}
+                    {getPeriodLabel(plan.billing_period)}
                   </span>
                 </div>
-                {plan.sub && (
-                  <p className="text-white/35 text-center text-[12px] mb-2">
-                    {plan.sub}
+                {plan.original_price && (
+                  <p className="text-white/35 text-center text-[12px] mb-2 line-through">
+                    ${plan.original_price}
                   </p>
                 )}
 
                 {/* Features */}
                 <div className="flex flex-col gap-3 flex-1 mt-8 mb-8">
-                  {features.map((f, i) => (
+                  {plan.features.map((f, i) => (
                     <motion.div
-                      key={f}
+                      key={f.name}
                       className="flex items-center gap-2.5"
                       initial={{ opacity: 0, x: -8 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -440,7 +418,7 @@ export default function Subscription() {
                     >
                       <CheckIcon />
                       <span className="text-white/80 text-[15px] font-medium">
-                        {f}
+                        {f.name}
                       </span>
                     </motion.div>
                   ))}
