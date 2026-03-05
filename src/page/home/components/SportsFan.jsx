@@ -79,7 +79,7 @@ function ReviewCard({ review, index }) {
         transition: { duration: 0.25 },
       }}
     >
-      {/* Rating — render stars based on review.rating */}
+      {/* Rating */}
       <motion.div
         className="flex justify-start mb-4"
         initial={{ opacity: 0, x: -10 }}
@@ -107,7 +107,7 @@ function ReviewCard({ review, index }) {
         animate={isInView ? "visible" : "hidden"}
       />
 
-      {/* Review text — ✅ API uses "content" not "text" */}
+      {/* Review text */}
       <motion.p
         className="text-white/70 font-logo font-normal text-[12px] lg:text-[14px] leading-[18px] lg:leading-[24px] flex-grow"
         initial={{ opacity: 0 }}
@@ -124,7 +124,6 @@ function ReviewCard({ review, index }) {
         animate={isInView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.4, delay: 0.4 + index * 0.1 }}
       >
-        {/* ✅ API uses "user_name" not "name" */}
         <h4 className="font-logo text-white font-bold text-[14px] mb-2">
           {review.user_name}
         </h4>
@@ -139,7 +138,6 @@ function ReviewCard({ review, index }) {
               Verified Customer
             </p>
           </div>
-          {/* ✅ API uses "date_posted" — format it */}
           <p className="font-logo font-medium text-[10px] sm:text-[11px] leading-none text-white/40">
             {formatDate(review.date_posted)}
           </p>
@@ -150,8 +148,25 @@ function ReviewCard({ review, index }) {
 }
 
 export default function SportsFan({ data }) {
-  // ✅ Use API data, fallback to empty array
   const reviews = data ?? [];
+
+  // Mobile: < 768px | Tablet: 768px–1279px | Desktop: >= 1280px
+  const getScreenType = () => {
+    const w = window.innerWidth;
+    if (w >= 1280) return "desktop";
+    if (w >= 768) return "tablet";
+    return "mobile";
+  };
+
+  const [screenType, setScreenType] = useState(getScreenType());
+
+  useEffect(() => {
+    const handleResize = () => setScreenType(getScreenType());
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const isDesktop = screenType === "desktop";
 
   const [activeIndex, setActiveIndex] = useState(0);
   const touchStartX = useRef(null);
@@ -213,50 +228,65 @@ export default function SportsFan({ data }) {
           </h2>
         </InView>
 
-        {/* ── Mobile Slider ── */}
-        <div className="block sm:hidden">
-          <div
-            className="overflow-hidden"
-            onTouchStart={handleTouchStart}
-            onTouchEnd={handleTouchEnd}
-          >
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeIndex}
-                className="px-1"
-                initial={{ opacity: 0, x: 40 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -40 }}
-                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <ReviewCard review={reviews[activeIndex]} index={0} />
-              </motion.div>
-            </AnimatePresence>
-          </div>
+        {/* ── Mobile & Tablet Slider (< 1280px) ── */}
+        {!isDesktop && (
+          <div>
+            <div
+              className="overflow-hidden"
+              onTouchStart={handleTouchStart}
+              onTouchEnd={handleTouchEnd}
+            >
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeIndex}
+                  className="px-1"
+                  initial={{ opacity: 0, x: 40 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -40 }}
+                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <ReviewCard review={reviews[activeIndex]} index={0} />
+                </motion.div>
+              </AnimatePresence>
+            </div>
 
-          {/* Dots */}
-          <div className="flex justify-center items-center gap-2 mt-6">
-            {reviews.map((_, index) => (
-              <motion.button
-                key={index}
-                onClick={() => handleDotClick(index)}
-                className={`rounded-full transition-all duration-300 ${
-                  index === activeIndex
-                    ? "w-6 h-2.5 bg-[#0A9087]"
-                    : "w-2.5 h-2.5 bg-white/20 hover:bg-white/40"
-                }`}
-                whileTap={{ scale: 0.85 }}
-              />
+            {/* Dots */}
+            <div className="flex justify-center items-center gap-2 mt-6">
+              {reviews.map((_, index) => (
+                <motion.button
+                  key={index}
+                  onClick={() => handleDotClick(index)}
+                  className="rounded-full cursor-pointer"
+                  style={{
+                    width: index === activeIndex ? "24px" : "10px",
+                    height: "10px",
+                    background:
+                      index === activeIndex
+                        ? "#0A9087"
+                        : "rgba(255,255,255,0.2)",
+                    transition: "all 0.3s ease",
+                  }}
+                  whileTap={{ scale: 0.85 }}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── Desktop Grid (>= 1280px) ── */}
+        {isDesktop && (
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(3, 1fr)",
+              gap: "20px",
+            }}
+          >
+            {reviews.map((review, index) => (
+              <ReviewCard key={review.id} review={review} index={index} />
             ))}
           </div>
-        </div>
-
-        {/* ── Desktop Grid ── */}
-        <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {reviews.map((review, index) => (
-            <ReviewCard key={review.id} review={review} index={index} />
-          ))}
-        </div>
+        )}
 
         {/* CTA Button */}
         <InView

@@ -23,7 +23,6 @@ const General = () => {
   const { theme } = useTheme();
   const dispatch = useDispatch();
 
-  console.log(user?.country);
   const extractPhoneNumber = (phoneWithCode) => {
     if (!phoneWithCode) return "";
     const phoneCode = countryCode[user?.country || "Austria"] || "+880";
@@ -84,9 +83,9 @@ const General = () => {
     }
   };
 
-  const handleCountryChange = (countryValue) => {
-    setSelectedCountry(countryValue);
-  };
+  // const handleCountryChange = (countryValue) => {
+  //   setSelectedCountry(countryValue);
+  // };
 
   const onSubmit = (data) => {
     const phoneCode = countryCode[selectedCountry] || "+880";

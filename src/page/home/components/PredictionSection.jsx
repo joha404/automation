@@ -131,6 +131,12 @@ function FeatureGrid({ features = [] }) {
     <motion.div
       ref={ref}
       className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-14"
+      style={{
+        gridTemplateColumns:
+          window.innerWidth >= 768 && window.innerWidth < 1024
+            ? "repeat(2, 1fr)"
+            : undefined,
+      }}
       variants={cardContainerVariant}
       initial="hidden"
       animate={isInView ? "visible" : "hidden"}

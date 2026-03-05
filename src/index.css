@@ -38,6 +38,8 @@
   --breakpoint-sm: 480px; /* Small devices */
   --breakpoint-md: 576px; /* Medium devices */
   --breakpoint-lg: 768px; /* Large devices */
+  --breakpoint-tablet: 768px;
+  --breakpoint-tab: 768px;
   --breakpoint-xlg: 992px; /* Extra large devices */
   --breakpoint-xl: 1200px; /* Extra extra large devices */
   --breakpoint-2xl: 1600px; /* 2X extra large devices */

@@ -69,6 +69,11 @@ const Dashboard = () => {
     { queryKey: ["unit-info"] },
   );
 
+  const { data: pastPredictionData, isLoading: pastPredictionLoading } = useGet(
+    "/past-predictions/",
+    { queryKey: ["past-prediction"] },
+  );
+  console.log(pastPredictionData);
   const endpoint = marketEndpoints[selectedMarket] || "/ultimate/";
 
   const { data: results, isLoading: resultLoading } = useGet(endpoint, {
@@ -107,7 +112,7 @@ const Dashboard = () => {
       <PredictionComponent data={predictionsData} />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
         <ResultSection data={results} />
-        <PastPrediction />
+        <PastPrediction data={pastPredictionData} />
       </div>
     </div>
   );

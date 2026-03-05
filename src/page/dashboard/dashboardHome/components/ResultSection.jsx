@@ -62,13 +62,11 @@ const ResultSection = ({ data: propData }) => {
   const { theme } = useTheme();
   const { sidebarOpen } = useSidebar();
 
-  // ✅ Fetch chart data
   const { data: chartResponse, isLoading: chartLoading } = useGet(
     "/ultimate/chart/",
     { queryKey: ["resultSection-chart"] },
   );
 
-  // ✅ Fetch summary/unit data
   const { data: summaryResponse, isLoading: summaryLoading } = useGet(
     "/ultimate/",
     { queryKey: ["resultSection-summary"] },
@@ -76,7 +74,6 @@ const ResultSection = ({ data: propData }) => {
 
   const isLoading = chartLoading || summaryLoading;
 
-  // ✅ Unwrap — confirmed pattern: response = { status, data: { chartPoints, ... } }
   const chartInner = chartResponse?.data || chartResponse || {};
   const summaryInner = summaryResponse?.data || summaryResponse || {};
 
@@ -91,13 +88,11 @@ const ResultSection = ({ data: propData }) => {
     "Player Props",
   ];
 
-  // ✅ Filter chart points by selected time range
   const filteredPoints = useMemo(
     () => filterByRange(chartPoints, filter),
     [chartPoints, filter],
   );
 
-  // ✅ Map to recharts format
   const currentData = filteredPoints.map((p) => ({
     date: formatDateLabel(p.date, filter),
     value: p.cumulative_units,
@@ -242,7 +237,7 @@ const ResultSection = ({ data: propData }) => {
                 sidebarOpen ? "2xl:h-56 xlg:h-48" : "2xl:h-40 xl:h-44"
               } h-40`}
             >
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" className="mt-2">
                 <AreaChart data={currentData}>
                   <defs>
                     <linearGradient

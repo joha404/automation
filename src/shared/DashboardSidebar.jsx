@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { useLogout } from "@/hooks/api/auth/useLogout";
 import { useTheme } from "@/hooks/custom/useTheme";
 import { useState, useEffect } from "react";
-import logo from "../assets/dashboard/logo.png";
+import logo from "../assets/logo/logo.png";
 import avatar from "@/assets/shared/avatar.png";
 import ThemeSwitch from "./components/ThemeSwitch";
 import {
