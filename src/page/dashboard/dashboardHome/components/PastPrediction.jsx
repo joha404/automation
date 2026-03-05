@@ -62,11 +62,11 @@ const DUMMY_ITEMS = [
 ];
 // ─────────────────────────────────────────────────────────────
 
-const PastPrediction = () => {
+const PastPrediction = ({ data }) => {
   const { theme } = useTheme();
   const { sidebarOpen } = useSidebar();
 
-  const items = DUMMY_ITEMS;
+  const items = data?.data?.results;
 
   const getTypeColor = (type) => {
     switch (type) {
@@ -101,7 +101,7 @@ const PastPrediction = () => {
   // ─── Shared Card Content (used in both Desktop & Mobile) ───
   const PredictionCard = ({ item }) => (
     <div
-      className={`flex flex-row xl:p-1.5 p-2 my-2 rounded-xl transition-all duration-200 gap-3 w-full ${
+      className={`flex flex-row xl:p-1 p-2 my-1.5 rounded-xl transition-all duration-200 gap-3 w-full ${
         theme === "dark" ? "bg-[#020C0B]" : "bg-lightestGrey"
       }`}
     >
@@ -144,7 +144,7 @@ const PastPrediction = () => {
               </CommonParagraph>
 
               <div
-                className={`flex flex-row items-center gap-2 mt-1 ${
+                className={`flex flex-row items-center gap-2 mt-0.5 ${
                   theme === "dark" ? "text-mediumGrey" : "text-darkGrey"
                 }`}
               >

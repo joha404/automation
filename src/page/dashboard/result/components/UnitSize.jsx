@@ -177,7 +177,6 @@ const UnitSize = ({ unitData, sportsData }) => {
           >
             {sortedSportsData.map((item, i) => (
               <SwiperSlide key={i}>
-                {/* ✅ title = item.sport, data = full item with overall/7d/30d/90d */}
                 <UnitCard title={item.sport} data={item} />
               </SwiperSlide>
             ))}
@@ -187,14 +186,17 @@ const UnitSize = ({ unitData, sportsData }) => {
         {/* Prediction Size */}
         <div className="mb-12 md:mb-16">
           <div className="flex justify-between items-center mb-5">
-            <CommonTitle variant="small" className="font-semibold pb-5">
+            <CommonTitle
+              variant="small"
+              className="font-semibold mt-4 lg:mt-12 pb-1"
+            >
               Prediction Size
             </CommonTitle>
-            <div className="flex">
+            <div className="flex mt-4 lg:mt-12 ">
               <button
                 ref={unitPrevRef}
                 disabled={unitSliderPosition.isBeginning}
-                className={`cursor-pointer w-8 h-8 flex items-center justify-center transition-colors ${
+                className={`cursor-pointer w-8 h-8 flex items-center justify-center transition-colors  ${
                   unitSliderPosition.isBeginning
                     ? theme === "dark"
                       ? "text-lightGrey cursor-not-allowed"

@@ -302,7 +302,7 @@ const AllPastPrediction = () => {
                             variant="special"
                             className={`font-medium ${
                               theme === "dark"
-                                ? "text-[#0A9087]"
+                                ? "text-[#03dbcc]"
                                 : "text-[#0A9087]"
                             }`}
                           >

@@ -87,6 +87,14 @@ function FAQItem({ faq, index, isOpen, onToggle }) {
 export default function FAQ({ data }) {
   const [openIndex, setOpenIndex] = useState(1);
   const faqs = [...(data ?? [])].sort((a, b) => a.order - b.order);
+  const [isTabletOrMobile, setIsTabletOrMobile] = React.useState(false);
+
+  React.useEffect(() => {
+    const check = () => setIsTabletOrMobile(window.innerWidth < 1024);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   const handleToggle = (index) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -102,20 +110,32 @@ export default function FAQ({ data }) {
   return (
     <div className="bg-[#020C0B] relative overflow-hidden py-16 sm:py-24">
       <div className="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col lg:flex-row gap-10 lg:gap-20">
+        <div
+          className={`flex gap-10 lg:gap-20 ${isTabletOrMobile ? "flex-col" : "flex-row"}`}
+        >
           {/* ── Left: Heading ── */}
           <motion.div
             ref={leftRef}
-            className="w-full lg:w-[383px] flex-shrink-0 text-center lg:text-left"
+            className="w-full flex-shrink-0 flex flex-col"
+            style={{
+              width: window.innerWidth >= 1024 ? "383px" : "100%",
+              alignItems: window.innerWidth >= 1024 ? "flex-start" : "center",
+              textAlign: window.innerWidth >= 1024 ? "left" : "center",
+            }}
             variants={fadeUp}
             initial="hidden"
             animate={leftInView ? "visible" : "hidden"}
             custom={0}
           >
-            <h2 className="font-logo text-white font-extrabold text-base sm:text-xl lg:text-[28px] uppercase leading-tight mb-2 lg:mb-4">
+            <h2 className="font-logo text-white font-extrabold text-base sm:text-xl lg:text-[28px] uppercase leading-tight mb-2 lg:mb-4 text-center lg:text-left">
               Frequently Asked Questions
             </h2>
-            <p className="font-logo text-[#ECF6F4] font-normal text-[13px] sm:text-[18px] leading-[20px] sm:leading-[29px]">
+            <p
+              className="font-logo text-[#ECF6F4] font-normal text-[13px] sm:text-[18px] leading-[20px] sm:leading-[29px]"
+              style={{
+                textAlign: window.innerWidth >= 1024 ? "left" : "center",
+              }}
+            >
               Discover quick answers to common questions about HyperPicks.ai and
               its powerful capabilities.
             </p>

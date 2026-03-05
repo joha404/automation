@@ -16,12 +16,33 @@ const Result = () => {
     Futures: "/futures/",
   };
 
+  const marketEndpoints = {
+    Ultimate: "/ultimate/chart/",
+    Core: "/core/chart/",
+    Live: "/live/chart/",
+    "Player Props": "/player-props/chart/",
+    "Play of the Day": "/play-of-the-day/chart/",
+    Futures: "/futures/chart/",
+  };
+
+  const chartEndpoint = marketEndpoints[selectedMarket] || "/ultimate/chart/";
+
   const unitSizeEndpoint = unitSizeEndpoints[selectedMarket] || "/ultimate/";
 
   const { data: unitSizeData, isLoading: unitSizeLoading } = useGet(
     unitSizeEndpoint,
     { queryKey: ["unitSize", selectedMarket] },
   );
+
+  const {
+    data: results,
+    isLoading: chartLoading,
+    refetch: refetchChart,
+  } = useGet(chartEndpoint, {
+    queryKey: ["result", selectedMarket],
+  });
+
+  const chartPointsData = results?.data || {};
 
   const isLoading = unitSizeLoading;
 
@@ -48,6 +69,7 @@ const Result = () => {
   return (
     <div>
       <ResultScreen
+        chartData={chartPointsData?.chartPoints}
         data={innerData}
         selectedMarket={selectedMarket}
         setSelectedMarket={setSelectedMarket}
