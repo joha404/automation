@@ -35,11 +35,11 @@ const PasswordField = ({
   const variants = {
     bg_none: `bg-transparent xl:px-8 px-5 ${sizeClasses[size]} placeholder:text-gray-400 text-mediumBlack border-2 border-lightGrey`,
     bg_white: `bg-white xl:px-8 px-5 ${sizeClasses[size]} placeholder:text-gray-400 text-mediumBlack light-theme border-2 border-lightGrey`,
-    bg_black: `bg-[bg-[#032422] xl:px-8 px-5 ${sizeClasses[size]} placeholder:text-mediumGrey text-lighterGrey dark-theme border-2 border-[#03635d]`,
+    bg_black: `bg-[#032422] xl:px-8 px-5 ${sizeClasses[size]} placeholder:text-mediumGrey text-lighterGrey dark-theme border-2 border-[#03635d]`,
   };
 
   const baseClass =
-    "focus:outline-none focus:border-mediumBlue placeholder:font-normal w-full thin-scrollbar transition-colors duration-200 tracking-wide";
+    "focus:outline-none focus:border-[#009c91] placeholder:font-normal w-full thin-scrollbar transition-colors duration-200 tracking-wide";
 
   const inputProps = register ? register(name, validationRules) : {};
   const errorMessage = errors[register_as]?.message;

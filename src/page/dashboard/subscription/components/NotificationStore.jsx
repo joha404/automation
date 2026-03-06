@@ -5,12 +5,12 @@ export default function NotificationStore() {
   const { theme } = useTheme();
   const handleAppStoreClick = () => {
     window.location.href =
-      "https://apps.apple.com/cz/app/tech-takes/id6755182491";
+      "https://apps.apple.com/cz/app/hyper-picks/id6755182491";
   };
 
   const handleGooglePlayClick = () => {
     window.location.href =
-      "https://play.google.com/store/apps/details?id=com.techtakes";
+      "https://play.google.com/store/apps/details?id=com.hyperpicks";
   };
 
   return (

@@ -19,8 +19,7 @@ const useAxiosSecure = () => {
     },
   });
 
-
- axiosSecure.interceptors.response.use(
+  axiosSecure.interceptors.response.use(
     (response) => response,
     (error) => {
       // 🧩 Ignore expected network errors caused by intentional redirects
@@ -38,7 +37,6 @@ const useAxiosSecure = () => {
         dispatch(setToken(null));
         errorToast("Session expired. Please log in again.");
         navigate("/sign-in");
-      
       } else if (error.request) {
         // ✅ Don’t show toast for redirects — only for genuine network issues
         if (!navigator.onLine) {
@@ -49,7 +47,7 @@ const useAxiosSecure = () => {
       }
 
       return Promise.reject(error);
-    }
+    },
   );
 
   return axiosSecure;

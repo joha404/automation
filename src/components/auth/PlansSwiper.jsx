@@ -15,7 +15,7 @@ export default function PlansSwiper({
   // Handle Contact Us for Enterprise API
   const handleContactUs = () => {
     window.location.href =
-      "mailto:customersupport@techtakes.ai?subject=Hyper Picks Enterprise API Demo Request";
+      "mailto:customersupport@hyperpicks.ai?subject=Hyper Picks Enterprise API Demo Request";
   };
 
   // Check if there are only 2 items

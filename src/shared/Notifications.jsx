@@ -32,12 +32,15 @@ const Notifications = () => {
   });
 
   // Fetch notifications
-  const { data: countData, isLoading : countLoading } = useGet("/in-app/unread/count/", {
-    queryKey: ["total-unread"],
-    secure: true,
-  });
+  const { data: countData, isLoading: countLoading } = useGet(
+    "/in-app/unread/count/",
+    {
+      queryKey: ["total-unread"],
+      secure: true,
+    },
+  );
 
-  console.log(countData)
+  console.log(countData);
 
   const notifications = response?.data || [];
 
@@ -119,10 +122,9 @@ const Notifications = () => {
   };
 
   const unreadCount = notifications.filter(
-    (notification) => !notification.is_read
+    (notification) => !notification.is_read,
   ).length;
 
-  
   if (isLoading || countLoading) {
     return (
       <div className="flex w-full max-w-6xl mx-auto justify-center">
@@ -138,7 +140,7 @@ const Notifications = () => {
         className={`rounded-xl border p-4 sm:p-6 mb-4 sm:mb-6 transition-colors duration-300
           ${
             theme === "dark"
-              ? "bg-darkBlack border-mediumBlack"
+              ? "bg-[#021716] "
               : "bg-white border-gray-200 shadow-sm"
           }`}
       >
@@ -152,7 +154,7 @@ const Notifications = () => {
             >
               <FiBell
                 className={`text-lg ${
-                  theme === "dark" ? "text-blue-400" : "text-blue-600"
+                  theme === "dark" ? "text-[#098c83] " : "text-blue-600"
                 }`}
               />
             </div>
@@ -185,7 +187,7 @@ const Notifications = () => {
                 markAllAsReadMutation.isPending ||
                 unreadCount === 0
               }
-              className="px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg bg-mediumBlue text-white font-medium hover:bg-darkBlue transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              className="px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg bg-[#054844] text-white font-medium hover:bg-darkBlue transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               <GiCheckMark className="text-sm" />
               {markAllAsReadMutation.isPending
@@ -211,7 +213,7 @@ const Notifications = () => {
         className={`rounded-xl border transition-colors duration-300
           ${
             theme === "dark"
-              ? "bg-darkBlack border-mediumBlack"
+              ? "bg-[#021716]"
               : "bg-white border-gray-200 shadow-sm"
           }`}
       >
@@ -233,8 +235,8 @@ const Notifications = () => {
                       ? "bg-darkBlack"
                       : "bg-gray-50"
                     : theme === "dark"
-                    ? "bg-blue-900/10 hover:bg-gray-800/30"
-                    : "bg-blue-50 hover:bg-gray-50/80"
+                      ? "bg-blue-900/10 hover:bg-gray-800/30"
+                      : "bg-blue-50 hover:bg-gray-50/80"
                 }`}
               >
                 {/* Content Section */}

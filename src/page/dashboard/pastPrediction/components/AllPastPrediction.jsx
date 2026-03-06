@@ -59,7 +59,7 @@ const AllPastPrediction = () => {
       case "P":
         return "text-yellow-400";
       case "win":
-        return "text-emerald-600 border border-emearald-600";
+        return "text-[#0A9087] border border-[#0A9087]";
       case "loss":
         return "text-rose-600 border border-rose-600";
       default:
@@ -194,7 +194,7 @@ const AllPastPrediction = () => {
                 <div
                   key={item.id}
                   className={`flex flex-row sm:p-5 p-2 rounded-xl transition-all duration-200 gap-5 w-full ${
-                    theme === "dark" ? "bg-[#054844]" : "bg-lightestGrey"
+                    theme === "dark" ? "bg-[#020C0B]" : "bg-lightestGrey"
                   }`}
                 >
                   {/* Left section */}
@@ -226,22 +226,18 @@ const AllPastPrediction = () => {
                       <div className="w-full">
                         <CommonParagraph
                           className={`font-semibold text-left capitalize ${
-                            theme === "dark"
-                              ? "text-lightGrey"
-                              : "text-mediumBlack"
+                            theme === "dark" ? "text-white" : "text-mediumBlack"
                           }`}
                         >
                           {item?.prediction_desc}
                         </CommonParagraph>
                         <div
                           className={`flex items-start gap-1 mt-1 ${
-                            theme === "dark"
-                              ? "text-mediumGrey"
-                              : "text-darkGrey"
+                            theme === "dark" ? "text-white" : "text-black"
                           }`}
                         >
                           <div className="flex items-center">
-                            <BsLightningChargeFill className="text-xs text-yellow-500" />
+                            <BsLightningChargeFill className="text-xs font-logo text-yellow-500" />
                             <CommonParagraph
                               variant="smaller"
                               className="ms-1 uppercase"
@@ -252,7 +248,10 @@ const AllPastPrediction = () => {
 
                           <div className="flex items-center">
                             <FaRegClock className="text-xs" />
-                            <CommonParagraph variant="smaller" className="ms-1">
+                            <CommonParagraph
+                              variant="smaller"
+                              className="ms-1 font-logo"
+                            >
                               {formatDate(item?.date_time)}
                             </CommonParagraph>
                           </div>
@@ -273,7 +272,7 @@ const AllPastPrediction = () => {
 
                         <div className="lg:text-right lg:hidden flex lg:items-end lg:justify-end justify-center items-center xl:w-[200px] lg:w-[20px] w-full">
                           <span
-                            className={`px-2 py-0.5 rounded font-medium md:text-sm text-xs border shadow-sm capitalize ${getTypeColor(
+                            className={`px-2 py-0.5 font-logo rounded font-medium md:text-sm text-xs border shadow-sm capitalize ${getTypeColor(
                               item?.game_status,
                             )}`}
                           >
@@ -283,7 +282,7 @@ const AllPastPrediction = () => {
 
                         <div className="flex justify-center items-center xl:w-[200px] lg:w-[20px] w-full">
                           <span
-                            className={`xl:text-sm md:text-xs text-[10px] font-medium text-center ${getTypeColor(
+                            className={`xl:text-sm md:text-xs font-logo text-[10px] font-medium text-center ${getTypeColor(
                               item?.prediction_type,
                             )}`}
                             style={{
@@ -297,13 +296,11 @@ const AllPastPrediction = () => {
                           </span>
                         </div>
 
-                        <div className="lg:flex hidden lg:justify-center justify-end items-end lg:items-center xl:w-[200px] w-[20px]">
+                        <div className="lg:flex hidden font-logo lg:justify-center justify-end items-end lg:items-center xl:w-[200px] w-[20px]">
                           <CommonParagraph
                             variant="special"
                             className={`font-medium ${
-                              theme === "dark"
-                                ? "text-[#03dbcc]"
-                                : "text-[#0A9087]"
+                              theme === "dark" ? "text-white" : "text-black"
                             }`}
                           >
                             {item?.unit_size}%

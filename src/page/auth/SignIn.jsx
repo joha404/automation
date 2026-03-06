@@ -176,7 +176,10 @@ const SignIn = () => {
                   </button>
 
                   {/* Label */}
-                  <CommonParagraph variant="small" className="font-normal">
+                  <CommonParagraph
+                    variant="small"
+                    className="font-normal text-white"
+                  >
                     Remember me
                   </CommonParagraph>
                 </div>
@@ -184,7 +187,7 @@ const SignIn = () => {
                   <Link to={"/forgot-password"}>
                     <CommonParagraph
                       variant="small"
-                      className=" hover:text-[#0A9087] transition-colors duration-150"
+                      className=" hover:text-[#0A9087] transition-colors duration-150 "
                     >
                       Forgot Password?
                     </CommonParagraph>

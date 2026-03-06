@@ -1,10 +1,6 @@
 import { useTheme } from "@/hooks/custom/useTheme";
 import { motion } from "framer-motion";
-import {
-  HiOutlineDocumentText,
-  HiOutlineShieldCheck,
-  HiOutlineCog,
-} from "react-icons/hi";
+import { HiOutlineDocumentText, HiOutlineShieldCheck } from "react-icons/hi";
 
 const Policy = () => {
   const { theme } = useTheme();
@@ -33,20 +29,10 @@ const Policy = () => {
       link: "/privacy-policy",
       iconColor: theme === "dark" ? "text-purple-400" : "text-purple-600",
     },
-    {
-      id: 3,
-      title: "Automation Policy",
-      description: "Understand our automated services guidelines",
-      icon: HiOutlineCog,
-      link: "/automation-policy",
-      iconColor: theme === "dark" ? "text-green-400" : "text-green-600",
-    },
   ];
 
   return (
-    <div
-      className={`py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-300`}
-    >
+    <div className="py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <motion.div
@@ -55,18 +41,16 @@ const Policy = () => {
           transition={{ duration: 0.5 }}
           className="text-center mb-12"
         >
-          <h1
-            className={`text-4xl md:text-5xl font-bold mb-4 text-[#0A9087] font-logo`}
-          >
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-[#0A9087] font-logo">
             Hyper Picks Compliance
           </h1>
-          <p className={`text-lg font-logo text-white `}>
+          <p className="text-lg font-logo text-white">
             Review our terms, privacy practices, and automation guidelines
           </p>
         </motion.div>
 
-        {/* Policy Cards Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Policy Cards — flex + justify-center fixes odd card alignment */}
+        <div className="flex flex-wrap justify-center gap-6">
           {policies.map((policy, index) => {
             const Icon = policy.icon;
 
@@ -77,7 +61,7 @@ const Policy = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className={`group relative p-6 flex flex-col justify-center items-center rounded-xl border ${borderClass} ${cardBg} transition-all duration-300 ${hoverClass}`}
+                className={`group relative p-6 w-full sm:w-72 flex flex-col justify-center items-center rounded-xl border ${borderClass} ${cardBg} transition-all duration-300 ${hoverClass}`}
               >
                 {/* Icon */}
                 <div
@@ -99,7 +83,7 @@ const Policy = () => {
                 </p>
 
                 {/* View Details */}
-                <div className="mt-4 flex items-center text-sm font-medium text-[#0A9087] hover:text-[#023c38] group-hover:gap-2 transition-all duration-300">
+                <div className="mt-4 flex items-center gap-1 text-sm font-medium text-[#0A9087] group-hover:gap-2 transition-all duration-300">
                   <span>View Details</span>
                   <svg
                     className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300"

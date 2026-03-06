@@ -66,7 +66,7 @@ const Dropdown = ({
     } light-theme  ${
       theme === "dark" ? "text-lightBlack" : "text-darkgerGrey"
     }`,
-    bg_black: `bg-darkerBlack xl:px-8 px-5 ${
+    bg_black: `bg-[#054844] xl:px-8 px-5 border-none ${
       sizeClasses[size]
     } placeholder:text-mediumGrey text-lighterGrey ${
       theme === "dark" ? "border-lightBlack" : "border-lightBlue"
@@ -75,7 +75,7 @@ const Dropdown = ({
     }`,
   };
 
-  const baseClass = `focus:outline-none focus:border-mediumBlue placeholder:font-normal border-2 w-full thin-scrollbar transition-colors duration-200 tracking-wide  resize-none w-full cursor-pointer flex justify-between items-center`;
+  const baseClass = `focus:outline-none focus:border-[#009c91] placeholder:font-normal border-2 w-full thin-scrollbar transition-colors duration-200 tracking-wide  resize-none w-full cursor-pointer flex justify-between items-center`;
 
   return (
     <div
@@ -128,7 +128,9 @@ const Dropdown = ({
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ type: "spring", stiffness: 50, damping: 10 }}
         >
-          <FaChevronDown className="text-lightBlack" />
+          <FaChevronDown
+            className={`${theme === "dark" ? "text-white" : "text-black"}`}
+          />
         </motion.div>
       </div>
 
@@ -147,7 +149,7 @@ const Dropdown = ({
               atLeft ? "left-0" : "right-0"
             } border rounded-lg shadow-md z-[1000] mt-1 mb-1 p-1 overflow-y-scroll  max-h-[200px] thin-scrollbar ${
               theme === "dark"
-                ? "bg-[#0a0a0a] border-gray-700"
+                ? "bg-[#054844] border-gray-700"
                 : "bg-white border-lighterGrey"
             }`}
           >
@@ -156,9 +158,9 @@ const Dropdown = ({
                 key={index}
                 className={`px-5 py-2 cursor-pointer m-1 rounded-md font-medium text-[10px] sm:text-xs lg:text-sm transition-all duration-200 ${
                   selectedValue === option.value
-                    ? "text-white bg-lightBlue"
+                    ? "text-white bg-[#026a63]"
                     : theme === "dark"
-                      ? "text-white hover:bg-lightBlue hover:text-white"
+                      ? "text-white hover:bg-[#001f1d] hover:text-white"
                       : "text-darkerGrey hover:bg-lightBlue hover:text-white"
                 }`}
                 onClick={() => handleDropDown(option.value)}

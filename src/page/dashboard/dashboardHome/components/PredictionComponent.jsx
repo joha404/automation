@@ -1,41 +1,9 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useTheme } from "@/hooks/custom/useTheme";
+import { useNavigate } from "react-router-dom";
 
 const tabs = ["All Predictions", "Play of the Day", "Futures", "Live"];
-
-const predictions = [
-  {
-    id: 1,
-    title: "Titans +14.5 (-147)",
-    league: "NBA",
-    matchup: "Detroit Lions vs Philadelphia Eagles",
-    date: "Feb 26, 05:37PM",
-    betType: "F",
-    betTypeColor: "#FF4444",
-    betSize: "4.00%",
-  },
-  {
-    id: 2,
-    title: "Titans +14.5 (-147)",
-    league: "NBA",
-    matchup: "Detroit Lions vs Philadelphia Eagles",
-    date: "Feb 26, 05:37PM",
-    betType: "S",
-    betTypeColor: "#FFFFFF",
-    betSize: "4.00%",
-  },
-  {
-    id: 3,
-    title: "Titans +14.5 (-147)",
-    league: "NBA",
-    matchup: "Detroit Lions vs Philadelphia Eagles",
-    date: "Feb 26, 05:37PM",
-    betType: "POTD",
-    betTypeColor: "#C27AFF",
-    betSize: "4.00%",
-  },
-];
 
 const NBAIcon = () => (
   <div
@@ -98,6 +66,35 @@ const ChartIcon = ({ color }) => (
   </svg>
 );
 
+const getBetTypeColor = (type, t) => {
+  switch (type) {
+    case "S":
+      return t.betTypeS;
+    case "F":
+      return "#eb464c";
+    case "L":
+      return "#FFDB5B";
+    case "PP":
+      return "#4ade80";
+    case "POTD":
+      return "#c084fc";
+    case "P":
+      return "#facc15";
+    default:
+      return "#60a5fa";
+  }
+};
+
+const formatDate = (dateString) => {
+  if (!dateString) return "N/A";
+  const date = new Date(dateString);
+  return (
+    date.toLocaleDateString("en-US", { month: "short", day: "numeric" }) +
+    ", " +
+    date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
+  );
+};
+
 // ── Theme tokens ──────────────────────────────────────────────
 const tokens = {
   dark: {
@@ -122,6 +119,7 @@ const tokens = {
     bolt: "#F5C518",
     clock: "#6B7B7A",
     betTypeS: "#ffffff",
+    emptyText: "rgba(255,255,255,0.4)",
   },
   light: {
     wrapper: "#edf7f6",
@@ -145,12 +143,14 @@ const tokens = {
     bolt: "#e6a800",
     clock: "#8aaba8",
     betTypeS: "#0A9087",
+    emptyText: "rgba(10,31,30,0.4)",
   },
 };
 
 function PredictionRow({ p, i, t }) {
   const [hovered, setHovered] = useState(false);
-  const betTypeColor = p.betType === "S" ? t.betTypeS : p.betTypeColor;
+  const betType = p.prediction_type || p.betType || "N/A";
+  const betTypeColor = getBetTypeColor(betType, t);
 
   return (
     <motion.div
@@ -166,14 +166,24 @@ function PredictionRow({ p, i, t }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: i * 0.08, duration: 0.35 }}
     >
-      <NBAIcon />
+      {/* Logo */}
+      {p.image ? (
+        <img
+          src={p.image}
+          alt={p.game}
+          className="w-9 h-9 rounded-full object-cover flex-shrink-0"
+        />
+      ) : (
+        <NBAIcon />
+      )}
 
+      {/* Main Info */}
       <div className="flex-1 min-w-0">
         <p
           className="font-semibold font-logo text-[13px] sm:text-[14px] leading-tight mb-1"
           style={{ color: t.title }}
         >
-          {p.title}
+          {p.prediction_desc || p.title || "N/A"}
         </p>
         <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
           <div className="flex items-center gap-1">
@@ -182,21 +192,22 @@ function PredictionRow({ p, i, t }) {
               className="text-[11px] font-logo sm:text-[12px]"
               style={{ color: t.sub }}
             >
-              {p.matchup}
+              {p.game || p.matchup || "N/A"}
             </span>
           </div>
-          <div className="flex items-center  gap-1">
+          <div className="flex items-center gap-1">
             <ClockIcon color={t.clock} />
             <span
               className="text-[11px] font-logo sm:text-[12px]"
               style={{ color: t.sub }}
             >
-              {p.date}
+              {p.date_time ? formatDate(p.date_time) : p.date || "N/A"}
             </span>
           </div>
         </div>
       </div>
 
+      {/* Bet Type */}
       <div className="flex-shrink-0 text-right mr-2 sm:mr-6">
         <p
           className="text-[10px] font-logo sm:text-[11px] mb-1"
@@ -208,13 +219,14 @@ function PredictionRow({ p, i, t }) {
           className="font-bold text-[13px] font-logo text-center sm:text-[14px]"
           style={{ color: betTypeColor }}
         >
-          {p.betType}
+          {betType}
         </p>
       </div>
 
+      {/* Bet Size */}
       <div className="flex-shrink-0 text-right">
         <p
-          className="text-[10px] text-center font-logo  sm:text-[11px] mb-2"
+          className="text-[10px] text-center font-logo sm:text-[11px] mb-2"
           style={{ color: t.label }}
         >
           Bet Size
@@ -227,7 +239,7 @@ function PredictionRow({ p, i, t }) {
             border: `1px solid ${t.betSizeBorder}`,
           }}
         >
-          {p.betSize}
+          {p.unit_size || p.bet_size || p.betSize || "N/A"}
         </span>
       </div>
     </motion.div>
@@ -235,10 +247,17 @@ function PredictionRow({ p, i, t }) {
 }
 
 export default function PredictionComponent({ data }) {
-  const predictionData = data?.data?.package_sections || [];
   const [activeTab, setActiveTab] = useState("All Predictions");
   const { theme } = useTheme();
   const t = tokens[theme] ?? tokens.dark;
+  const navigate = useNavigate();
+
+  // ✅ Handle both flat results[] and package_sections[] API shapes
+  const innerData = data?.data || data || {};
+  const rawResults = innerData?.results || [];
+  const predictionData = innerData?.package_sections
+    ? innerData.package_sections.flatMap((pkg) => pkg.predictions || [])
+    : rawResults;
 
   return (
     <div
@@ -281,13 +300,16 @@ export default function PredictionComponent({ data }) {
       {/* Rows */}
       <div className="flex flex-col">
         {predictionData.length === 0 ? (
-          <p className="text-center py-4 text-sm font-logo text-white/40">
+          <p
+            className="text-center py-4 text-sm font-logo"
+            style={{ color: t.emptyText }}
+          >
             No predictions available
           </p>
         ) : (
-          predictionData.map((p, i) => (
-            <PredictionRow key={p.id} p={p} i={i} t={t} />
-          ))
+          predictionData
+            ?.slice(0, 5)
+            ?.map((p, i) => <PredictionRow key={p.id} p={p} i={i} t={t} />)
         )}
       </div>
 
@@ -295,6 +317,7 @@ export default function PredictionComponent({ data }) {
       {predictionData.length > 0 && (
         <div className="text-center mt-2">
           <button
+            onClick={() => navigate("/dashboard/predictions")}
             className="font-semibold text-[13px] font-logo sm:text-[14px] cursor-pointer tracking-wide"
             style={{ color: t.viewAll, transition: "opacity 0.15s ease" }}
             onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.5")}

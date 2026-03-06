@@ -207,7 +207,9 @@ const Setting = () => {
               className="w-full text-center mt-2"
             >
               For any customer support issues, please email{" "}
-              <span className="text-[#0A9087]">customersupport@hyperpicks</span>
+              <span className="text-[#0A9087]">
+                customersupport@hyperpicks.ai
+              </span>
             </CommonParagraph>
           </CommonWrapper>
         </div>
