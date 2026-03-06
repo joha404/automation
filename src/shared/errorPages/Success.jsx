@@ -75,33 +75,33 @@ const Success = () => {
 
   const data = subscription;
   const pkg = data?.package;
-  useEffect(() => {
-    if (
-      !loading &&
-      pkg?.price &&
-      typeof window !== "undefined" &&
-      window.fbq &&
-      !fbTrackedRef.current
-    ) {
-      window.fbq("track", "Purchase", {
-        value: Number(pkg.price),
-        currency: "USD",
-        content_ids: pkg?.stripe_price_id ? [pkg.stripe_price_id] : [],
-        content_type: "product",
-        transaction_id: pkg?.order_id || `order_${Date.now()}`,
-      });
+  // useEffect(() => {
+  //   if (
+  //     !loading &&
+  //     pkg?.price &&
+  //     typeof window !== "undefined" &&
+  //     window.fbq &&
+  //     !fbTrackedRef.current
+  //   ) {
+  //     window.fbq("track", "Purchase", {
+  //       value: Number(pkg.price),
+  //       currency: "USD",
+  //       content_ids: pkg?.stripe_price_id ? [pkg.stripe_price_id] : [],
+  //       content_type: "product",
+  //       transaction_id: pkg?.order_id || `order_${Date.now()}`,
+  //     });
 
-      fbTrackedRef.current = true;
+  //     fbTrackedRef.current = true;
 
-      console.log(" FB Pixel Event Fired: Purchase", pkg.price);
-    }
-  }, [loading, pkg]);
+  //     console.log(" FB Pixel Event Fired: Purchase", pkg.price);
+  //   }
+  // }, [loading, pkg]);
 
   return (
     <div
       className={`min-h-screen flex flex-col items-center justify-center px-4 py-6 transition-colors duration-300 overflow-hidden ${
         isDark
-          ? "bg-[#0d0d0d]"
+          ? "bg-[#020C0B]"
           : "bg-gradient-to-br from-blue-50 via-white to-purple-50"
       }`}
     >
@@ -127,7 +127,7 @@ const Success = () => {
       {/* Card */}
       <div
         className={`relative z-10 w-full max-w-4xl rounded-3xl shadow-md backdrop-blur-sm transition-all duration-300 ${
-          isDark ? "bg-[#0d0d0d] " : "bg-white/90 border border-gray-200/50"
+          isDark ? "bg-[#054844] " : "bg-white/90 border border-gray-200/50"
         }`}
       >
         {loading ? (
@@ -143,9 +143,7 @@ const Success = () => {
               />
               <div
                 className={`relative w-full h-full rounded-full flex items-center justify-center shadow-lg ${
-                  isDark
-                    ? "bg-gradient-to-br from-green-500 to-green-600"
-                    : "bg-gradient-to-br from-green-400 to-green-500"
+                  isDark ? "bg-[#0A9087]" : "bg-[#0A9087]"
                 }`}
               >
                 <GiCheckMark className="w-10 h-10 text-white animate-bounce" />
@@ -154,7 +152,7 @@ const Success = () => {
 
             {/* Title */}
             <div className="mb-4 text-center">
-              <CommonTitle className="mb-2 font-semibold xl:mt-2 mt-10 text-lightGrey">
+              <CommonTitle className="mb-2 font-semibold xl:mt-2 mt-10 text-[#0A9087]">
                 Payment Successful!
               </CommonTitle>
               <CommonParagraph
@@ -164,7 +162,7 @@ const Success = () => {
                 }
               >
                 Welcome to{" "}
-                <strong className="text-blue-500">{pkg?.name}</strong>! Your
+                <strong className="text-[#0A9087]">{pkg?.name}</strong>! Your
                 subscription is now active.
               </CommonParagraph>
             </div>
@@ -172,22 +170,19 @@ const Success = () => {
             {/* Package Card */}
             <div
               className={`mb-4 p-4 rounded-2xl ${
-                isDark
-                  ? "bg-[#0d0d0d] border border-lightGrey"
-                  : "bg-gradient-to-br from-blue-100 to-purple-100"
+                isDark ? "bg-[#021716] " : "bg-gray-100"
               }`}
             >
               <div className="flex items-center justify-center gap-2 mb-2">
                 <FaCrown className="text-yellow-500" />
                 <h3
-                  style={{ color: pkg?.color }}
-                  className="text-2xl font-bold"
+                  className={`text-2xl font-bold font-logo ${isDark ? "text-white " : "text-black"}`}
                 >
                   {pkg?.name}
                 </h3>
               </div>
               <div className="flex justify-center gap-2">
-                <span className="text-3xl font-bold text-lightGrey">
+                <span className="text-3xl font-bold text-[#0A9087]">
                   ${pkg?.price}
                 </span>
                 <span className="text-lightGrey">/ {pkg?.interval}</span>
@@ -195,7 +190,7 @@ const Success = () => {
             </div>
 
             {/* Dates & Email */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4 text-lightGrey">
               {[
                 { label: "Start Date", value: data?.start_date },
                 { label: "Next Billing", value: data?.end_date },
@@ -204,7 +199,7 @@ const Success = () => {
                   key={i}
                   className={`p-3 rounded-xl ${
                     isDark
-                      ? "bg-[#0d0d0d] border border-lightGrey text-lightGrey text-bold"
+                      ? "bg-[#021716]  text-bold"
                       : "bg-gray-100 text-black"
                   }`}
                 >
@@ -220,18 +215,22 @@ const Success = () => {
 
               <div
                 className={`p-3 rounded-xl md:col-span-2 ${
-                  isDark
-                    ? "bg-[#0d0d0d] border border-lightGrey "
-                    : "bg-gray-100"
+                  isDark ? "bg-[#021716]  border-lightGrey " : "bg-gray-100"
                 }`}
               >
-                <div className="flex items-center gap-2 mb-1">
+                <div
+                  className={`flex items-center gap-2 mb-1 ${
+                    isDark ? "text-white " : " text-black"
+                  }`}
+                >
                   <FaEnvelope />
-                  <span className="font-semibold text-bold text-lightGrey">
+                  <span className="font-semibold text-bold ">
                     Account Email
                   </span>
                 </div>
-                <p className="ml-6 font-medium">{data?.user}</p>
+                <p className="ml-6 font-medium text-lightGrey font-logo">
+                  {data?.user}
+                </p>
               </div>
             </div>
 
@@ -251,7 +250,7 @@ const Success = () => {
             <div className="flex justify-center">
               <button
                 onClick={() => navigate("/dashboard")}
-                className="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-purple-600 text-white font-bold shadow-lg hover:scale-105 transition"
+                className="px-6 py-3 rounded-xl bg-[#0A9087] cursor-pointer text-white font-bold shadow-lg hover:scale-105 transition"
               >
                 Go to Dashboard →
               </button>

@@ -159,13 +159,13 @@ const ResultSection = ({ data: propData }) => {
               {headlineUnits} %
             </CommonParagraph>
 
-            <div className="flex flex-wrap justify-center gap-1 text-xs w-full">
+            <div className="flex flex-wrap justify-center gap-1 my-5 text-xs w-full">
               {statsData.map((stat, index) => (
                 <div
                   key={index}
                   className={`border ${
                     theme === "dark"
-                      ? "bg-darkBlack border-mediumBlack"
+                      ? "bg-[#054844] border-mediumBlack"
                       : "bg-white border-lighterGrey"
                   } text-gray-700 py-1 px-2 rounded flex justify-between items-center
                     w-1/2 sm:w-[100px] md:w-[120px] lg:w-[100px] xlg:w-[110px] xl:w-[130px] 2xl:w-[110px]`}
@@ -197,7 +197,7 @@ const ResultSection = ({ data: propData }) => {
                   key={index}
                   className={`border ${
                     theme === "dark"
-                      ? "bg-darkBlack border-mediumBlack"
+                      ? "bg-[#054844] border-mediumBlack"
                       : "bg-white border-lighterGrey"
                   } text-gray-700 py-0.5 rounded flex flex-row justify-center items-center gap-2`}
                 >
@@ -218,7 +218,7 @@ const ResultSection = ({ data: propData }) => {
               theme === "dark" ? "bg-[#020C0B]" : "bg-lightestGrey"
             }`}
           >
-            <div className="w-full flex lg:flex-row flex-col-reverse gap-2 lg:justify-between justify-start items-center mb-1">
+            {/* <div className="w-full flex lg:flex-row flex-col-reverse gap-2 lg:justify-between justify-start items-center mb-1">
               <div className="xl:w-[200px] w-[120px]">
                 <Dropdown
                   atLeft={true}
@@ -230,7 +230,7 @@ const ResultSection = ({ data: propData }) => {
                   onChange={(value) => setSelectedMarket(value)}
                 />
               </div>
-            </div>
+            </div> */}
 
             <div
               className={`${
@@ -303,7 +303,7 @@ const ResultSection = ({ data: propData }) => {
               theme === "dark" ? "bg-[#020C0B]" : "bg-lightestGrey"
             }`}
           >
-            <div className="w-full flex flex-col-reverse gap-2 justify-start items-start">
+            <div className="w-full flex flex-col-reverse gap-2 justify-center items-center">
               <div
                 className={`flex gap-1 flex-wrap border rounded-md shadow-lg p-0.5 ${
                   theme === "dark"

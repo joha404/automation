@@ -96,14 +96,6 @@ const UnitSize = ({ unitData, sportsData }) => {
           : "bg-white border-lightestGrey"
       }`}
     >
-      <h1
-        className={`font-logo font-bold text-[20px] my-8 ${
-          theme === "dark" ? "text-white" : "text-black"
-        }`}
-      >
-        Result
-      </h1>
-
       <div className="mx-auto">
         {/* Sports Type */}
         <div>

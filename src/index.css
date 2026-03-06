@@ -78,7 +78,7 @@ xl: 1280px
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-mediumBlue); /* Darker grey */
+  background: #0a9087; /* Darker grey */
   border-radius: 4px;
 }
 
@@ -101,7 +101,7 @@ xl: 1280px
 }
 
 .thin-scrollbar::-webkit-scrollbar-thumb {
-  background: #454f5b; /* Light gray thumb */
+  background: #0a9087; /* Light gray thumb */
   border-radius: 10px; /* Rounded corners */
 }
 
@@ -157,4 +157,20 @@ select.dark-theme:-webkit-autofill {
   background-color: transparent !important;
   -webkit-text-fill-color: #c9d3de !important;
   transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Hot Toast Custom Styles */
+.toast-base {
+  background: #0a9087 !important;
+  color: #ffffff !important;
+}
+
+.toast-success {
+  background: #0a9087 !important;
+  color: #ffffff !important;
+}
+
+.toast-error {
+  background: #032422 !important;
+  color: #eb464c !important;
 }

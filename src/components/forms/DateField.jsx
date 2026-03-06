@@ -27,7 +27,7 @@ const DateField = ({
   // Enhanced validation function for dates
   const validateDate = (value) => {
     if (!value) return true; // Allow empty field if not required
-    
+
     // Check format YYYY-MM-DD
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (!dateRegex.test(value)) {
@@ -89,10 +89,10 @@ const DateField = ({
   // Handle date format during input
   const handleDateChange = (e) => {
     let value = e.target.value;
-    
+
     // Remove all non-digit characters
-    const numericValue = value.replace(/\D/g, '');
-    
+    const numericValue = value.replace(/\D/g, "");
+
     // Format the date based on input length
     if (numericValue.length <= 4) {
       value = numericValue;
@@ -101,23 +101,26 @@ const DateField = ({
     } else {
       value = `${numericValue.slice(0, 4)}-${numericValue.slice(4, 6)}-${numericValue.slice(6, 8)}`;
     }
-    
+
     setLocalValue(value);
     if (inputProps.onChange) {
       inputProps.onChange({
         ...e,
         target: {
           ...e.target,
-          value: value
-        }
+          value: value,
+        },
       });
     }
   };
 
- const sizeClasses = {
-    small: "py-1 xl:text-sm text-xs  xl:placeholder:text-sm placeholder:text-xs xl:px-5 px-3 rounded-md",
-    medium: "py-2.5 xl:text-sm text-xs  xl:placeholder:text-sm placeholder:text-xs xl:px-8 px-5 rounded-lg",
-    large: "py-3 xl:text-[16px] text-sm  xl:placeholder:text-[16px] placeholder:text-sm xl:px-8 px-5 rounded-lg",
+  const sizeClasses = {
+    small:
+      "py-1 xl:text-sm text-xs  xl:placeholder:text-sm placeholder:text-xs xl:px-5 px-3 rounded-md",
+    medium:
+      "py-2.5 xl:text-sm text-xs  xl:placeholder:text-sm placeholder:text-xs xl:px-8 px-5 rounded-lg",
+    large:
+      "py-3 xl:text-[16px] text-sm  xl:placeholder:text-[16px] placeholder:text-sm xl:px-8 px-5 rounded-lg",
   };
 
   const variants = {
@@ -127,13 +130,15 @@ const DateField = ({
   };
 
   const baseClass =
-    "focus:outline-none focus:border-mediumBlue placeholder:font-normal border-2 border-lightGrey w-full thin-scrollbar transition-colors duration-200 tracking-wide";
+    "focus:outline-none focus:border-[#009c91] placeholder:font-normal border-2 border-lightGrey w-full thin-scrollbar transition-colors duration-200 tracking-wide";
 
   return (
     <div className="flex flex-col space-y-2 w-full">
       {label && (
         <label htmlFor={register_as}>
-          <CommonParagraph className={`font-medium ${variant === "bg_black" ? "text-lighterGrey" : "text-darkBlack" }`}>
+          <CommonParagraph
+            className={`font-medium ${variant === "bg_black" ? "text-lighterGrey" : "text-darkBlack"}`}
+          >
             {label}
           </CommonParagraph>
         </label>
@@ -154,7 +159,7 @@ const DateField = ({
               className,
               baseClass,
               variants[variant],
-              errorMessage && "border-mediumBlue focus:border-mediumBlue"
+              errorMessage && "border-mediumBlue focus:border-mediumBlue",
             )}
             autoComplete={autoComplete}
             maxLength={10}
@@ -173,7 +178,7 @@ const DateField = ({
               className,
               baseClass,
               variants[variant],
-              errorMessage && "border-mediumBlue focus:border-mediumBlue"
+              errorMessage && "border-mediumBlue focus:border-mediumBlue",
             )}
             {...inputProps}
             {...props}
@@ -190,7 +195,7 @@ const DateField = ({
               className,
               baseClass,
               variants[variant],
-              errorMessage && "border-darkBlue focus:border-darkBlue"
+              errorMessage && "border-darkBlue focus:border-darkBlue",
             )}
             autoComplete={autoComplete}
             {...inputProps}
@@ -200,7 +205,9 @@ const DateField = ({
       </div>
 
       {errorMessage && (
-        <p className={` ${variant === "bg_black" ? "text-rose-500" : "text-rose-700" } font-normal xl:text-base text-sm tracking-wide xl:px-8 px-5`}>
+        <p
+          className={` ${variant === "bg_black" ? "text-rose-500" : "text-rose-700"} font-normal xl:text-base text-sm tracking-wide xl:px-8 px-5`}
+        >
           {errorMessage}
         </p>
       )}

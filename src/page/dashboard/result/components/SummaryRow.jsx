@@ -21,7 +21,7 @@ const SummaryRow = ({ title, data, theme }) => (
           ? "bg-lightBlack text-white"
           : data.net < 0
             ? "bg-rose-600 text-white"
-            : "bg-green-700 text-white"
+            : "bg-[#054844] text-white"
       }`}
     >
       {data?.net || "0.00"} %

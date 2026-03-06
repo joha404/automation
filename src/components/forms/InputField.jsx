@@ -49,7 +49,7 @@ const InputField = ({
   };
 
   const baseClass =
-    "focus:outline-none focus:border-mediumBlue placeholder:font-normal w-full thin-scrollbar transition-colors duration-200 tracking-wide";
+    "focus:outline-none focus:border-[#009c91] placeholder:font-normal w-full thin-scrollbar transition-colors duration-200 tracking-wide";
 
   return (
     <div className="flex flex-col lg:space-y-2 space-y-1 w-full">

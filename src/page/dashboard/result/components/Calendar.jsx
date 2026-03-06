@@ -240,10 +240,10 @@ const Calendar = ({ calendarData }) => {
               ? "bg-transparent"
               : dayData
                 ? isZeroValue || dayData.color === "green"
-                  ? "bg-green-600/90 hover:bg-green-400 border-green-400"
+                  ? "bg-[#054844] hover:bg-[#086b64] "
                   : "bg-rose-600/90 hover:bg-rose-700 border-red-400"
                 : theme === "dark"
-                  ? "bg-lightBlack hover:bg-lightBlack/60 border-darkerGrey"
+                  ? "bg-[#001f1d] hover:bg-lightBlack/60 border-darkerGrey"
                   : "bg-lighterGrey hover:bg-lightBlue border-lightBlue"
           }
           ${!isEmpty && "hover:scale-105"}
@@ -257,8 +257,8 @@ const Calendar = ({ calendarData }) => {
                       dayData
                         ? "text-white"
                         : theme === "dark"
-                          ? "text-lighterGrey"
-                          : "text-darkGrey"
+                          ? "text-white"
+                          : "text-white"
                     }`}
                   >
                     {day}
@@ -274,7 +274,7 @@ const Calendar = ({ calendarData }) => {
                       } ${
                         theme === "dark"
                           ? "bg-black/20 text-white"
-                          : "bg-white/20 text-darkGrey"
+                          : "bg-black/20 text-white"
                       }`}
                     >
                       {parseFloat(dayData.value).toFixed(2)} %
@@ -305,8 +305,8 @@ const Calendar = ({ calendarData }) => {
             parseFloat(currentMonthPL) < 0
               ? "bg-rose-600 text-white"
               : parseFloat(currentMonthPL) === 0
-                ? "bg-gray-500 text-white"
-                : "bg-green-600 text-white"
+                ? "bg-[#054844] text-white"
+                : "bg-[#054844] text-white"
           }`}
         >
           {currentMonthPL}

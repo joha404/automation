@@ -35,7 +35,19 @@ function App() {
       <SidebarProvider>
         <Provider store={store}>
           <RouterProvider router={router} />
-          <Toaster containerStyle={{ zIndex: 9999 }} />
+          <Toaster
+            containerStyle={{ zIndex: 9999 }}
+            toastOptions={{
+              className: "toast-base",
+              success: {
+                className: "toast-success",
+              },
+              error: {
+                className: "toast-error",
+              },
+            }}
+          />
+          {/* <Toaster containerStyle={{ zIndex: 9999 }} /> */}
         </Provider>
       </SidebarProvider>
     </ThemeProvider>

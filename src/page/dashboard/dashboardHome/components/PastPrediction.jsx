@@ -112,7 +112,7 @@ const PastPrediction = ({ data }) => {
             theme === "dark" ? "border-lightBlack" : "border-lighterGrey"
           }`}
         >
-          {item.image ? (
+          {item?.image ? (
             <img
               src={item.image}
               alt={item.game}
@@ -120,7 +120,7 @@ const PastPrediction = ({ data }) => {
             />
           ) : (
             <div className="w-full h-full rounded-full flex items-center justify-center bg-gray-200 text-gray-700 font-bold text-xs">
-              {item.game?.[0]?.toUpperCase() || ""}
+              {item?.game?.[0]?.toUpperCase() || ""}
             </div>
           )}
         </div>
@@ -137,8 +137,8 @@ const PastPrediction = ({ data }) => {
                 }`}
               >
                 {item.prediction_desc
-                  ? item.prediction_desc.length > 35
-                    ? item.prediction_desc.slice(0, 35) + "..."
+                  ? item?.prediction_desc.length > 35
+                    ? item?.prediction_desc?.slice(0, 35) + "..."
                     : item.prediction_desc
                   : "N/A"}
               </CommonParagraph>
@@ -189,7 +189,7 @@ const PastPrediction = ({ data }) => {
                   item.prediction_type || "N/A",
                 )}`}
               >
-                {item.prediction_type || "N/A"}
+                {item?.prediction_type || "N/A"}
               </span>
             </div>
           </div>
@@ -221,7 +221,7 @@ const PastPrediction = ({ data }) => {
           {/* ── Desktop ── */}
           <div className="lg:block hidden">
             <div className="space-y-1">
-              {items.slice(0, 5).map((item) => (
+              {items?.slice(0, 5).map((item) => (
                 <PredictionCard key={item.id} item={item} />
               ))}
             </div>
@@ -230,7 +230,7 @@ const PastPrediction = ({ data }) => {
           {/* ── Mobile ── */}
           <div className="lg:hidden block">
             <div className="space-y-1">
-              {items.slice(0, 5).map((item) => (
+              {items?.slice(0, 5).map((item) => (
                 <PredictionCard key={item.id} item={item} />
               ))}
             </div>

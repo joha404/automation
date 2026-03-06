@@ -23,7 +23,7 @@ const ErrorPage = ({
   }, []);
 
   return (
-    <div className="bg-[#032422] min-h-screen">
+    <div className="bg-[#054844] min-h-screen">
       <div className="container mx-auto px-4">
         {/* Logo */}
         <div className="flex xlg:justify-start justify-center mt-5  lg:mb-5">

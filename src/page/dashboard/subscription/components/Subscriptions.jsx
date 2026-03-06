@@ -1,187 +1,552 @@
 import { useTheme } from "@/hooks/custom/useTheme";
-import { useEffect, useState, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import CommonWrapper from "@/components/wrappers/CommonWrapper";
-import CommonTitle from "@/components/texts/CommonTitle";
-import CommonParagraph from "@/components/texts/CommonParagraph";
-import { GiCheckMark } from "react-icons/gi";
-import SubmitButton from "@/components/buttons/SubmitButton";
-import { CgClose } from "react-icons/cg";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
+import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import { useGet } from "@/hooks/api/common/useGet";
-import ScreenLoader from "@/components/loaders/ScreenLoader";
 import { usePost } from "@/hooks/api/common/usePost";
 import { useNavigate } from "react-router-dom";
-import "swiper/css/bundle";
+import ScreenLoader from "@/components/loaders/ScreenLoader";
+import { GiCheckMark } from "react-icons/gi";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/pagination";
 
+// ── Theme Tokens ──────────────────────────────────────────────
+const t = {
+  dark: {
+    pageBg: "#040e0d",
+    headingColor: "text-white",
+    subColor: "text-white/55",
+    cardBg: "linear-gradient(201.03deg, #4D5456 -21.17%, #020C0B 62.19%)",
+    cardBorderFeat: "1px solid #0A9087",
+    cardBorderSmall: "1px solid #858F95",
+    glowFeat:
+      "radial-gradient(ellipse 70% 50% at 50% 0%, rgba(10,144,135,0.13) 0%, transparent 70%)",
+    glowSmall:
+      "radial-gradient(ellipse 70% 50% at 50% 0%, rgba(10,144,135,0.09) 0%, transparent 70%)",
+    planName: "text-white",
+    price: "text-white",
+    pricePeriod: "text-white/45",
+    featureText: "text-white/80",
+    featureFeatText: "text-[#e2f0ee]",
+    checkBg: "rgba(10,144,135,0.18)",
+    checkColor: "text-[#0A9087]",
+    btnBg: "linear-gradient(3.11deg, #020C0B -44.12%, #055651 149.92%)",
+    btnBorder: "border-[#0A9087]",
+    btnText: "text-white",
+    cancelBtnBg: "transparent",
+    cancelBtnBorder: "border-white/30",
+    cancelBtnText: "text-white",
+    cancelBtnHoverBg: "rgba(255,255,255,0.06)",
+    mostPopBg: "#0A9087",
+    mostPopText: "text-white",
+    saveBg: "#00C08026",
+    saveText: "#00C080",
+    saveBadgeBg: "#00C08026",
+    saveBadgeText: "#00C080",
+    divider: "border-white/10",
+    subInfo: "text-white/35",
+    emptyText: "text-white/40",
+    dotColor: "rgba(255,255,255,0.3)",
+    dotActive: "#0A9087",
+    currentCardBorder: "1px solid #0A9087",
+    currentLabelColor: "#0A9087",
+  },
+  light: {
+    pageBg: "#f0faf9",
+    headingColor: "text-[#0a1f1e]",
+    subColor: "text-[#0a1f1e]/50",
+    cardBg: "linear-gradient(160deg, #ffffff 0%, #e8f7f5 100%)",
+    cardBorderFeat: "1px solid #0A9087",
+    cardBorderSmall: "1px solid #c5e4e1",
+    glowFeat:
+      "radial-gradient(ellipse 70% 50% at 50% 0%, rgba(10,144,135,0.10) 0%, transparent 70%)",
+    glowSmall:
+      "radial-gradient(ellipse 70% 50% at 50% 0%, rgba(10,144,135,0.06) 0%, transparent 70%)",
+    planName: "text-[#0a1f1e]",
+    price: "text-[#0a1f1e]",
+    pricePeriod: "text-[#0a1f1e]/45",
+    featureText: "text-[#0a1f1e]/75",
+    featureFeatText: "text-[#0a2e2c]",
+    checkBg: "rgba(10,144,135,0.12)",
+    checkColor: "text-[#0A9087]",
+    btnBg: "linear-gradient(3.11deg, #0A9087 -44.12%, #0dc4b4 149.92%)",
+    btnBorder: "border-[#0A9087]",
+    btnText: "text-white",
+    cancelBtnBg: "transparent",
+    cancelBtnBorder: "border-[#0a1f1e]/25",
+    cancelBtnText: "text-[#0a1f1e]",
+    cancelBtnHoverBg: "rgba(10,31,30,0.06)",
+    mostPopBg: "#0A9087",
+    mostPopText: "text-white",
+    saveBg: "#dcfce7",
+    saveText: "#15803d",
+    saveBadgeBg: "#00C08026",
+    saveBadgeText: "#00C080",
+    divider: "border-[#0a1f1e]/10",
+    subInfo: "text-[#0a1f1e]/35",
+    emptyText: "text-[#0a1f1e]/40",
+    dotColor: "rgba(10,31,30,0.2)",
+    dotActive: "#0A9087",
+    currentCardBorder: "1px solid #0A9087",
+    currentLabelColor: "#0A9087",
+  },
+};
+
+// ── Animations ────────────────────────────────────────────────
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  visible: (i = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.1, duration: 0.45, ease: "easeOut" },
+  }),
+};
+const cardVariant = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (i = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i, duration: 0.45, ease: "easeOut" },
+  }),
+};
+
+// ── Helpers ───────────────────────────────────────────────────
+const getPeriodLabel = (period) => {
+  switch (period) {
+    case "weekly":
+      return "/wk";
+    case "monthly":
+      return "/mo";
+    case "quarterly":
+      return "/quarter";
+    case "annual":
+    case "annually":
+      return "/yr";
+    default:
+      return period ? `/${period}` : "";
+  }
+};
+
+const getMonthlyBreakdown = (price, period) => {
+  const p = Number(String(price).replace(/[^0-9.]/g, ""));
+  if (!p) return null;
+  if (period === "quarterly") return `($${(p / 3).toFixed(2)}/mo)`;
+  if (period === "annual" || period === "annually")
+    return `($${(p / 12).toFixed(2)}/mo)`;
+  return null;
+};
+
+const hasSave = (plan) => {
+  const s = Number(String(plan.save_amount ?? "0").replace(/[^0-9.]/g, ""));
+  return s > 0;
+};
+
+const CheckIcon = ({ tk }) => (
+  <span
+    className="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center"
+    style={{ background: tk.checkBg }}
+  >
+    <GiCheckMark className={tk.checkColor} style={{ fontSize: "9px" }} />
+  </span>
+);
+
+// ── Save Badge (inline next to plan name) ─────────────────────
+const SaveBadge = ({ plan, tk }) => {
+  if (!hasSave(plan)) return null;
+  return (
+    <span
+      className="ml-2 font-bold text-[10px] tracking-widest uppercase px-3 py-1 rounded-full align-middle"
+      style={{ background: tk.saveBadgeBg, color: tk.saveBadgeText }}
+    >
+      SAVE ${plan.save_amount}
+    </span>
+  );
+};
+
+// ── Plan Card (used everywhere) ───────────────────────────────
+const PlanCard = ({
+  plan,
+  idx,
+  onSelect,
+  onCancel,
+  loadingPlanId,
+  isCancelPending,
+  isFeatured = false,
+  tk,
+}) => {
+  const isCurrentPlan = plan.current_plan === true;
+  const isThisLoading = loadingPlanId === plan.id;
+  const anyLoading = !!loadingPlanId || isCancelPending;
+
+  return (
+    <motion.div
+      className="rounded-2xl w-full flex flex-col relative overflow-hidden h-full"
+      style={{
+        background: tk.cardBg,
+        border: isCurrentPlan
+          ? tk.currentCardBorder
+          : isFeatured
+            ? tk.cardBorderFeat
+            : tk.cardBorderSmall,
+        minHeight: "400px",
+      }}
+      variants={cardVariant}
+      initial="hidden"
+      animate="visible"
+      custom={0.1 + (idx ?? 0) * 0.1}
+      whileHover={{ scale: 1.03, transition: { duration: 0.22 } }}
+    >
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: isFeatured ? tk.glowFeat : tk.glowSmall }}
+      />
+      <div className="relative flex flex-col flex-1 px-6 pt-8 pb-7">
+        {/* Badges row */}
+        <div className="flex justify-center gap-2 mb-4 min-h-[28px]">
+          {isCurrentPlan && (
+            <span
+              className="font-extrabold text-[11px] tracking-widest uppercase px-4 py-1.5 rounded-md"
+              style={{ background: tk.currentLabelColor, color: "#fff" }}
+            >
+              CURRENT PLAN
+            </span>
+          )}
+        </div>
+
+        {/* Plan name + save badge */}
+        <div className="flex items-center justify-center mb-3">
+          <p
+            className={`font-bold font-logo text-[15px] tracking-widest uppercase text-center ${tk.planName}`}
+          >
+            {plan.name}
+          </p>
+          <SaveBadge plan={plan} tk={tk} />
+        </div>
+
+        {/* Price */}
+        <div className="flex items-baseline justify-center gap-1 mb-1">
+          <span
+            className={`font-normal font-logo leading-none ${tk.price}`}
+            style={{ fontSize: "44px" }}
+          >
+            ${plan.price}
+          </span>
+          <span
+            className={`font-logo text-[15px] font-normal ${tk.pricePeriod}`}
+          >
+            {getPeriodLabel(plan.package_type)}
+          </span>
+        </div>
+
+        {getMonthlyBreakdown(plan.price, plan.package_type) && (
+          <p className={`text-center text-[12px] mb-1 ${tk.subInfo}`}>
+            {getMonthlyBreakdown(plan.price, plan.package_type)}
+          </p>
+        )}
+        {plan.per_month_price && (
+          <p className={`text-center text-[12px] mb-1 ${tk.subInfo}`}>
+            (${plan.per_month_price}/mo)
+          </p>
+        )}
+
+        {/* Features */}
+        <div className="flex flex-col gap-2.5 flex-1 mt-6 mb-6">
+          {(plan.features || []).map((f, i) => (
+            <motion.div
+              key={f.text}
+              className="flex items-center gap-2.5"
+              initial={{ opacity: 0, x: -8 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{
+                delay: 0.3 + (idx ?? 0) * 0.1 + i * 0.06,
+                duration: 0.35,
+              }}
+            >
+              <CheckIcon tk={tk} />
+              <span
+                className={`text-[14px] font-medium ${isFeatured ? tk.featureFeatText : tk.featureText}`}
+              >
+                {f.text}
+              </span>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Button */}
+        {isCurrentPlan ? (
+          <motion.button
+            onClick={onCancel}
+            disabled={anyLoading}
+            className={`cursor-pointer w-full h-[46px] px-6 rounded-full border font-logo font-bold text-[15px] flex justify-center items-center disabled:opacity-50 ${tk.cancelBtnBorder} ${tk.cancelBtnText}`}
+            style={{ background: tk.cancelBtnBg }}
+            whileHover={{ scale: 1.04, background: tk.cancelBtnHoverBg }}
+            whileTap={{ scale: 0.96 }}
+            transition={{ duration: 0.18 }}
+          >
+            {isCancelPending ? "Cancelling..." : "CANCEL"}
+          </motion.button>
+        ) : (
+          <motion.button
+            onClick={() => onSelect(plan)}
+            disabled={anyLoading}
+            className={`cursor-pointer w-full h-[46px] px-6 rounded-full border font-logo font-bold text-[15px] flex justify-center items-center disabled:opacity-50 ${tk.btnBorder} ${tk.btnText}`}
+            style={{ background: tk.btnBg }}
+            whileHover={{
+              scale: 1.04,
+              boxShadow: "0 0 22px rgba(10,144,135,0.45)",
+            }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ duration: 0.18 }}
+          >
+            {isThisLoading ? "Loading..." : "UPGRADE"}
+          </motion.button>
+        )}
+      </div>
+    </motion.div>
+  );
+};
+
+// ── Featured Plan Row (desktop wide card — Quarterly on top) ──
+const FeaturedPlanRow = ({
+  plan,
+  onSelect,
+  onCancel,
+  loadingPlanId,
+  isCancelPending,
+  tk,
+}) => {
+  const isCurrentPlan = plan.current_plan === true;
+  const isThisLoading = loadingPlanId === plan.id;
+  const anyLoading = !!loadingPlanId || isCancelPending;
+
+  return (
+    <motion.div
+      className="rounded-2xl mb-6 relative overflow-hidden"
+      style={{
+        background: tk.cardBg,
+        border: isCurrentPlan ? tk.currentCardBorder : tk.cardBorderFeat,
+        minHeight: "220px",
+      }}
+      variants={cardVariant}
+      initial="hidden"
+      animate="visible"
+      custom={0.05}
+      whileHover={{ scale: 1.008, transition: { duration: 0.25 } }}
+    >
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: tk.glowFeat }}
+      />
+      <div className="relative flex flex-row items-center h-full gap-8 px-10 py-8">
+        {/* Left */}
+        <div className="flex-shrink-0 min-w-[220px] flex flex-col justify-center gap-2">
+          {/* Plan name + save badge */}
+          <div className="flex items-center gap-2 flex-wrap">
+            <span
+              className={`font-logo font-bold text-[13px] tracking-widest uppercase ${tk.planName}`}
+            >
+              {plan.name}
+            </span>
+            <SaveBadge plan={plan} tk={tk} />
+          </div>
+
+          <div className="flex items-baseline gap-1">
+            <span
+              className={`font-extrabold leading-none ${tk.price}`}
+              style={{ fontSize: "44px" }}
+            >
+              ${plan.price}
+            </span>
+            <span className={`text-[16px] font-medium ${tk.pricePeriod}`}>
+              {getPeriodLabel(plan.package_type)}
+            </span>
+          </div>
+          {getMonthlyBreakdown(plan.price, plan.package_type) && (
+            <p className={`text-[13px] ${tk.subInfo}`}>
+              {getMonthlyBreakdown(plan.price, plan.package_type)}
+            </p>
+          )}
+          {plan.per_month_price && (
+            <p className={`text-[13px] ${tk.subInfo}`}>
+              (${plan.per_month_price}/mo)
+            </p>
+          )}
+        </div>
+
+        {/* Features */}
+        <div
+          className={`flex-1 flex flex-col justify-center gap-3 pl-8 border-l ${tk.divider}`}
+        >
+          {(plan.features || []).map((f, i) => (
+            <motion.div
+              key={f.text}
+              className="flex items-center gap-2.5"
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 + i * 0.07, duration: 0.38 }}
+            >
+              <CheckIcon tk={tk} />
+              <span className={`text-[15px] font-medium ${tk.featureFeatText}`}>
+                {f.text}
+              </span>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* CTA */}
+        <div className="flex-shrink-0 pl-8 flex items-center">
+          {isCurrentPlan ? (
+            <motion.button
+              onClick={onCancel}
+              disabled={anyLoading}
+              className={`cursor-pointer w-[200px] h-[48px] px-6 rounded-full border font-bold text-[15px] flex justify-center items-center disabled:opacity-50 ${tk.cancelBtnBorder} ${tk.cancelBtnText}`}
+              style={{ background: tk.cancelBtnBg }}
+              whileHover={{ scale: 1.04, background: tk.cancelBtnHoverBg }}
+              whileTap={{ scale: 0.96 }}
+              transition={{ duration: 0.18 }}
+            >
+              {isCancelPending ? "Cancelling..." : "CANCEL"}
+            </motion.button>
+          ) : (
+            <motion.button
+              onClick={() => onSelect(plan)}
+              disabled={anyLoading}
+              className={`cursor-pointer w-[200px] h-[48px] px-6 rounded-full border font-bold text-[15px] flex justify-center items-center disabled:opacity-50 ${tk.btnBorder} ${tk.btnText}`}
+              style={{ background: tk.btnBg }}
+              whileHover={{
+                scale: 1.06,
+                boxShadow: "0 0 22px rgba(10,144,135,0.45)",
+              }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ duration: 0.18 }}
+            >
+              {isThisLoading ? "Loading..." : "UPGRADE"}
+            </motion.button>
+          )}
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+// ── Main Component ────────────────────────────────────────────
 const Subscriptions = () => {
   const { theme } = useTheme();
+  const tk = t[theme] ?? t.dark;
   const navigate = useNavigate();
-  const [openModal, setOpenModal] = useState(false);
-  const [modalPayload, setModalPayload] = useState(null);
-  const [modalLoading, setModalLoading] = useState(false);
-  const [agreements, setAgreements] = useState({
-    accept: false,
-    non_us_risk: false,
-    us_risk: false,
-  });
-
-  const toggleAgreement = (key) => {
-    setAgreements((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-  };
-
-  const allChecked = Object.values(agreements).every(Boolean);
-
-  // Track Facebook Pixel events to prevent duplicates
   const fbTrackedRef = useRef({
     addToCart: false,
     initiateCheckout: new Set(),
   });
+  const [loadingPlanId, setLoadingPlanId] = useState(null);
 
-  const [billingCycle, setBillingCycle] = useState("monthly");
-
-  // Use the GET hook to fetch subscriptions
-  const {
-    data: plansData,
-    isLoading: planLoading,
-    refetch,
-  } = useGet("/plans/", {
-    secure: true,
-    queryKey: ["home-plans"],
-  });
-
-  const { data: response, isLoading: isActiveLoading } = useGet(
-    "/my-subscription/",
+  // ── API ──────────────────────────────────────────────────────
+  const { data: homeData, isLoading: homeLoading } = useGet(
+    "/subscriptions-tiers/",
     {
-      queryKey: ["active-subscription"],
-      secure: true,
+      queryKey: ["home-page-data"],
     },
   );
 
-  const sub = response?.data || [];
+  const {
+    data: subResponse,
+    isLoading: isActiveLoading,
+    refetch: refetchSub,
+  } = useGet("/my-subscription/", {
+    queryKey: ["active-subscription"],
+    secure: true,
+  });
 
-  const [selectedCheckoutId, setSelectedCheckoutId] = useState(null);
-  const [selectedCancelId, setSelectedCancelId] = useState(null);
+  // ── Parse plans ──────────────────────────────────────────────
+  const rawPlans = homeData?.data || homeData?.subscription_plans || [];
 
-  //  FIXED: AddToCart fires ONLY on page load (once)
+  // Featured = quarterly plan (shown as wide row on desktop)
+  const featuredPlan =
+    rawPlans.find((p) => p.package_type === "quarterly") || rawPlans[0] || null;
+
+  // Bottom row = weekly, monthly, annual (everything except quarterly)
+  const smallPlans = rawPlans.filter((p) => p.id !== featuredPlan?.id);
+
+  // Mobile slider = quarterly first, then rest
+  const sliderPlans = featuredPlan ? [featuredPlan, ...smallPlans] : smallPlans;
+
+  // Current plan (for cancel id)
+  const currentPlan = rawPlans.find((p) => p.current_plan === true) || null;
+  const activeSub = subResponse?.data?.[0] || subResponse?.data || null;
+
+  // ── Facebook Pixel ───────────────────────────────────────────
   useEffect(() => {
     if (
-      !planLoading &&
-      plansData?.data?.length &&
-      typeof window !== "undefined" &&
+      !homeLoading &&
+      featuredPlan &&
       window.fbq &&
       !fbTrackedRef.current.addToCart
     ) {
-      const firstCategory = plansData.data[0];
-      const firstPlan = firstCategory?.plans?.[0];
-
-      const price = Number(
-        String(firstPlan?.monthly_price || "").replace(/[^0-9.]/g, ""),
-      );
-
+      const price = Number(String(featuredPlan.price).replace(/[^0-9.]/g, ""));
       if (price > 0) {
         window.fbq("track", "AddToCart", {
           value: price,
           currency: "USD",
-          content_ids: [String(firstPlan.package_id)],
+          content_ids: [String(featuredPlan.id)],
           content_type: "product",
-          content_name: `${firstCategory.title} - ${firstPlan.region}`,
+          content_name: featuredPlan.name,
         });
-
-        console.log("🟢 AddToCart fired on page load");
         fbTrackedRef.current.addToCart = true;
       }
     }
-  }, [planLoading, plansData]);
+  }, [homeLoading, featuredPlan]);
 
-  const { mutate: checkout, isPending: isCheckoutPending } = usePost(null, {
+  // ── Checkout ─────────────────────────────────────────────────
+  const { mutate: checkout } = usePost(null, {
     secure: true,
     onSuccess: (data) => {
-      const checkoutUrl = data?.data?.url;
-
-      if (checkoutUrl) {
-        console.log("✅ Redirecting to checkout:", checkoutUrl);
+      const url = data?.data?.url;
+      if (url)
         setTimeout(() => {
-          window.location.href = checkoutUrl;
+          window.location.href = url;
         }, 300);
-      }
+      setLoadingPlanId(null);
     },
-    onError: (error) => {
-      console.error("Checkout API error:", error);
+    onError: (err) => {
+      console.error("Checkout error:", err);
+      setLoadingPlanId(null);
     },
   });
 
+  // ── Cancel ───────────────────────────────────────────────────
   const { mutate: cancelSubscription, isPending: isCancelPending } = usePost(
-    selectedCancelId ? `/cancel_subscription/${selectedCancelId}` : "",
+    null,
     {
       secure: true,
-      onSuccess: (data) => {
+      onSuccess: () => {
         navigate("/package/cancel");
-        refetch && refetch();
+        refetchSub && refetchSub();
       },
     },
   );
 
-  const { mutateAsync: completeReferral, isPending: referalPending } = usePost(
-    "/referrals/complete/",
-    {
-      secure: true,
-    },
-  );
-
-  const [checkoutInitiated, setCheckoutInitiated] = useState(false);
-  const { mutateAsync: submitAgreements } = usePost("/automation-policy/", {
+  const { mutateAsync: completeReferral } = usePost("/referrals/complete/", {
     secure: true,
   });
 
-  const handleModalConfirm = async () => {
-    if (!modalPayload || !allChecked) return;
-
-    setModalLoading(true);
-
-    try {
-      await submitAgreements({
-        accept: true,
-        non_us_risk: true,
-        us_risk: true,
-        for_automation_legal:
-          "I hereby accept all TechTakes automation terms and conditions.",
-      });
-
-      if (modalPayload.action === "checkout") {
-        await handleCheckout(modalPayload.packageId, modalPayload.price);
-      }
-
-      setOpenModal(false);
-      setModalPayload(null);
-      setAgreements({
-        accept: false,
-        non_us_risk: false,
-        us_risk: false,
-      });
-    } catch (err) {
-      console.error("Agreement submission failed", err);
-    } finally {
-      setModalLoading(false);
+  const processReferral = async () => {
+    const code = localStorage.getItem("referral_code");
+    const processed = localStorage.getItem("referral_processed");
+    if (code && !processed) {
+      await completeReferral({ referral_code: code });
+      localStorage.removeItem("referral_code");
+      localStorage.setItem("referral_processed", "true");
     }
   };
 
-  const onClose = () => {
-    setOpenModal(false);
-    setModalLoading(false);
-    setModalPayload(null);
-  };
+  // ── Select plan → direct checkout ────────────────────────────
+  const handleSelectPlan = async (plan) => {
+    const planId = plan.id;
+    const price = Number(String(plan.price).replace(/[^0-9.]/g, ""));
+    setLoadingPlanId(planId);
 
-  const handleCheckout = async (planId, price) => {
-    if (!planId) return;
-
-    // Facebook Pixel tracking
     if (
-      typeof window !== "undefined" &&
       window.fbq &&
       price > 0 &&
       !fbTrackedRef.current.initiateCheckout.has(planId)
@@ -189,7 +554,7 @@ const Subscriptions = () => {
       window.fbq("track", "InitiateCheckout", {
         content_ids: [String(planId)],
         content_type: "product",
-        content_name: "Subscription Checkout",
+        content_name: plan.name,
         value: price,
         currency: "USD",
       });
@@ -202,1251 +567,139 @@ const Subscriptions = () => {
         url: `/subscription/${planId}/checkout/`,
         data: { plan_id: planId },
       });
-    } catch (error) {
-      console.error("Checkout failed:", error);
+    } catch (err) {
       fbTrackedRef.current.initiateCheckout.delete(planId);
+      setLoadingPlanId(null);
+      console.error("Checkout error:", err);
     }
   };
 
-  const processReferral = async () => {
-    const referralCode = localStorage.getItem("referral_code");
-    const referralProcessed = localStorage.getItem("referral_processed");
-
-    if (referralCode && !referralProcessed) {
-      await completeReferral({ referral_code: referralCode });
-
-      localStorage.removeItem("referral_code");
-      localStorage.setItem("referral_processed", "true");
-    }
+  // ── Cancel current plan ───────────────────────────────────────
+  const handleCancel = () => {
+    const cancelId =
+      currentPlan?.subscription_id ||
+      activeSub?.id ||
+      activeSub?.subscription_id;
+    if (!cancelId) return;
+    cancelSubscription({ url: `/cancel_subscription/${cancelId}`, data: {} });
   };
 
-  useEffect(() => {
-    if (checkoutInitiated && !isCheckoutPending) {
-      setCheckoutInitiated(false);
-    }
-  }, [isCheckoutPending, checkoutInitiated]);
-
-  const handleCancel = (planId) => {
-    if (!planId) return;
-    setSelectedCancelId(planId);
-    cancelSubscription();
-  };
-
-  const isUltimatePackage = (planRegion) => {
-    return planRegion === "Ultimate Automation";
-  };
-
-  // Normalize region names to handle typos and inconsistencies
-  const normalizeRegionName = (region) => {
-    return region
-      .trim()
-      .toLowerCase()
-      .replace(/player\s+props/i, "player props")
-      .replace(/\s+/g, " ");
-  };
-
-  // Transform the API data to match your component structure
-  const transformPlansData = (apiData) => {
-    if (!apiData?.data) return {};
-
-    const transformedData = {};
-
-    apiData.data.forEach((category) => {
-      const plansByRegion = {};
-      const featuresByRegion = {};
-
-      // First pass: collect features from plans that have them
-      category.plans.forEach((plan) => {
-        const normalizedKey = normalizeRegionName(plan.region);
-
-        if (plan.features && plan.features.length > 0) {
-          featuresByRegion[normalizedKey] = plan.features;
-        }
-      });
-
-      // Second pass: build plans
-      category.plans.forEach((plan) => {
-        const normalizedKey = normalizeRegionName(plan.region);
-        const displayName = plan.region.trim().replace(/^PLayer/, "Player");
-
-        if (!plansByRegion[normalizedKey]) {
-          plansByRegion[normalizedKey] = {
-            region: displayName,
-            monthlyPrice: null,
-            monthlyPackageId: null,
-            quarterlyPrice: null,
-            quarterlyPackageId: null,
-            annualPrice: null,
-            annualPackageId: null,
-            features: featuresByRegion[normalizedKey] || [],
-          };
-        }
-
-        // Check if monthly_price contains "3 months" for quarterly
-        if (plan.monthly_price) {
-          if (plan.monthly_price.includes("3 months")) {
-            const cleanPrice = plan.monthly_price
-              .replace(" / 3 months", "")
-              .replace("/3 months", "")
-              .trim();
-            plansByRegion[normalizedKey].quarterlyPrice = cleanPrice;
-            plansByRegion[normalizedKey].quarterlyPackageId = plan.package_id;
-          } else {
-            plansByRegion[normalizedKey].monthlyPrice = plan.monthly_price;
-            plansByRegion[normalizedKey].monthlyPackageId = plan.package_id;
-          }
-        }
-
-        if (plan.annual_price) {
-          plansByRegion[normalizedKey].annualPrice = plan.annual_price;
-          plansByRegion[normalizedKey].annualPackageId = plan.package_id;
-        }
-      });
-
-      transformedData[category.title] = {
-        title: category.title,
-        subtitle: category.subtitle,
-        plans: Object.values(plansByRegion),
-      };
-    });
-
-    return transformedData;
-  };
-
-  const createTabsFromData = (apiData) => {
-    if (!apiData?.data) return [];
-
-    return apiData.data.map((category) => ({
-      id: category.title,
-      title: category.title,
-    }));
-  };
-
-  const plans = transformPlansData(plansData);
-  const tabs = createTabsFromData(plansData);
-
-  const [activeTab, setActiveTab] = useState(
-    tabs[0]?.title || "Ultimate Access",
-  );
-  const currentPlans = plans[activeTab] || {
-    title: "",
-    subtitle: "",
-    plans: [],
-  };
-
-  const isMonthly = billingCycle === "monthly";
-  const isQuarterly = billingCycle === "quarterly";
-  const isAnnual = billingCycle === "annual";
-
-  if (planLoading || isActiveLoading) {
+  if (homeLoading || isActiveLoading) {
     return (
-      <div className="flex w-full max-w-6xl mx-auto justify-center">
+      <div className="flex w-full max-w-6xl mx-auto justify-center py-20">
         <ScreenLoader />
       </div>
     );
   }
 
-  // Filter plans based on billing cycle
-  const filteredPlans =
-    currentPlans?.plans?.filter((plan) => {
-      if (isMonthly) return plan.monthlyPrice;
-      if (isQuarterly) return plan.quarterlyPrice;
-      if (isAnnual) return plan.annualPrice;
-      return false;
-    }) || [];
-
-  // ✅ Enterprise card removed — use filteredPlans directly
-  const allPlans = filteredPlans;
-
-  const planCount = allPlans.length;
-
   return (
     <>
-      <CommonWrapper>
-        <div
-          className={`rounded-xl font-primary xl:p-5 lg:p-3 p-2 shadow-sm border h-full ${
-            theme === "dark" ? "bg-[#021716] " : "bg-white border-lightestGrey"
-          }`}
+      <style>{`
+        .plans-swiper .swiper-pagination-bullet { background: ${tk.dotColor}; opacity:1; width:8px; height:8px; transition: all 0.3s ease; }
+        .plans-swiper .swiper-pagination-bullet-active { background: ${tk.dotActive}; width:22px; border-radius:4px; }
+      `}</style>
+
+      <div
+        className="min-h-screen py-16 px-4 transition-colors duration-300"
+        style={{ background: tk.pageBg }}
+      >
+        {/* Heading */}
+        <motion.div
+          className="text-center mb-12"
+          variants={fadeUp}
+          initial="hidden"
+          animate="visible"
+          custom={0}
         >
-          {/* Animated Tabs */}
-          <div className="flex justify-center pb-5">
-            {/* Desktop Tabs */}
-            <div className="hidden sm:block">
-              <div className="relative flex p-1 rounded-lg">
-                <motion.div
-                  className={`absolute bottom-0 h-0.5 ${
-                    theme === "dark"
-                      ? "border-b-2 border-[#0A9087]"
-                      : "border-b-2 border-[#0A9087]"
-                  }`}
-                  style={{
-                    width: `calc(100% / ${tabs.length})`,
-                  }}
-                  animate={{
-                    x: `${
-                      tabs.findIndex((tab) => tab.id === activeTab) * 100
-                    }%`,
-                  }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 300,
-                    damping: 20,
-                  }}
+          <h1
+            className={`font-extrabold uppercase tracking-widest mb-2 ${tk.headingColor}`}
+            style={{
+              fontSize: "clamp(26px, 4vw, 40px)",
+              letterSpacing: "0.18em",
+            }}
+          >
+            SUBSCRIPTIONS
+          </h1>
+          <p className={`text-[15px] ${tk.subColor}`}>
+            Quick, simple, and straight to the point
+          </p>
+        </motion.div>
+
+        {/* ══ MOBILE & TABLET ( < 1280px ) ══ */}
+        <div className="xl:hidden max-w-3xl mx-auto pb-4">
+          <Swiper
+            modules={[Pagination]}
+            pagination={{ clickable: true }}
+            grabCursor
+            breakpoints={{
+              0: { slidesPerView: 1, spaceBetween: 16 },
+              768: { slidesPerView: 1.25, spaceBetween: 20 },
+              1024: { slidesPerView: 2, spaceBetween: 24 },
+            }}
+            className="plans-swiper !pb-12"
+          >
+            {sliderPlans.map((plan, idx) => (
+              <SwiperSlide key={plan.id}>
+                <PlanCard
+                  plan={plan}
+                  idx={idx}
+                  onSelect={handleSelectPlan}
+                  onCancel={handleCancel}
+                  loadingPlanId={loadingPlanId}
+                  isCancelPending={isCancelPending}
+                  isFeatured={plan.id === featuredPlan?.id}
+                  tk={tk}
                 />
-                {tabs.map((tab) => (
-                  <button
-                    key={tab?.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`relative z-10 px-6 py-3 text-sm font-medium transition-colors duration-200 whitespace-nowrap cursor-pointer ${
-                      activeTab === tab.id
-                        ? theme === "dark"
-                          ? "text-[#0A9087]"
-                          : "text-[#0A9087]"
-                        : theme === "dark"
-                          ? "text-gray-400 hover:text-gray-200"
-                          : "text-darkerGrey hover:text-gray-700"
-                    }`}
-                    style={{
-                      minWidth: "120px",
-                    }}
-                  >
-                    <span className="flex items-center justify-center xl:text-base text-sm">
-                      {tab?.title}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Mobile Swiper Tabs */}
-            <div className="sm:hidden w-full px-4">
-              <Swiper
-                slidesPerView={"auto"}
-                centeredSlides={false}
-                spaceBetween={12}
-                initialSlide={tabs.findIndex((tab) => tab.id === activeTab)}
-                onSlideChange={(swiper) =>
-                  setActiveTab(tabs[swiper.activeIndex]?.id || tabs[0]?.id)
-                }
-                className="mobile-tabs-swiper"
-              >
-                {tabs.map((tab) => (
-                  <SwiperSlide key={tab.id} style={{ width: "auto" }}>
-                    <button
-                      onClick={() => setActiveTab(tab.id)}
-                      className={`px-6 py-3 text-sm font-medium transition-colors duration-200 whitespace-nowrap cursor-pointer border-b-2 ${
-                        activeTab === tab.id
-                          ? theme === "dark"
-                            ? "border-b-[#0A9087] text-[#0A9087] shadow-md"
-                            : "border-b-[#0A9087] text-[#0A9087] shadow-md"
-                          : theme === "dark"
-                            ? "text-gray-400 border-b-mediumBlack hover:text-gray-200 "
-                            : "text-darkerGrey border-b-gray-100 hover:text-gray-70"
-                      }`}
-                    >
-                      {tab?.title}
-                    </button>
-                  </SwiperSlide>
-                ))}
-              </Swiper>
-            </div>
-          </div>
-
-          <div className="">
-            {/* Plan Title and Subtitle */}
-            <div className="text-center mb-2">
-              <CommonTitle
-                variant="small"
-                className={`${
-                  theme === "dark" ? "text-[#0A9087]" : "text-[#0A9087]"
-                }`}
-              >
-                {currentPlans?.title}
-              </CommonTitle>
-              <CommonParagraph
-                variant="small"
-                className={`${
-                  theme === "dark" ? "text-mediumGrey" : "text-darkGrey"
-                }`}
-              >
-                {currentPlans?.subtitle || "N/a"}
-              </CommonParagraph>
-            </div>
-
-            {/* Billing Toggle */}
-            <div className="flex justify-center items-center">
-              <div className="relative">
-                <div
-                  className={`relative p-1.5 rounded-full shadow-lg transition-all duration-300 ${
-                    theme === "dark"
-                      ? "bg-[#054844] border border-slate-600 shadow-slate-900/30"
-                      : "bg-gradient-to-r from-white to-gray-50 border border-gray-200 shadow-gray-900/10"
-                  } hover:shadow-xl`}
-                >
-                  <div className="relative flex rounded-xl">
-                    <button
-                      className={`relative px-3 py-1.5 lg:px-6 lg:py-3 text-sm font-semibold z-10 transition-all duration-300 rounded-xl ${
-                        isMonthly
-                          ? "text-white transform"
-                          : theme === "dark"
-                            ? "text-gray-300 hover:text-white"
-                            : "text-gray-600 hover:text-gray-900"
-                      } `}
-                      onClick={() => setBillingCycle("monthly")}
-                    >
-                      <span className="relative z-10">Monthly</span>
-                      {isMonthly && (
-                        <motion.div
-                          layoutId="activeTab"
-                          className="absolute inset-0 rounded-full bg-[#0A9087] shadow-lg"
-                          transition={{
-                            type: "spring",
-                            stiffness: 400,
-                            damping: 30,
-                          }}
-                        />
-                      )}
-                    </button>
-
-                    <button
-                      className={`relative px-3 py-1.5 lg:px-6 lg:py-3 text-sm font-semibold z-10 transition-all duration-300 rounded-xl ${
-                        isQuarterly
-                          ? "text-white transform"
-                          : theme === "dark"
-                            ? "text-gray-300 hover:text-white"
-                            : "text-gray-600 hover:text-gray-900"
-                      } `}
-                      onClick={() => setBillingCycle("quarterly")}
-                    >
-                      <span className="relative z-10">Quarterly</span>
-                      <span
-                        className={`relative z-10 text-xs px-2 py-0.5 rounded-full font-bold ${
-                          isQuarterly
-                            ? "bg-white/20 text-white"
-                            : theme === "dark"
-                              ? "bg-emerald-500/20 text-emerald-400"
-                              : "bg-emerald-100 text-emerald-600"
-                        }`}
-                      >
-                        -15%
-                      </span>
-
-                      {isQuarterly && (
-                        <motion.div
-                          layoutId="activeTab"
-                          className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-600 to-purple-500 shadow-lg"
-                          transition={{
-                            type: "spring",
-                            stiffness: 400,
-                            damping: 30,
-                          }}
-                        />
-                      )}
-                    </button>
-
-                    <button
-                      className={`relative px-3 py-1.5 lg:px-6 lg:py-3 text-sm font-semibold z-10 transition-all duration-300 rounded-xl ${
-                        isAnnual
-                          ? "text-white transform "
-                          : theme === "dark"
-                            ? "text-gray-300 hover:text-white"
-                            : "text-gray-600 hover:text-gray-900"
-                      }`}
-                      onClick={() => setBillingCycle("annual")}
-                    >
-                      <span className="relative z-10 flex items-center space-x-2">
-                        <span>Annual</span>
-                        <span
-                          className={`text-xs px-2 py-0.5 rounded-full font-bold ${
-                            isAnnual
-                              ? "bg-white/20 text-white"
-                              : theme === "dark"
-                                ? "bg-emerald-500/20 text-emerald-400"
-                                : "bg-emerald-100 text-emerald-600"
-                          }`}
-                        >
-                          -25%
-                        </span>
-                      </span>
-                      {isAnnual && (
-                        <motion.div
-                          layoutId="activeTab"
-                          className="absolute inset-0 rounded-full bg-gradient-to-r from-emerald-600 to-emerald-500 shadow-lg"
-                          transition={{
-                            type: "spring",
-                            stiffness: 400,
-                            damping: 30,
-                          }}
-                        />
-                      )}
-                    </button>
-                  </div>
-
-                  <div
-                    className={`absolute inset-0 rounded-2xl transition-opacity duration-300 ${
-                      theme === "dark"
-                        ? "bg-gradient-to-r from-blue-500/5 to-emerald-500/5 opacity-0 group-hover:opacity-100"
-                        : "bg-gradient-to-r from-blue-500/3 to-emerald-500/3 opacity-0 group-hover:opacity-100"
-                    }`}
-                  ></div>
-                </div>
-
-                <div className="text-center mb-2 mt-2">
-                  <motion.p
-                    key={billingCycle}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className={`text-sm font-medium ${
-                      theme === "dark" ? "text-gray-400" : "text-gray-600"
-                    }`}
-                  >
-                    {isAnnual
-                      ? "You're saving money with annual billing!"
-                      : isQuarterly
-                        ? "Save more with quarterly billing!"
-                        : "Switch to quarterly and save 15%"}
-                  </motion.p>
-                </div>
-              </div>
-            </div>
-
-            {/* Plans Grid - Desktop & Tablet */}
-            <div className="hidden sm:block">
-              <div
-                className="w-full max-w-6xl mx-auto"
-                style={{
-                  display: "grid",
-                  gap: "1.5rem",
-                  gridTemplateColumns:
-                    planCount === 1
-                      ? "minmax(0, 480px)"
-                      : planCount === 2
-                        ? "repeat(2, minmax(0, 1fr))"
-                        : planCount === 3
-                          ? "repeat(3, minmax(0, 1fr))"
-                          : "repeat(4, minmax(0, 1fr))",
-                  justifyContent: planCount === 1 ? "center" : "unset",
-                }}
-              >
-                {allPlans.map((plan, index) => {
-                  // Regular plan cards
-                  const packageId = isMonthly
-                    ? plan.monthlyPackageId
-                    : isQuarterly
-                      ? plan.quarterlyPackageId
-                      : plan.annualPackageId;
-                  const price = isMonthly
-                    ? plan.monthlyPrice
-                    : isQuarterly
-                      ? plan.quarterlyPrice
-                      : plan.annualPrice;
-                  const priceValue = Number(
-                    String(price || "").replace(/[^0-9.]/g, ""),
-                  );
-                  const monthlyPriceValue = plan.monthlyPrice
-                    ? parseFloat(plan.monthlyPrice.replace(/[^0-9.]/g, ""))
-                    : 0;
-                  const quarterlyPriceValue = plan.quarterlyPrice
-                    ? parseFloat(plan.quarterlyPrice.replace(/[^0-9.]/g, ""))
-                    : 0;
-                  const annualPriceValue = plan.annualPrice
-                    ? parseFloat(plan.annualPrice.replace(/[^0-9.]/g, ""))
-                    : 0;
-
-                  return (
-                    <div
-                      key={`${plan.region}-${index}-${packageId}`}
-                      className={`group relative rounded-2xl p-8 border transition-all duration-400 ease-in flex flex-col h-full transform scale-95 hover:scale-100 ${
-                        theme === "dark"
-                          ? "bg-[#054844] hover:from-mediumBlack hover:to-darkerBlack border-lightBlack hover:border-darkerGrey shadow-xl "
-                          : "bg-gradient-to-br from-white to-extraLightBlue hover:from-extraLightBlue hover:to-white border-gray-200 hover:border-gray-300 shadow-lg hover:shadow-2xl shadow-gray-900/10"
-                      }`}
-                    >
-                      {/* Plan Header */}
-                      <div className="text-center mb-8 relative z-10">
-                        <CommonParagraph
-                          variant="small"
-                          className={`font-bold mb-3 uppercase tracking-widest text-xs ${
-                            theme === "dark"
-                              ? "text-lightBlue"
-                              : "text-darkerBlue"
-                          }`}
-                        >
-                          {plan.region}
-                        </CommonParagraph>
-
-                        <div className="mb-4">
-                          <div className="flex items-baseline justify-center mb-2">
-                            <CommonTitle
-                              variant="regular"
-                              className={`font-extrabold text-4xl ${
-                                theme === "dark"
-                                  ? "text-white"
-                                  : "text-gray-900"
-                              }`}
-                            >
-                              {price}
-                            </CommonTitle>
-                            <CommonParagraph
-                              variant="small"
-                              className={`text-lg ml-2 font-medium ${
-                                theme === "dark"
-                                  ? "text-gray-400"
-                                  : "text-gray-600"
-                              }`}
-                            >
-                              {isAnnual
-                                ? "/year"
-                                : isQuarterly
-                                  ? "/3 months"
-                                  : "/month"}
-                            </CommonParagraph>
-                          </div>
-
-                          {isAnnual &&
-                            plan.monthlyPrice &&
-                            plan.annualPrice && (
-                              <div className="flex items-center justify-center space-x-2">
-                                <CommonParagraph
-                                  variant="smaller"
-                                  className={`text-sm px-3 py-1 rounded-full font-semibold ${
-                                    theme === "dark"
-                                      ? "text-emerald-400 bg-emerald-500/20"
-                                      : "text-emerald-600 bg-emerald-50"
-                                  }`}
-                                >
-                                  Save $
-                                  {(
-                                    monthlyPriceValue * 12 -
-                                    annualPriceValue
-                                  ).toFixed(0)}
-                                </CommonParagraph>
-                                <CommonParagraph
-                                  variant="smaller"
-                                  className={`text-sm ${
-                                    theme === "dark"
-                                      ? "text-gray-400"
-                                      : "text-gray-500"
-                                  }`}
-                                >
-                                  (${(annualPriceValue / 12).toFixed(2)}
-                                  /mo)
-                                </CommonParagraph>
-                              </div>
-                            )}
-
-                          {isQuarterly &&
-                            plan.monthlyPrice &&
-                            plan.quarterlyPrice && (
-                              <div className="flex items-center justify-center space-x-2">
-                                <CommonParagraph
-                                  variant="smaller"
-                                  className={`text-sm px-3 py-1 rounded-full font-semibold ${
-                                    theme === "dark"
-                                      ? "text-purple-400 bg-purple-500/20"
-                                      : "text-purple-600 bg-purple-50"
-                                  }`}
-                                >
-                                  Save $
-                                  {(
-                                    monthlyPriceValue * 3 -
-                                    quarterlyPriceValue
-                                  ).toFixed(0)}
-                                </CommonParagraph>
-                                <CommonParagraph
-                                  variant="smaller"
-                                  className={`text-sm ${
-                                    theme === "dark"
-                                      ? "text-gray-400"
-                                      : "text-gray-500"
-                                  }`}
-                                >
-                                  (${(quarterlyPriceValue / 3).toFixed(2)}
-                                  /mo)
-                                </CommonParagraph>
-                              </div>
-                            )}
-                        </div>
-                      </div>
-
-                      {/* Elegant Divider */}
-                      <div className="relative mb-8">
-                        <div
-                          className={`h-px ${
-                            theme === "dark" ? "bg-gray-700" : "bg-gray-200"
-                          }`}
-                        ></div>
-                        <div className={`absolute inset-0 flex justify-center`}>
-                          <div
-                            className={`w-24 h-px ${
-                              theme === "dark"
-                                ? "bg-gradient-to-r from-blue-500 to-purple-500"
-                                : "bg-gradient-to-r from-blue-400 to-purple-400"
-                            }`}
-                          ></div>
-                        </div>
-                      </div>
-
-                      {/* Features */}
-                      <div className="flex-grow space-y-4 mb-8">
-                        {plan.features && plan.features.length > 0 ? (
-                          plan.features.map((feature, featureIndex) => (
-                            <div
-                              key={featureIndex}
-                              className="flex items-start group/feature"
-                            >
-                              <div
-                                className={`flex-shrink-0 flex items-center justify-center mr-4 w-6 h-6 rounded-full transition-all duration-300 ${
-                                  feature.included
-                                    ? theme === "dark"
-                                      ? "text-emerald-400 bg-emerald-500/20 group-hover/feature:bg-emerald-500/30"
-                                      : "text-emerald-600 bg-emerald-50 group-hover/feature:bg-emerald-100"
-                                    : theme === "dark"
-                                      ? "text-lighterGrey bg-darkerGrey"
-                                      : "text-lightBlack bg-lightestGrey"
-                                }`}
-                              >
-                                {feature.included ? (
-                                  <GiCheckMark className="w-3 h-3" />
-                                ) : (
-                                  <CgClose className="w-3 h-3 " />
-                                )}
-                              </div>
-                              <CommonParagraph
-                                className={`leading-relaxed transition-all duration-300 ${
-                                  feature.included
-                                    ? theme === "dark"
-                                      ? "text-lighterGrey group-hover/feature:text-white"
-                                      : "text-lightBlack group-hover/feature:text-gray-900"
-                                    : "opacity-50"
-                                }`}
-                              >
-                                {feature.text}
-                              </CommonParagraph>
-                            </div>
-                          ))
-                        ) : (
-                          <CommonParagraph
-                            className={`text-center ${
-                              theme === "dark"
-                                ? "text-gray-400"
-                                : "text-gray-500"
-                            }`}
-                          >
-                            No features listed
-                          </CommonParagraph>
-                        )}
-                      </div>
-
-                      {/* CTA Button */}
-                      <div className="mt-auto pt-6">
-                        <div className="mt-auto pt-6 z-100">
-                          {plan?.region === "UT" ? (
-                            <CommonParagraph
-                              variant="medium"
-                              className="font-semibold w-full mx-auto text-center"
-                            >
-                              Coming Soon
-                            </CommonParagraph>
-                          ) : sub?.is_active ? (
-                            sub?.package_id === packageId ? (
-                              <SubmitButton
-                                variant="bg_red"
-                                isLoading={
-                                  isCancelPending &&
-                                  selectedCancelId === sub?.id
-                                }
-                                onClick={() => handleCancel(sub?.id)}
-                              >
-                                Cancel
-                              </SubmitButton>
-                            ) : (
-                              <SubmitButton
-                                variant="bg_black"
-                                isLoading={
-                                  isCheckoutPending &&
-                                  selectedCheckoutId === packageId
-                                }
-                                onClick={() => {
-                                  setSelectedCheckoutId(packageId);
-                                  if (isUltimatePackage(plan.region)) {
-                                    setModalPayload({
-                                      action: "checkout",
-                                      packageId,
-                                      price: priceValue,
-                                    });
-                                    setOpenModal(true);
-                                  } else {
-                                    handleCheckout(packageId, priceValue);
-                                  }
-                                }}
-                              >
-                                Update
-                              </SubmitButton>
-                            )
-                          ) : (
-                            <SubmitButton
-                              variant="bg_black"
-                              isLoading={
-                                (referalPending ||
-                                  checkoutInitiated ||
-                                  isCheckoutPending) &&
-                                selectedCheckoutId === packageId
-                              }
-                              onClick={() => {
-                                setSelectedCheckoutId(packageId);
-                                if (isUltimatePackage(plan.region)) {
-                                  setModalPayload({
-                                    action: "checkout",
-                                    packageId,
-                                    price: priceValue,
-                                  });
-                                  setOpenModal(true);
-                                } else {
-                                  handleCheckout(packageId, priceValue);
-                                }
-                              }}
-                            >
-                              Select Plan
-                            </SubmitButton>
-                          )}
-                        </div>
-
-                        {plan.isPopular && (
-                          <CommonParagraph
-                            variant="smaller"
-                            className={`text-center mt-2 text-xs ${
-                              theme === "dark"
-                                ? "text-gray-400"
-                                : "text-gray-500"
-                            }`}
-                          >
-                            14-day free trial included
-                          </CommonParagraph>
-                        )}
-                      </div>
-
-                      {/* Subtle Glow Effect */}
-                      <div
-                        className={`absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none ${
-                          theme === "dark"
-                            ? "bg-gradient-to-br from-blue-500/5 to-purple-700/3"
-                            : "bg-gradient-to-br from-blue-500/3 to-purple-500/3"
-                        }`}
-                      ></div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Plans Swiper - Mobile Only */}
-            <div className="sm:hidden w-full px-2">
-              <Swiper
-                slidesPerView={1.2}
-                spaceBetween={12}
-                centeredSlides={false}
-                breakpoints={{
-                  480: {
-                    slidesPerView: 1.5,
-                    spaceBetween: 16,
-                  },
-                  640: {
-                    slidesPerView: 2,
-                    spaceBetween: 16,
-                  },
-                }}
-                className="mobile-plans-swiper !overflow-visible"
-              >
-                {allPlans.map((plan, index) => {
-                  // Regular plan cards (mobile)
-                  const packageId = isMonthly
-                    ? plan.monthlyPackageId
-                    : isQuarterly
-                      ? plan.quarterlyPackageId
-                      : plan.annualPackageId;
-                  const price = isMonthly
-                    ? plan.monthlyPrice
-                    : isQuarterly
-                      ? plan.quarterlyPrice
-                      : plan.annualPrice;
-                  const priceValue = Number(
-                    String(price || "").replace(/[^0-9.]/g, ""),
-                  );
-                  const monthlyPriceValue = plan.monthlyPrice
-                    ? parseFloat(plan.monthlyPrice.replace(/[^0-9.]/g, ""))
-                    : 0;
-                  const quarterlyPriceValue = plan.quarterlyPrice
-                    ? parseFloat(plan.quarterlyPrice.replace(/[^0-9.]/g, ""))
-                    : 0;
-                  const annualPriceValue = plan.annualPrice
-                    ? parseFloat(plan.annualPrice.replace(/[^0-9.]/g, ""))
-                    : 0;
-
-                  return (
-                    <SwiperSlide key={`${plan.region}-${index}-${packageId}`}>
-                      <div
-                        className={`group relative rounded-2xl p-6 border transition-all duration-400 ease-in flex flex-col h-full ${
-                          theme === "dark"
-                            ? "bg-[#054844]  shadow-xl"
-                            : "bg-gradient-to-br from-white to-extraLightBlue border-gray-200 shadow-lg shadow-gray-900/10"
-                        }`}
-                      >
-                        {/* Plan Header */}
-                        <div className="text-center mb-6 relative z-10">
-                          <CommonParagraph
-                            variant="small"
-                            className={`font-bold mb-3 uppercase tracking-widest text-xs ${
-                              theme === "dark"
-                                ? "text-lightBlue"
-                                : "text-darkerBlue"
-                            }`}
-                          >
-                            {plan.region}
-                          </CommonParagraph>
-
-                          <div className="mb-4">
-                            <div className="flex items-baseline justify-center mb-2">
-                              <CommonTitle
-                                variant="regular"
-                                className={`font-extrabold text-3xl ${
-                                  theme === "dark"
-                                    ? "text-white"
-                                    : "text-gray-900"
-                                }`}
-                              >
-                                {price}
-                              </CommonTitle>
-                              <CommonParagraph
-                                variant="small"
-                                className={`text-base ml-2 font-medium ${
-                                  theme === "dark"
-                                    ? "text-gray-400"
-                                    : "text-gray-600"
-                                }`}
-                              >
-                                {isAnnual
-                                  ? "/year"
-                                  : isQuarterly
-                                    ? "/3 months"
-                                    : "/month"}
-                              </CommonParagraph>
-                            </div>
-
-                            {isAnnual &&
-                              plan.monthlyPrice &&
-                              plan.annualPrice && (
-                                <div className="flex flex-col items-center space-y-1">
-                                  <CommonParagraph
-                                    variant="smaller"
-                                    className={`text-sm px-3 py-1 rounded-full font-semibold ${
-                                      theme === "dark"
-                                        ? "text-emerald-400 bg-emerald-500/20"
-                                        : "text-emerald-600 bg-emerald-50"
-                                    }`}
-                                  >
-                                    Save $
-                                    {(
-                                      monthlyPriceValue * 12 -
-                                      annualPriceValue
-                                    ).toFixed(0)}
-                                  </CommonParagraph>
-                                  <CommonParagraph
-                                    variant="smaller"
-                                    className={`text-xs ${
-                                      theme === "dark"
-                                        ? "text-gray-400"
-                                        : "text-gray-500"
-                                    }`}
-                                  >
-                                    (${(annualPriceValue / 12).toFixed(2)}
-                                    /mo)
-                                  </CommonParagraph>
-                                </div>
-                              )}
-
-                            {isQuarterly &&
-                              plan.monthlyPrice &&
-                              plan.quarterlyPrice && (
-                                <div className="flex flex-col items-center space-y-1">
-                                  <CommonParagraph
-                                    variant="smaller"
-                                    className={`text-sm px-3 py-1 rounded-full font-semibold ${
-                                      theme === "dark"
-                                        ? "text-purple-400 bg-purple-500/20"
-                                        : "text-purple-600 bg-purple-50"
-                                    }`}
-                                  >
-                                    Save $
-                                    {(
-                                      monthlyPriceValue * 3 -
-                                      quarterlyPriceValue
-                                    ).toFixed(0)}
-                                  </CommonParagraph>
-                                  <CommonParagraph
-                                    variant="smaller"
-                                    className={`text-xs ${
-                                      theme === "dark"
-                                        ? "text-gray-400"
-                                        : "text-gray-500"
-                                    }`}
-                                  >
-                                    (${(quarterlyPriceValue / 3).toFixed(2)}
-                                    /mo)
-                                  </CommonParagraph>
-                                </div>
-                              )}
-                          </div>
-                        </div>
-
-                        {/* Elegant Divider */}
-                        <div className="relative mb-6">
-                          <div
-                            className={`h-px ${
-                              theme === "dark" ? "bg-[#0A9087]" : "bg-gray-200"
-                            }`}
-                          ></div>
-                          <div
-                            className={`absolute inset-0 flex justify-center`}
-                          >
-                            <div
-                              className={`w-24 h-px ${
-                                theme === "dark"
-                                  ? "bg-[#013e3a]"
-                                  : "bg-[#013e3a]"
-                              }`}
-                            ></div>
-                          </div>
-                        </div>
-
-                        {/* Features */}
-                        <div className="flex-grow space-y-3 mb-6">
-                          {plan.features && plan.features.length > 0 ? (
-                            plan.features.map((feature, featureIndex) => (
-                              <div
-                                key={featureIndex}
-                                className="flex items-start"
-                              >
-                                <div
-                                  className={`flex-shrink-0 flex items-center justify-center mr-3 w-5 h-5 rounded-full transition-all duration-300 ${
-                                    feature.included
-                                      ? theme === "dark"
-                                        ? "text-emerald-400 bg-emerald-500/20"
-                                        : "text-emerald-600 bg-emerald-50"
-                                      : theme === "dark"
-                                        ? "text-lighterGrey bg-darkerGrey"
-                                        : "text-lightBlack bg-lightestGrey"
-                                  }`}
-                                >
-                                  {feature.included ? (
-                                    <GiCheckMark className="w-3 h-3" />
-                                  ) : (
-                                    <CgClose className="w-3 h-3" />
-                                  )}
-                                </div>
-                                <CommonParagraph
-                                  variant="small"
-                                  className={`leading-relaxed ${
-                                    feature.included
-                                      ? theme === "dark"
-                                        ? "text-lighterGrey"
-                                        : "text-lightBlack"
-                                      : "opacity-50"
-                                  }`}
-                                >
-                                  {feature.text}
-                                </CommonParagraph>
-                              </div>
-                            ))
-                          ) : (
-                            <CommonParagraph
-                              className={`text-center ${
-                                theme === "dark"
-                                  ? "text-gray-400"
-                                  : "text-gray-500"
-                              }`}
-                            >
-                              No features listed
-                            </CommonParagraph>
-                          )}
-                        </div>
-
-                        {/* CTA Button */}
-                        <div className="mt-auto pt-4">
-                          {plan?.region === "UT" ? (
-                            <CommonParagraph
-                              variant="medium"
-                              className="font-semibold w-full mx-auto text-center"
-                            >
-                              Coming Soon
-                            </CommonParagraph>
-                          ) : sub?.is_active ? (
-                            sub?.package_id === packageId ? (
-                              <SubmitButton
-                                variant="bg_red"
-                                isLoading={
-                                  isCancelPending &&
-                                  selectedCancelId === sub?.id
-                                }
-                                onClick={() => handleCancel(sub?.id)}
-                              >
-                                Cancel
-                              </SubmitButton>
-                            ) : (
-                              <SubmitButton
-                                isLoading={
-                                  isCheckoutPending &&
-                                  selectedCheckoutId === packageId
-                                }
-                                onClick={() => {
-                                  setSelectedCheckoutId(packageId);
-                                  if (isUltimatePackage(plan.region)) {
-                                    setModalPayload({
-                                      action: "checkout",
-                                      packageId,
-                                      price: priceValue,
-                                    });
-                                    setOpenModal(true);
-                                  } else {
-                                    handleCheckout(packageId, priceValue);
-                                  }
-                                }}
-                              >
-                                Update
-                              </SubmitButton>
-                            )
-                          ) : (
-                            <SubmitButton
-                              variant="bg_blue"
-                              isLoading={
-                                (referalPending ||
-                                  checkoutInitiated ||
-                                  isCheckoutPending) &&
-                                selectedCheckoutId === packageId
-                              }
-                              onClick={() => {
-                                setSelectedCheckoutId(packageId);
-                                if (isUltimatePackage(plan.region)) {
-                                  setModalPayload({
-                                    action: "checkout",
-                                    packageId,
-                                    price: priceValue,
-                                  });
-                                  setOpenModal(true);
-                                } else {
-                                  handleCheckout(packageId, priceValue);
-                                }
-                              }}
-                            >
-                              Select Plan
-                            </SubmitButton>
-                          )}
-
-                          {plan.isPopular && (
-                            <CommonParagraph
-                              variant="smaller"
-                              className={`text-center mt-2 text-xs ${
-                                theme === "dark"
-                                  ? "text-gray-400"
-                                  : "text-gray-500"
-                              }`}
-                            >
-                              14-day free trial included
-                            </CommonParagraph>
-                          )}
-                        </div>
-
-                        {/* Subtle Glow Effect */}
-                        <div
-                          className={`absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none ${
-                            theme === "dark"
-                              ? "bg-gradient-to-br from-blue-500/5 to-purple-700/3"
-                              : "bg-gradient-to-br from-blue-500/3 to-purple-500/3"
-                          }`}
-                        ></div>
-                      </div>
-                    </SwiperSlide>
-                  );
-                })}
-              </Swiper>
-            </div>
-          </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </div>
-      </CommonWrapper>
-      {openModal && (
-        <AnimatePresence>
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={onClose}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+
+        {/* ══ DESKTOP ( >= 1280px ) ══ */}
+        <div className="hidden xl:block max-w-7xl mx-auto">
+          {/* Quarterly — wide featured row on top */}
+          {featuredPlan && (
+            <FeaturedPlanRow
+              plan={featuredPlan}
+              onSelect={handleSelectPlan}
+              onCancel={handleCancel}
+              loadingPlanId={loadingPlanId}
+              isCancelPending={isCancelPending}
+              tk={tk}
             />
+          )}
 
-            {/* Modal */}
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                transition={{ type: "spring", duration: 0.5 }}
-                className={`relative w-full max-w-md rounded-2xl shadow-2xl overflow-hidden ${
-                  theme === "dark"
-                    ? "bg-gradient-to-br from-darkBlack to-mediumBlack border border-lightBlack"
-                    : "bg-gradient-to-br from-white to-gray-50 border border-gray-200"
-                }`}
-              >
-                {/* Close Button */}
-                <button
-                  onClick={onClose}
-                  className={`absolute top-4 cursor-pointer hover:font-bold right-4 p-2 rounded-full transition-all duration-200 ${
-                    theme === "dark"
-                      ? "hover:bg-mediumBlack text-gray-400 hover:text-white"
-                      : "hover:bg-gray-100 text-gray-600 hover:text-gray-900"
-                  }`}
-                >
-                  <CgClose className="w-5 h-5" />
-                </button>
-
-                {/* Modal Content */}
-                <div className="p-8">
-                  <div className="flex justify-center mb-6">
-                    <div
-                      className={`w-16 h-16 rounded-full flex items-center justify-center ${
-                        theme === "dark"
-                          ? "bg-gradient-to-br from-blue-500/20 to-purple-500/20"
-                          : "bg-gradient-to-br from-blue-100 to-purple-100"
-                      }`}
-                    >
-                      <GiCheckMark
-                        className={`w-8 h-8 ${
-                          theme === "dark" ? "text-lightBlue" : "text-darkBlue"
-                        }`}
-                      />
-                    </div>
-                  </div>
-                  <CommonParagraph className="flex w-full justify-center items-center text-xl my-6">
-                    You Need to Accept all conditions
-                  </CommonParagraph>
-
-                  <div className="space-y-4 mb-6">
-                    {/* Accept */}
-                    <div className="flex items-start gap-3">
-                      <button
-                        type="button"
-                        onClick={() => toggleAgreement("accept")}
-                        className={`relative w-5 h-5 sm:w-6 sm:h-6 lg:w-5 lg:h-5 border-2 rounded-sm flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0 ${
-                          agreements.accept
-                            ? "border-mediumBlue"
-                            : "border-mediumGrey"
-                        }`}
-                      >
-                        {agreements.accept && (
-                          <GiCheckMark className="text-mediumBlue w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
-                        )}
-                      </button>
-
-                      <CommonParagraph
-                        variant="small"
-                        className="leading-relaxed"
-                      >
-                        I confirm that use of this service is legal in my
-                        jurisdiction.
-                      </CommonParagraph>
-                    </div>
-
-                    {/* Non-US Risk */}
-                    <div className="flex items-start gap-3">
-                      <button
-                        type="button"
-                        onClick={() => toggleAgreement("non_us_risk")}
-                        className={`relative w-5 h-5 sm:w-6 sm:h-6 lg:w-5 lg:h-5 border-2 rounded-sm flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0 ${
-                          agreements.non_us_risk
-                            ? "border-mediumBlue"
-                            : "border-mediumGrey"
-                        }`}
-                      >
-                        {agreements.non_us_risk && (
-                          <GiCheckMark className="text-mediumBlue w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
-                        )}
-                      </button>
-
-                      <CommonParagraph
-                        variant="small"
-                        className="leading-relaxed"
-                      >
-                        I acknowledge that Ultimate Automation is strictly
-                        unavailable to customers in certain jurisdictions
-                        (Please see Terms of Service & Risk Disclosure
-                        Statement.)
-                      </CommonParagraph>
-                    </div>
-
-                    {/* US Risk */}
-                    <div className="flex items-start gap-3">
-                      <button
-                        type="button"
-                        onClick={() => toggleAgreement("us_risk")}
-                        className={`relative w-5 h-5 sm:w-6 sm:h-6 lg:w-5 lg:h-5 border-2 rounded-sm flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0 ${
-                          agreements.us_risk
-                            ? "border-mediumBlue"
-                            : "border-mediumGrey"
-                        }`}
-                      >
-                        {agreements.us_risk && (
-                          <GiCheckMark className="text-mediumBlue w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
-                        )}
-                      </button>
-
-                      <CommonParagraph
-                        variant="small"
-                        className="leading-relaxed"
-                      >
-                        I understand that misrepresentation may result in
-                        immediate termination and loss of access.
-                      </CommonParagraph>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-3">
-                    <button
-                      onClick={onClose}
-                      className={`flex-1 px-6 py-3 rounded-xl cursor-pointer hover:font-bold font-semibold transition-all duration-200 ${
-                        theme === "dark"
-                          ? "bg-mediumBlack text-gray-300 hover:bg-lightBlack hover:text-white border border-lightBlack"
-                          : "bg-gray-100 text-gray-700 hover:bg-gray-200 hover:text-gray-900 border border-gray-200"
-                      }`}
-                    >
-                      Cancel
-                    </button>
-
-                    <SubmitButton
-                      variant="bg_blue"
-                      className="flex-1"
-                      isLoading={modalLoading}
-                      disabled={!allChecked || modalLoading}
-                      onClick={handleModalConfirm}
-                    >
-                      Confirm
-                    </SubmitButton>
-                  </div>
-                </div>
-
-                <div
-                  className={`absolute -bottom-20 -right-20 w-40 h-40 rounded-full blur-3xl opacity-20 ${
-                    theme === "dark"
-                      ? "bg-gradient-to-br from-blue-500 to-purple-500"
-                      : "bg-gradient-to-br from-blue-300 to-purple-300"
-                  }`}
+          {/* Bottom row: weekly, monthly, annual */}
+          {smallPlans.length > 0 && (
+            <div
+              className="grid gap-6 my-10"
+              style={{
+                gridTemplateColumns: `repeat(${Math.min(smallPlans.length, 4)}, minmax(0, 1fr))`,
+              }}
+            >
+              {smallPlans.map((plan, idx) => (
+                <PlanCard
+                  key={plan.id}
+                  plan={plan}
+                  idx={idx}
+                  onSelect={handleSelectPlan}
+                  onCancel={handleCancel}
+                  loadingPlanId={loadingPlanId}
+                  isCancelPending={isCancelPending}
+                  isFeatured={false}
+                  tk={tk}
                 />
-              </motion.div>
+              ))}
             </div>
-          </>
-        </AnimatePresence>
-      )}
+          )}
+
+          {rawPlans.length === 0 && (
+            <p className={`text-center py-16 text-sm ${tk.emptyText}`}>
+              No subscription plans available.
+            </p>
+          )}
+        </div>
+      </div>
     </>
   );
 };

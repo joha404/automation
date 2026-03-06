@@ -49,6 +49,7 @@ const DashboardSidebar = ({ open, countData }) => {
   }, [open]);
 
   const isActive = (path) => location.pathname === path;
+
   if (isActiveLoading) {
     return (
       <div className="flex w-full max-w-6xl mx-auto justify-center">
@@ -56,6 +57,7 @@ const DashboardSidebar = ({ open, countData }) => {
       </div>
     );
   }
+
   return (
     <>
       {/* Sidebar */}
@@ -73,7 +75,7 @@ const DashboardSidebar = ({ open, countData }) => {
           {/* Header with user profile */}
           <div className="w-full flex justify-center items-center xl:mt-3 mb-1">
             {!open && (
-              <div className="w-8 h-8 mb-1.5 ">
+              <div className="w-8 h-8 mb-1.5">
                 <img
                   src={logo}
                   alt="logo"
@@ -82,9 +84,10 @@ const DashboardSidebar = ({ open, countData }) => {
               </div>
             )}
           </div>
+
           <div
             className={`m-2.5 rounded-lg p-2.5 ${
-              open ? " mt-10" : "mt-0 bg-transparent"
+              open ? "mt-10" : "mt-0 bg-transparent"
             } transition-colors duration-200 ${
               theme === "dark"
                 ? "text-[#0A9087] bg-[#054844] hover:bg-mediumBlack hover:text-white"
@@ -167,13 +170,7 @@ const DashboardSidebar = ({ open, countData }) => {
                       }`}
                     >
                       <MdNotifications size={19} />
-                      <span
-                        className={`absolute -top-2 -right-1 w-5 h-5 text-xs rounded-full flex items-center justify-center ${
-                          theme === "dark"
-                            ? "bg-rose-600 text-white"
-                            : "bg-rose-600 text-white"
-                        }`}
-                      >
+                      <span className="absolute -top-2 -right-1 w-5 h-5 text-xs rounded-full flex items-center justify-center bg-rose-600 text-white">
                         {countData?.data?.count || "0"}
                       </span>
                     </motion.button>
@@ -224,13 +221,7 @@ const DashboardSidebar = ({ open, countData }) => {
                     }`}
                   >
                     <MdNotifications size={16} />
-                    <span
-                      className={`absolute -top-2 -right-1 w-5 h-5 text-xs rounded-full flex items-center justify-center ${
-                        theme === "dark"
-                          ? "bg-rose-600 text-white"
-                          : "bg-rose-600 text-white"
-                      }`}
-                    >
+                    <span className="absolute -top-2 -right-1 w-5 h-5 text-xs rounded-full flex items-center justify-center bg-rose-600 text-white">
                       {countData?.data?.count || "0"}
                     </span>
                   </motion.button>
@@ -302,84 +293,11 @@ const DashboardSidebar = ({ open, countData }) => {
               sectionName="account"
               title="Account"
             />
-
-            <div
-              className={`lg:hidden block transition-colors duration-200 xl:pb-2 pb-1.5 ${
-                theme === "dark" ? "border-gray-700" : "border-gray-200"
-              }`}
-            >
-              <motion.button
-                onClick={logout}
-                transition={{
-                  type: "tween",
-                  ease: [0.25, 0.1, 0.25, 1],
-                  duration: 0.5,
-                }}
-                className={`group relative flex ${
-                  open ? "" : "justify-center"
-                } items-center w-full rounded-lg px-1 text-sm font-medium transition-all duration-200 cursor-pointer ${
-                  theme === "dark"
-                    ? "text-gray-400 hover:text-rose-500"
-                    : "text-darkGrey group-hover:text-mediumBlack hover:text-rose-600"
-                }`}
-              >
-                <div className="flex items-center justify-center w-7 h-7 rounded-md transition-transform duration-300 group-hover:rotate-90">
-                  <FaPowerOff size={16} />
-                </div>
-                {open && (
-                  <motion.span
-                    variants={textVariants}
-                    initial="closed"
-                    animate="open"
-                    className="ml-3 whitespace-nowrap font-medium"
-                  >
-                    Logout
-                  </motion.span>
-                )}
-              </motion.button>
-            </div>
           </div>
 
-          {/* Logout Button */}
+          {/* ── Single Logout Button (all screen sizes) ── */}
           <div
-            className={`md:hidden block transition-colors duration-200 xl:pb-2 pb-1.5 ${
-              theme === "dark" ? "border-gray-700" : "border-gray-200"
-            }`}
-          >
-            <motion.button
-              onClick={logout}
-              transition={{
-                type: "tween",
-                ease: [0.25, 0.1, 0.25, 1],
-                duration: 0.5,
-              }}
-              className={`group relative flex ${
-                open ? "" : "justify-center"
-              } items-center w-full rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 cursor-pointer ${
-                theme === "dark"
-                  ? "text-gray-400 hover:text-rose-500"
-                  : "text-darkGrey group-hover:text-mediumBlack hover:text-rose-600"
-              }`}
-            >
-              <div className="flex items-center justify-center w-7 h-7 rounded-md transition-transform duration-300 group-hover:rotate-90">
-                <FaPowerOff size={16} />
-              </div>
-              {open && (
-                <motion.span
-                  variants={textVariants}
-                  initial="closed"
-                  animate="open"
-                  className="ml-3 whitespace-nowrap font-medium"
-                >
-                  Logout
-                </motion.span>
-              )}
-            </motion.button>
-          </div>
-
-          {/* Logout Button - Desktop */}
-          <div
-            className={`md:block hidden transition-colors duration-200 xl:pb-2 pb-1.5 ${
+            className={`transition-colors duration-200 xl:pb-2 pb-1.5 ${
               theme === "dark" ? "border-gray-700" : "border-gray-200"
             }`}
           >
