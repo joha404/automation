@@ -1,9 +1,17 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/hooks/custom/useTheme";
 import { useNavigate } from "react-router-dom";
 
-const tabs = ["All Predictions", "Play of the Day", "Futures", "Live"];
+// Tab config: label → prediction_type filter (null = show all)
+const tabs = [
+  { label: "All Predictions", type: null },
+  { label: "Standard", type: "S" },
+  { label: "Play of the Day", type: "POTD" },
+  { label: "Player Props", type: "PP" },
+  { label: "Live", type: "L" },
+  { label: "Futures", type: "F" },
+];
 
 const NBAIcon = () => (
   <div
@@ -95,7 +103,6 @@ const formatDate = (dateString) => {
   );
 };
 
-// ── Theme tokens ──────────────────────────────────────────────
 const tokens = {
   dark: {
     wrapper: "#071412",
@@ -120,6 +127,7 @@ const tokens = {
     clock: "#6B7B7A",
     betTypeS: "#ffffff",
     emptyText: "rgba(255,255,255,0.4)",
+    tabScrollFade: "rgba(7,20,18,0.9)",
   },
   light: {
     wrapper: "#edf7f6",
@@ -144,6 +152,7 @@ const tokens = {
     clock: "#8aaba8",
     betTypeS: "#0A9087",
     emptyText: "rgba(10,31,30,0.4)",
+    tabScrollFade: "rgba(237,247,246,0.9)",
   },
 };
 
@@ -151,6 +160,7 @@ function PredictionRow({ p, i, t }) {
   const [hovered, setHovered] = useState(false);
   const betType = p.prediction_type || p.betType || "N/A";
   const betTypeColor = getBetTypeColor(betType, t);
+  const isLocked = p.prediction_desc === "Upgrade to unlock";
 
   return (
     <motion.div
@@ -164,9 +174,9 @@ function PredictionRow({ p, i, t }) {
       onMouseLeave={() => setHovered(false)}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -6 }}
       transition={{ delay: i * 0.08, duration: 0.35 }}
     >
-      {/* Logo */}
       {p.image ? (
         <img
           src={p.image}
@@ -177,7 +187,6 @@ function PredictionRow({ p, i, t }) {
         <NBAIcon />
       )}
 
-      {/* Main Info */}
       <div className="flex-1 min-w-0">
         <p
           className="font-semibold font-logo text-[13px] sm:text-[14px] leading-tight mb-1"
@@ -192,7 +201,13 @@ function PredictionRow({ p, i, t }) {
               className="text-[11px] font-logo sm:text-[12px]"
               style={{ color: t.sub }}
             >
-              {p.game || p.matchup || "N/A"}
+              {isLocked ? (
+                <span className="blur-sm select-none">
+                  {p.game || p.matchup || "N/A"}
+                </span>
+              ) : (
+                p.game || p.matchup || "N/A"
+              )}
             </span>
           </div>
           <div className="flex items-center gap-1">
@@ -201,13 +216,20 @@ function PredictionRow({ p, i, t }) {
               className="text-[11px] font-logo sm:text-[12px]"
               style={{ color: t.sub }}
             >
-              {p.date_time ? formatDate(p.date_time) : p.date || "N/A"}
+              {isLocked ? (
+                <span className="blur-sm select-none">
+                  {p.date_time ? formatDate(p.date_time) : p.date || "N/A"}
+                </span>
+              ) : p.date_time ? (
+                formatDate(p.date_time)
+              ) : (
+                p.date || "N/A"
+              )}
             </span>
           </div>
         </div>
       </div>
 
-      {/* Bet Type */}
       <div className="flex-shrink-0 text-right mr-2 sm:mr-6">
         <p
           className="text-[10px] font-logo sm:text-[11px] mb-1"
@@ -219,11 +241,14 @@ function PredictionRow({ p, i, t }) {
           className="font-bold text-[13px] font-logo text-center sm:text-[14px]"
           style={{ color: betTypeColor }}
         >
-          {betType}
+          {isLocked ? (
+            <span className="blur-sm select-none">{betType}</span>
+          ) : (
+            betType
+          )}
         </p>
       </div>
 
-      {/* Bet Size */}
       <div className="flex-shrink-0 text-right">
         <p
           className="text-[10px] text-center font-logo sm:text-[11px] mb-2"
@@ -239,7 +264,13 @@ function PredictionRow({ p, i, t }) {
             border: `1px solid ${t.betSizeBorder}`,
           }}
         >
-          {p.unit_size || p.bet_size || p.betSize || "N/A"}
+          {isLocked ? (
+            <span className="blur-sm select-none">
+              {p.unit_size || p.bet_size || p.betSize || "N/A"}
+            </span>
+          ) : (
+            p.unit_size || p.bet_size || p.betSize || "N/A"
+          )}
         </span>
       </div>
     </motion.div>
@@ -247,17 +278,30 @@ function PredictionRow({ p, i, t }) {
 }
 
 export default function PredictionComponent({ data }) {
-  const [activeTab, setActiveTab] = useState("All Predictions");
+  const [activeTab, setActiveTab] = useState(tabs[0]);
   const { theme } = useTheme();
   const t = tokens[theme] ?? tokens.dark;
   const navigate = useNavigate();
 
-  // ✅ Handle both flat results[] and package_sections[] API shapes
   const innerData = data?.data || data || {};
   const rawResults = innerData?.results || [];
   const predictionData = innerData?.package_sections
     ? innerData.package_sections.flatMap((pkg) => pkg.predictions || [])
     : rawResults;
+
+  // Filter by prediction_type when a specific tab is selected
+  const filtered = activeTab.type
+    ? predictionData.filter(
+        (p) => (p.prediction_type || p.betType) === activeTab.type,
+      )
+    : predictionData;
+
+  // Count per tab for badge
+  const countFor = (type) =>
+    type
+      ? predictionData.filter((p) => (p.prediction_type || p.betType) === type)
+          .length
+      : predictionData.length;
 
   return (
     <div
@@ -275,46 +319,87 @@ export default function PredictionComponent({ data }) {
         </span>
       </div>
 
-      {/* Tabs */}
-      <div className="flex items-center gap-1 sm:gap-2 mb-4 flex-wrap">
-        {tabs.map((tab) => {
-          const isActive = activeTab === tab;
-          return (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className="px-3 sm:px-4 py-1.5 rounded-full text-[11px] sm:text-[13px] font-medium cursor-pointer"
-              style={{
-                background: isActive ? t.tabActiveBg : t.tabInactiveBg,
-                color: isActive ? t.tabActiveColor : t.tabInactiveColor,
-                border: `1px solid ${isActive ? t.tabActiveBorder : t.tabInactiveBorder}`,
-                transition: "all 0.2s ease",
-              }}
-            >
-              {tab}
-            </button>
-          );
-        })}
+      {/* Tabs — horizontally scrollable on mobile */}
+      <div className="relative mb-4">
+        <div
+          className="flex items-center gap-1 sm:gap-2 overflow-x-auto pb-1 scrollbar-hide"
+          style={{ scrollbarWidth: "none" }}
+        >
+          {tabs.map((tab) => {
+            const isActive = activeTab.label === tab.label;
+            const count = countFor(tab.type);
+            return (
+              <button
+                key={tab.label}
+                onClick={() => setActiveTab(tab)}
+                className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-full text-[11px] sm:text-[13px] font-medium cursor-pointer whitespace-nowrap flex-shrink-0"
+                style={{
+                  background: isActive ? t.tabActiveBg : t.tabInactiveBg,
+                  color: isActive ? t.tabActiveColor : t.tabInactiveColor,
+                  border: `1px solid ${isActive ? t.tabActiveBorder : t.tabInactiveBorder}`,
+                  transition: "all 0.2s ease",
+                }}
+              >
+                {tab.label}
+                {/* Count badge — only show when not "All" or when has items */}
+                {tab.type && count > 0 && (
+                  <span
+                    className="text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-none"
+                    style={{
+                      background: isActive
+                        ? "rgba(255,255,255,0.25)"
+                        : "rgba(10,144,135,0.15)",
+                      color: isActive ? "#fff" : t.betSizeColor,
+                    }}
+                  >
+                    {count}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+        {/* Right fade hint for scroll */}
+        <div
+          className="absolute right-0 top-0 bottom-1 w-6 pointer-events-none"
+          style={{
+            background: `linear-gradient(to right, transparent, ${t.tabScrollFade})`,
+          }}
+        />
       </div>
 
       {/* Rows */}
       <div className="flex flex-col">
-        {predictionData.length === 0 ? (
-          <p
-            className="text-center py-4 text-sm font-logo"
-            style={{ color: t.emptyText }}
-          >
-            No predictions available
-          </p>
-        ) : (
-          predictionData
-            ?.slice(0, 5)
-            ?.map((p, i) => <PredictionRow key={p.id} p={p} i={i} t={t} />)
-        )}
+        <AnimatePresence mode="wait">
+          {filtered.length === 0 ? (
+            <motion.p
+              key="empty"
+              className="text-center py-6 text-sm font-logo"
+              style={{ color: t.emptyText }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              No {activeTab.label} available
+            </motion.p>
+          ) : (
+            <motion.div
+              key={activeTab.label}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              {filtered.slice(0, 3).map((p, i) => (
+                <PredictionRow key={p.id ?? i} p={p} i={i} t={t} />
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* View All */}
-      {predictionData.length > 0 && (
+      {filtered.length > 0 && (
         <div className="text-center mt-2">
           <button
             onClick={() => navigate("/dashboard/predictions")}

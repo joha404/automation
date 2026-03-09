@@ -36,6 +36,7 @@ const MessageInput = ({
 }) => {
   const renderImagePreview = () => {
     if (!selectedImage) return null;
+    console.log(canSendMessages);
 
     return (
       <div

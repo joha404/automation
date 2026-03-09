@@ -216,11 +216,22 @@ const PlanCard = ({
 
         {/* Plan name + save badge */}
         <div className="flex items-center justify-center mb-3">
-          <p
+          {/* <p
             className={`font-bold font-logo text-[15px] tracking-widest uppercase text-center ${tk.planName}`}
           >
             {plan.name}
-          </p>
+          </p> */}
+
+          <span
+            className={`font-logo font-bold text-[13px] tracking-widest uppercase ${tk.planName}`}
+          >
+            {plan.name?.split(" ").map((word, i) => (
+              <span key={i} className={i === 1 ? "text-[0.65em]" : ""}>
+                {word}
+                {i === 0 ? " " : ""}
+              </span>
+            ))}
+          </span>
           <SaveBadge plan={plan} tk={tk} />
         </div>
 
@@ -242,11 +253,6 @@ const PlanCard = ({
         {getMonthlyBreakdown(plan.price, plan.package_type) && (
           <p className={`text-center text-[12px] mb-1 ${tk.subInfo}`}>
             {getMonthlyBreakdown(plan.price, plan.package_type)}
-          </p>
-        )}
-        {plan.per_month_price && (
-          <p className={`text-center text-[12px] mb-1 ${tk.subInfo}`}>
-            (${plan.per_month_price}/mo)
           </p>
         )}
 
@@ -346,7 +352,12 @@ const FeaturedPlanRow = ({
             <span
               className={`font-logo font-bold text-[13px] tracking-widest uppercase ${tk.planName}`}
             >
-              {plan.name}
+              {plan.name?.split(" ").map((word, i) => (
+                <span key={i} className={i === 1 ? "text-[0.65em]" : ""}>
+                  {word}
+                  {i === 0 ? " " : ""}
+                </span>
+              ))}
             </span>
             <SaveBadge plan={plan} tk={tk} />
           </div>
@@ -363,12 +374,12 @@ const FeaturedPlanRow = ({
             </span>
           </div>
           {getMonthlyBreakdown(plan.price, plan.package_type) && (
-            <p className={`text-[13px] ${tk.subInfo}`}>
+            <p className={`text-[13px] text-center ${tk.subInfo}`}>
               {getMonthlyBreakdown(plan.price, plan.package_type)}
             </p>
           )}
           {plan.per_month_price && (
-            <p className={`text-[13px] ${tk.subInfo}`}>
+            <p className={`text-[13px]  ${tk.subInfo}`}>
               (${plan.per_month_price}/mo)
             </p>
           )}

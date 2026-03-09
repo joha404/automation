@@ -18,8 +18,8 @@ import { useWebSocket } from "@/hooks/ useWebSocket";
 // Hooks
 
 // Cloudinary configuration
-const CLOUD_NAME = "dkgnzxmy8";
-const API_KEY = "788391149578185";
+const CLOUD_NAME = "dbtzfek0q";
+const API_KEY = "986312557576329";
 const UPLOAD_PRESET = "chatroom";
 const UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`;
 

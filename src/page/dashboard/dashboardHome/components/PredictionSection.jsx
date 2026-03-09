@@ -195,7 +195,7 @@ const PredictionSection = () => {
             {/* ITEMS LIST - SHOWING ONLY TOP 3 */}
             <div className="space-y-1.5 mt-2">
               {allPredictions && allPredictions.length > 0 ? (
-                allPredictions.slice(0, 3).map((item) => (
+                allPredictions.slice(0, 1).map((item) => (
                   <div
                     key={item.id}
                     className={`flex flex-row p-2 rounded-xl transition-all duration-200 gap-5 w-full ${
@@ -323,7 +323,7 @@ const PredictionSection = () => {
                 >
                   <div>
                     <CommonParagraph variant="large" className="font-semibold">
-                      <b>NO PREDICTIONS AVAILABLE</b>
+                      <b> No predictions available</b>
                     </CommonParagraph>
                     <CommonParagraph
                       variant="smaller"

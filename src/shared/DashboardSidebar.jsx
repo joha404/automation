@@ -65,13 +65,13 @@ const DashboardSidebar = ({ open, countData }) => {
         initial={false}
         animate={open ? "open" : "closed"}
         variants={sidebarVariants}
-        className={`fixed top-0 z-[1000] h-screen transition-colors duration-300 ${
+        className={`fixed top-0  z-[1000] h-screen transition-colors duration-300 ${
           theme === "dark"
             ? "bg-[#021716] border border-[#021716] shadow-sm"
             : "bg-white border-gray-200"
         } border-r shadow-lg`}
       >
-        <div className="flex h-full flex-col">
+        <div className="flex h-full flex-col mt-2 lg:mt-0">
           {/* Header with user profile */}
           <div className="w-full flex justify-center items-center xl:mt-3 mb-1">
             {!open && (
@@ -132,23 +132,44 @@ const DashboardSidebar = ({ open, countData }) => {
                     <p
                       className={`text-xs ${
                         [
-                          "Ultimate Predictions",
-                          "Ultimate Automation",
+                          "Ultimate weekly",
+                          "Ultimate monthly",
+                          "Ultimate quarterly",
+                          "Ultimate annually",
                         ].includes(sub?.package_name)
-                          ? "text-mediumBlue"
+                          ? "text-green-500"
                           : theme === "dark"
                             ? "text-gray-400"
                             : "text-gray-500"
                       }`}
                     >
-                      {sub?.has_access
-                        ? [
-                            "Ultimate Predictions",
-                            "Ultimate Automation",
-                          ].includes(sub?.package_name)
-                          ? "Ultimate"
-                          : sub?.package_name
-                        : "No Package"}
+                      {sub?.has_access ? (
+                        [
+                          "Ultimate weekly",
+                          "Ultimate monthly",
+                          "Ultimate quarterly",
+                          "Ultimate annually",
+                        ].includes(sub?.package_name) ? (
+                          <>
+                            <span>Ultimate</span>{" "}
+                            <span className="text-[0.65em]">
+                              {sub?.package_name?.split(" ")[1]}
+                            </span>
+                          </>
+                        ) : (
+                          sub?.package_name?.split(" ").map((word, i) => (
+                            <span
+                              key={i}
+                              className={i === 1 ? "text-[0.65em]" : ""}
+                            >
+                              {word}
+                              {i === 0 ? " " : ""}
+                            </span>
+                          ))
+                        )
+                      ) : (
+                        "No Package"
+                      )}
                     </p>
                   </div>
                 </div>
