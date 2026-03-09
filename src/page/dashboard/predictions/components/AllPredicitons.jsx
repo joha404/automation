@@ -199,7 +199,11 @@ const PredictionRow = ({ p, isDark }) => (
               color: isDark ? "rgba(255,255,255,0.5)" : "rgba(10,31,30,0.6)",
             }}
           >
-            {p.game || "N/A"}
+            {p.prediction_desc === "Upgrade to unlock" ? (
+              <span className="blur-sm select-none">{p.game || "N/A"}</span>
+            ) : (
+              p.game || "N/A"
+            )}
           </span>
         </div>
         <div className="flex items-center gap-1 flex-shrink-0">
@@ -209,13 +213,21 @@ const PredictionRow = ({ p, isDark }) => (
               color: isDark ? "rgba(255,255,255,0.4)" : "rgba(10,31,30,0.5)",
             }}
           />
+
           <span
             className="text-[12px] sm:text-[14px] font-logo font-normal whitespace-nowrap"
             style={{
               color: isDark ? "rgba(255,255,255,0.5)" : "rgba(10,31,30,0.6)",
             }}
           >
-            {p.date_time ? formatDate(p.date_time) : "N/A"}
+            {p.prediction_desc === "Upgrade to unlock" ? (
+              <span className="blur-sm select-none">
+                {" "}
+                {p.date_time ? formatDate(p.date_time) : "N/A"}
+              </span>
+            ) : (
+              p.game || "N/A"
+            )}
           </span>
         </div>
       </div>
@@ -236,7 +248,13 @@ const PredictionRow = ({ p, isDark }) => (
           className="font-bold text-[13px] font-logo sm:text-[16px]"
           style={{ color: getBetTypeColor(p.prediction_type || p.bet_type) }}
         >
-          {p.prediction_type || p.bet_type || "N/A"}
+          {p.prediction_desc === "Upgrade to unlock" ? (
+            <span className="blur-sm select-none">
+              {p.prediction_type || p.bet_type || "N/A"}
+            </span>
+          ) : (
+            p.prediction_type || p.bet_type || "N/A"
+          )}
         </p>
       </div>
 
@@ -257,7 +275,13 @@ const PredictionRow = ({ p, isDark }) => (
             border: "1px solid #41C551",
           }}
         >
-          {p.unit_size || p.bet_size || "N/A"}
+          {p.prediction_desc === "Upgrade to unlock" ? (
+            <span className="blur-sm select-none">
+              {p.unit_size || p.bet_size || "N/A"}
+            </span>
+          ) : (
+            p.unit_size || p.bet_size || "N/A"
+          )}
         </span>
       </div>
     </div>
@@ -347,15 +371,6 @@ export default function AllPredictions() {
       className="w-full rounded-xl font-primary overflow-hidden"
       style={{ background: isDark ? "#071412" : "#f8fafc" }}
     >
-      {/* ── Top Header ── */}
-      <div
-        className="flex items-center gap-2 px-3 sm:px-4 py-3"
-        style={{ color: textColor }}
-      >
-        <GoGraph isDark={isDark} />
-        <span className="font-bold text-[15px]">Predictions</span>
-      </div>
-
       {/* ── Accordion Sections ── */}
       {allPackages.map((pkg) => {
         const isOpen = !!expandedPackages[pkg.package_name];

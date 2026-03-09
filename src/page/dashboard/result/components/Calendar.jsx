@@ -240,7 +240,7 @@ const Calendar = ({ calendarData }) => {
               ? "bg-transparent"
               : dayData
                 ? isZeroValue || dayData.color === "green"
-                  ? "bg-[#054844] hover:bg-[#086b64] "
+                  ? "bg-green-500 hover:bg-[#086b64] "
                   : "bg-rose-600/90 hover:bg-rose-700 border-red-400"
                 : theme === "dark"
                   ? "bg-[#001f1d] hover:bg-lightBlack/60 border-darkerGrey"
@@ -305,8 +305,8 @@ const Calendar = ({ calendarData }) => {
             parseFloat(currentMonthPL) < 0
               ? "bg-rose-600 text-white"
               : parseFloat(currentMonthPL) === 0
-                ? "bg-[#054844] text-white"
-                : "bg-[#054844] text-white"
+                ? "bg-green-500 text-white"
+                : "bg-green-500 text-white"
           }`}
         >
           {currentMonthPL}

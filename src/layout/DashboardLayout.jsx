@@ -11,6 +11,7 @@ import { motion } from "framer-motion";
 import CommonParagraph from "@/components/texts/CommonParagraph";
 import PixelTracker from "@/components/facebook/PixelTracker";
 import { useGet } from "@/hooks/api/common/useGet";
+import hImage from "../assets/dashboard/h.png";
 
 const DashboardLayout = () => {
   const { theme } = useTheme();
@@ -77,26 +78,49 @@ const DashboardLayout = () => {
       <PixelTracker />
 
       {/* Header with Logo and Toggle Button */}
-      <div
-        className={`flex items-center w-[280px] z-[2001] fixed top-0 h-[56px] transition-all duration-300 ${
-          sidebarOpen
-            ? "left-0  px-5 justify-between"
-            : isMobile
-              ? "left-2 w-auto"
-              : "left-[80px] w-auto px-4"
-        }`}
-      >
-        <div className="flex items-center">
-          <div className="text-xl font-semibold">
-            {sidebarOpen && <Logo transition={true} />}
+      <div className="flex items-center  gap-2 ">
+        <div
+          className={`flex items-center w-[280px] z-[2001] fixed top-0 h-[56px] transition-all duration-300 ${
+            sidebarOpen
+              ? "left-0  px-5 justify-between"
+              : isMobile
+                ? "left-2 w-auto"
+                : "left-[80px] w-auto px-4"
+          }`}
+        >
+          <div className="flex items-center">
+            <div className="text-xl font-semibold">
+              {sidebarOpen && (
+                <div className="flex items-center gap-2">
+                  <div
+                    className={`flex justify-center items-center h-[44px] p-3 w-[44px] rounded-lg overflow-hidden ${
+                      theme === "dark" ? "bg-none" : "bg-[#032422]"
+                    }`}
+                  >
+                    <img
+                      src={hImage}
+                      className="h-full w-full object-contain"
+                      alt=""
+                    />
+                  </div>
+                  <h1 className="font-bold font-logo text-2xl">
+                    <span className="text-[#0A9087]">Hyper</span>
+                    <span
+                      className={`${theme === "dark" ? "text-white" : "text-green-900"}`}
+                    >
+                      Picks
+                    </span>
+                  </h1>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
 
-        <button
-          onClick={toggleSidebar}
-          className={`mr-2 rounded-sm p-0.5 group transition-all duration-300 cursor-pointer ${
-            theme === "dark" ? "hover:bg-" : "hover:bg-extraLightBlue"
-          } 
+          <button
+            onClick={toggleSidebar}
+            className={`mr-2 rounded-sm p-0.5 group transition-all duration-300 cursor-pointer ${
+              theme === "dark" ? "hover:bg-" : "hover:bg-extraLightBlue"
+            } 
           ${
             !sidebarOpen
               ? theme === "dark"
@@ -104,30 +128,31 @@ const DashboardLayout = () => {
                 : "max-xl:bg-lightBlack max-xl:hover:bg-darkBlack"
               : ""
           }`}
-        >
-          {sidebarOpen ? (
-            <TbLayoutSidebarLeftCollapseFilled
-              className={`h-5 w-5 transition-all duration-300 ${
-                theme === "dark"
-                  ? "text-mediumGrey group-hover:text-white "
-                  : "text-darkGrey group-hover:text-darkBlack"
-              }`}
-            />
-          ) : (
-            <IoMenu
-              className={`h-5 w-5 transition-all duration-300  ${
-                !sidebarOpen
-                  ? theme === "dark"
-                    ? "max-xl:text-darkBlack group-hover:max-xl:text-darkBlack text-lightestGrey group-hover:text-white "
-                    : "max-xl:text-lightestGrey group-hover:max-xl:text-white text-darkGrey group-hover:text-darkBlack"
-                  : ""
-              }`}
-            />
-          )}
-        </button>
+          >
+            {sidebarOpen ? (
+              <TbLayoutSidebarLeftCollapseFilled
+                className={`h-5 w-5 transition-all duration-300 ${
+                  theme === "dark"
+                    ? "text-mediumGrey group-hover:text-white "
+                    : "text-darkGrey group-hover:text-darkBlack"
+                }`}
+              />
+            ) : (
+              <IoMenu
+                className={`h-5 w-5 transition-all duration-300  ${
+                  !sidebarOpen
+                    ? theme === "dark"
+                      ? "max-xl:text-darkBlack group-hover:max-xl:text-darkBlack text-lightestGrey group-hover:text-white "
+                      : "max-xl:text-lightestGrey group-hover:max-xl:text-white text-darkGrey group-hover:text-darkBlack"
+                    : ""
+                }`}
+              />
+            )}
+          </button>
+        </div>
       </div>
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden ">
         {/* Sidebar */}
         <div className={`${!sidebarOpen && isMobile ? "hidden" : "block"}`}>
           <DashboardSidebar

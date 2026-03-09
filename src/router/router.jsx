@@ -30,7 +30,6 @@ import PublicRoutes from "@/routes/PublicRoutes";
 import Success from "@/shared/errorPages/Success";
 import Cancel from "@/shared/errorPages/Cancel";
 import Logo from "@/page/dashboard/logo/Logo";
-import Offer from "@/page/dashboard/offer/Offer";
 import AutomationPolicy from "@/shared/AutomationPolicy";
 
 const router = createBrowserRouter([
@@ -158,15 +157,6 @@ const router = createBrowserRouter([
         ),
       },
 
-      {
-        path: "rewards",
-        element: (
-          <PrivateRoute allowedRoles={["superAdmin"]}>
-            <Offer />
-          </PrivateRoute>
-          // <CommingSoon />
-        ),
-      },
       {
         path: "settings",
         element: (

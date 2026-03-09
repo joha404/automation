@@ -59,14 +59,7 @@ const ResultScreen = ({
 
   return (
     <CommonWrapper>
-      <div className={`rounded-xl font-primary sm:p-5 p-3 shadow-sm   `}>
-        <h1
-          className={`font-logo font-bold text-[20px] my-2 ${
-            theme === "dark" ? "text-white" : "text-black"
-          }`}
-        >
-          Result
-        </h1>
+      <div className={`rounded-xl font-primary  shadow-sm   `}>
         <div
           className={` mb-2 ${
             theme === "dark" ? " bg-[#021716]" : "bg-lightestGrey "
@@ -131,7 +124,7 @@ const ResultScreen = ({
           </div>
         </div>
         <div
-          className={`rounded-lg sm:p-5 p-3 ${
+          className={`rounded-lg sm:p-2 p-3 ${
             theme === "dark" ? "bg-[#021716]" : "bg-lightestGrey"
           } `}
         >
