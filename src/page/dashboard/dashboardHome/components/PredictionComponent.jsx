@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/hooks/custom/useTheme";
 import { useNavigate } from "react-router-dom";
 
-// Tab config: label → prediction_type filter (null = show all)
 const tabs = [
   { label: "All Predictions", type: null },
   { label: "Standard", type: "S" },
@@ -15,8 +14,16 @@ const tabs = [
 
 const NBAIcon = () => (
   <div
-    className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
-    style={{ background: "#C8102E" }}
+    style={{
+      width: 36,
+      height: 36,
+      borderRadius: "50%",
+      background: "#C8102E",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      flexShrink: 0,
+    }}
   >
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
       <circle
@@ -164,8 +171,14 @@ function PredictionRow({ p, i, t }) {
 
   return (
     <motion.div
-      className="flex items-center gap-3 py-4 px-4 rounded-lg mb-3 cursor-pointer"
       style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+        padding: "10px 14px",
+        borderRadius: 10,
+        marginBottom: 10,
+        cursor: "pointer",
         background: hovered ? t.rowHover : t.rowBg,
         transition: "background 0.2s ease",
         boxShadow: hovered ? "0 2px 12px rgba(10,144,135,0.07)" : "none",
@@ -177,101 +190,129 @@ function PredictionRow({ p, i, t }) {
       exit={{ opacity: 0, y: -6 }}
       transition={{ delay: i * 0.08, duration: 0.35 }}
     >
+      {/* Logo */}
       {p.image ? (
         <img
           src={p.image}
           alt={p.game}
-          className="w-9 h-9 rounded-full object-cover flex-shrink-0"
+          style={{
+            width: 36,
+            height: 36,
+            borderRadius: "50%",
+            objectFit: "cover",
+            flexShrink: 0,
+          }}
         />
       ) : (
         <NBAIcon />
       )}
 
-      <div className="flex-1 min-w-0">
+      {/* Middle: title + meta */}
+      <div style={{ flex: 1, minWidth: 0 }}>
         <p
-          className="font-semibold font-logo text-[13px] sm:text-[14px] leading-tight mb-1"
-          style={{ color: t.title }}
+          style={{
+            color: t.title,
+            fontWeight: 600,
+            fontSize: 13,
+            lineHeight: 1.4,
+            margin: 0,
+            marginBottom: 3,
+            wordBreak: "break-word",
+            overflowWrap: "break-word",
+          }}
         >
           {p.prediction_desc || p.title || "N/A"}
         </p>
-        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-          <div className="flex items-center gap-1">
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            flexWrap: "wrap",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
             <BoltIcon color={t.bolt} />
             <span
-              className="text-[11px] font-logo sm:text-[12px]"
-              style={{ color: t.sub }}
+              style={{
+                color: t.sub,
+                fontSize: 11,
+                ...(isLocked
+                  ? { filter: "blur(4px)", userSelect: "none" }
+                  : {}),
+              }}
             >
-              {isLocked ? (
-                <span className="blur-sm select-none">
-                  {p.game || p.matchup || "N/A"}
-                </span>
-              ) : (
-                p.game || p.matchup || "N/A"
-              )}
+              {p.game || p.matchup || "N/A"}
             </span>
           </div>
-          <div className="flex items-center gap-1">
+          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
             <ClockIcon color={t.clock} />
             <span
-              className="text-[11px] font-logo sm:text-[12px]"
-              style={{ color: t.sub }}
+              style={{
+                color: t.sub,
+                fontSize: 11,
+                whiteSpace: "nowrap",
+                ...(isLocked
+                  ? { filter: "blur(4px)", userSelect: "none" }
+                  : {}),
+              }}
             >
-              {isLocked ? (
-                <span className="blur-sm select-none">
-                  {p.date_time ? formatDate(p.date_time) : p.date || "N/A"}
-                </span>
-              ) : p.date_time ? (
-                formatDate(p.date_time)
-              ) : (
-                p.date || "N/A"
-              )}
+              {p.date_time ? formatDate(p.date_time) : p.date || "N/A"}
             </span>
           </div>
         </div>
       </div>
 
-      <div className="flex-shrink-0 text-right mr-2 sm:mr-6">
-        <p
-          className="text-[10px] font-logo sm:text-[11px] mb-1"
-          style={{ color: t.label }}
-        >
-          Bet Type
-        </p>
-        <p
-          className="font-bold text-[13px] font-logo text-center sm:text-[14px]"
-          style={{ color: betTypeColor }}
-        >
-          {isLocked ? (
-            <span className="blur-sm select-none">{betType}</span>
-          ) : (
-            betType
-          )}
-        </p>
-      </div>
-
-      <div className="flex-shrink-0 text-right">
-        <p
-          className="text-[10px] text-center font-logo sm:text-[11px] mb-2"
-          style={{ color: t.label }}
-        >
-          Bet Size
-        </p>
-        <span
-          className="text-[12px] sm:text-[13px] font-bold px-2 sm:px-3 py-1 rounded-md whitespace-nowrap"
-          style={{
-            background: t.betSizeBg,
-            color: t.betSizeColor,
-            border: `1px solid ${t.betSizeBorder}`,
-          }}
-        >
-          {isLocked ? (
-            <span className="blur-sm select-none">
-              {p.unit_size || p.bet_size || p.betSize || "N/A"}
-            </span>
-          ) : (
-            p.unit_size || p.bet_size || p.betSize || "N/A"
-          )}
-        </span>
+      {/* Right: Bet Type + Bet Size — row layout on desktop */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 24,
+          flexShrink: 0,
+        }}
+      >
+        <div style={{ textAlign: "center" }}>
+          <p
+            style={{ color: t.label, fontSize: 10, margin: 0, marginBottom: 2 }}
+          >
+            Bet Type
+          </p>
+          <p
+            style={{
+              color: betTypeColor,
+              fontWeight: 700,
+              fontSize: 13,
+              margin: 0,
+              ...(isLocked ? { filter: "blur(4px)", userSelect: "none" } : {}),
+            }}
+          >
+            {betType}
+          </p>
+        </div>
+        <div style={{ textAlign: "center" }}>
+          <p
+            style={{ color: t.label, fontSize: 10, margin: 0, marginBottom: 4 }}
+          >
+            Bet Size
+          </p>
+          <span
+            style={{
+              fontSize: 12,
+              fontWeight: 700,
+              padding: "3px 10px",
+              borderRadius: 6,
+              whiteSpace: "nowrap",
+              background: t.betSizeBg,
+              color: t.betSizeColor,
+              border: `1px solid ${t.betSizeBorder}`,
+              ...(isLocked ? { filter: "blur(4px)", userSelect: "none" } : {}),
+            }}
+          >
+            {p.unit_size || p.bet_size || p.betSize || "N/A"}
+          </span>
+        </div>
       </div>
     </motion.div>
   );
@@ -289,14 +330,12 @@ export default function PredictionComponent({ data }) {
     ? innerData.package_sections.flatMap((pkg) => pkg.predictions || [])
     : rawResults;
 
-  // Filter by prediction_type when a specific tab is selected
   const filtered = activeTab.type
     ? predictionData.filter(
         (p) => (p.prediction_type || p.betType) === activeTab.type,
       )
     : predictionData;
 
-  // Count per tab for badge
   const countFor = (type) =>
     type
       ? predictionData.filter((p) => (p.prediction_type || p.betType) === type)
@@ -305,25 +344,54 @@ export default function PredictionComponent({ data }) {
 
   return (
     <div
-      className="w-full mx-auto rounded-2xl p-4 sm:p-5"
-      style={{ background: t.wrapper }}
+      style={{
+        width: "100%",
+        borderRadius: 16,
+        padding: 16,
+        background: t.wrapper,
+        overflow: "visible",
+        boxSizing: "border-box",
+      }}
     >
       {/* Header */}
-      <div className="flex items-center gap-2 mb-4">
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+          marginBottom: 14,
+        }}
+      >
         <ChartIcon color={t.icon} />
-        <span
-          className="font-bold font-logo text-[14px] sm:text-[15px]"
-          style={{ color: t.header }}
-        >
+        <span style={{ fontWeight: 700, fontSize: 15, color: t.header }}>
           Predictions
         </span>
       </div>
 
-      {/* Tabs — horizontally scrollable on mobile */}
-      <div className="relative mb-4">
+      {/* Tabs — scrollable, no Tailwind overflow classes */}
+      <div
+        style={{
+          position: "relative",
+          marginBottom: 14,
+          marginLeft: -16,
+          marginRight: -16,
+        }}
+      >
         <div
-          className="flex items-center gap-1 sm:gap-2 overflow-x-auto pb-1 scrollbar-hide"
-          style={{ scrollbarWidth: "none" }}
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "nowrap",
+            overflowX: "scroll",
+            overflowY: "visible",
+            WebkitOverflowScrolling: "touch",
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+            paddingLeft: 16,
+            paddingRight: 40,
+            paddingBottom: 4,
+            gap: 6,
+          }}
         >
           {tabs.map((tab) => {
             const isActive = activeTab.label === tab.label;
@@ -332,20 +400,36 @@ export default function PredictionComponent({ data }) {
               <button
                 key={tab.label}
                 onClick={() => setActiveTab(tab)}
-                className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-full text-[11px] sm:text-[13px] font-medium cursor-pointer whitespace-nowrap flex-shrink-0"
                 style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 5,
+                  paddingLeft: 13,
+                  paddingRight: 13,
+                  paddingTop: 6,
+                  paddingBottom: 6,
+                  borderRadius: 999,
+                  fontSize: 11,
+                  fontWeight: 500,
+                  cursor: "pointer",
+                  whiteSpace: "nowrap",
+                  flexShrink: 0,
                   background: isActive ? t.tabActiveBg : t.tabInactiveBg,
                   color: isActive ? t.tabActiveColor : t.tabInactiveColor,
                   border: `1px solid ${isActive ? t.tabActiveBorder : t.tabInactiveBorder}`,
                   transition: "all 0.2s ease",
+                  outline: "none",
                 }}
               >
                 {tab.label}
-                {/* Count badge — only show when not "All" or when has items */}
                 {tab.type && count > 0 && (
                   <span
-                    className="text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-none"
                     style={{
+                      fontSize: 10,
+                      fontWeight: 700,
+                      padding: "2px 6px",
+                      borderRadius: 999,
+                      lineHeight: 1,
                       background: isActive
                         ? "rgba(255,255,255,0.25)"
                         : "rgba(10,144,135,0.15)",
@@ -359,23 +443,33 @@ export default function PredictionComponent({ data }) {
             );
           })}
         </div>
-        {/* Right fade hint for scroll */}
+
+        {/* Right fade */}
         <div
-          className="absolute right-0 top-0 bottom-1 w-6 pointer-events-none"
           style={{
+            position: "absolute",
+            right: 0,
+            top: 0,
+            bottom: 4,
+            width: 40,
+            pointerEvents: "none",
             background: `linear-gradient(to right, transparent, ${t.tabScrollFade})`,
           }}
         />
       </div>
 
-      {/* Rows */}
-      <div className="flex flex-col">
+      {/* Prediction Rows */}
+      <div>
         <AnimatePresence mode="wait">
           {filtered.length === 0 ? (
             <motion.p
               key="empty"
-              className="text-center py-6 text-sm font-logo"
-              style={{ color: t.emptyText }}
+              style={{
+                textAlign: "center",
+                padding: "24px 0",
+                fontSize: 13,
+                color: t.emptyText,
+              }}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -400,11 +494,19 @@ export default function PredictionComponent({ data }) {
 
       {/* View All */}
       {filtered.length > 0 && (
-        <div className="text-center mt-2">
+        <div style={{ textAlign: "center", marginTop: 8 }}>
           <button
             onClick={() => navigate("/dashboard/predictions")}
-            className="font-semibold text-[13px] font-logo sm:text-[14px] cursor-pointer tracking-wide"
-            style={{ color: t.viewAll, transition: "opacity 0.15s ease" }}
+            style={{
+              fontWeight: 600,
+              fontSize: 13,
+              cursor: "pointer",
+              color: t.viewAll,
+              background: "none",
+              border: "none",
+              letterSpacing: 1,
+              transition: "opacity 0.15s ease",
+            }}
             onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.5")}
             onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
           >
