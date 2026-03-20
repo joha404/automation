@@ -136,8 +136,8 @@ const Otp = () => {
               className="text-center  mb-8 w-full"
             >
               <Link
-                to="/sign-up"
-                className="flex justify-center items-center gap-2 text-white font-logo hover:text-mediumBlue focus:text-mediumBlue focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-1 rounded transition-all duration-200 group  mb-5"
+                to="/sign-in"
+                className="flex justify-center items-center gap-2 text-darkGrey hover:text-[#0A9087] focus:text-[#04776f] focus:outline-none focus:ring-2 focus:ring-[#0A9087] focus:ring-offset-1 rounded transition-all duration-200 group mb-5"
               >
                 <IoIosArrowBack className="group-hover:-translate-x-1 transition-transform duration-200" />
                 <span className="text-sm font-medium">Back</span>

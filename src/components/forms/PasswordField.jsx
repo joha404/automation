@@ -77,7 +77,7 @@ const PasswordField = ({
         <button
           type="button"
           onClick={togglePasswordVisibility}
-          className="absolute inset-y-0 right-4 flex items-center cursor-pointer text-darkGrey hover:text-mediumBlue focus:outline-none transition-color duration-200"
+          className="absolute inset-y-0 right-4 flex items-center cursor-pointer text-darkGrey hover:text-[#0A9087] focus:outline-none transition-color duration-200"
           aria-label={showPassword ? "Hide password" : "Show password"}
           tabIndex={-1} // Prevent button from being focusable
         >

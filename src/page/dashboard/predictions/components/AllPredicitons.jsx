@@ -1,17 +1,15 @@
 import React, { useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { BsLightningChargeFill } from "react-icons/bs";
 import { FaRegClock, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { useTheme } from "@/hooks/custom/useTheme";
 import { useSidebar } from "@/hooks/custom/useSidebar";
-import { GoGraph } from "react-icons/go";
-
 import { useGet } from "@/hooks/api/common/useGet";
 import ScreenLoader from "@/components/loaders/ScreenLoader";
 import errorToast from "@/hooks/custom/errorToast";
 
 const getBetTypeColor = (type) => {
-  switch (type) {
+  switch (type?.toUpperCase()) {
     case "L":
       return "#FFDB5B";
     case "S":
@@ -24,16 +22,40 @@ const getBetTypeColor = (type) => {
       return "#c084fc";
     case "P":
       return "#facc15";
-    case "win":
+    case "WIN":
       return "#059669";
-    case "loss":
+    case "LOSS":
       return "#e11d48";
     default:
       return "#60a5fa";
   }
 };
 
+const getBetTypeLabel = (type) => {
+  switch (type?.toUpperCase()) {
+    case "L":
+      return "Lock";
+    case "S":
+      return "Standard";
+    case "F":
+      return "Futures";
+    case "PP":
+      return "Player Props";
+    case "POTD":
+      return "Play of the Day";
+    case "P":
+      return "Premium";
+    case "WIN":
+      return "Win";
+    case "LOSS":
+      return "Loss";
+    default:
+      return type || "N/A";
+  }
+};
+
 const formatDate = (dateString) => {
+  if (!dateString) return "N/A";
   const date = new Date(dateString);
   return (
     date.toLocaleDateString("en-US", { month: "short", day: "numeric" }) +
@@ -73,26 +95,12 @@ const NBALogo = () => (
   </div>
 );
 
-const ChartIcon = ({ isDark }) => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
-    <polyline
-      points="2,18 8,12 13,16 22,6"
-      stroke={isDark ? "white" : "#0a1f1e"}
-      strokeWidth="2.2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
-
-// ── Row background helpers (always inline style, never className bg) ────────
 const rowBg = (isDark) => (isDark ? "#032422" : "#f9fafb");
 const rowBgHover = (isDark) =>
   isDark ? "rgba(10,144,135,0.08)" : "rgba(10,144,135,0.06)";
 const rowBorder = (isDark) =>
   isDark ? "1px solid #0a3330" : "1px solid #e5e7eb";
 
-// ── Locked placeholder row ──────────────────────────────────────────────────
 const LockedRow = ({ isDark, onClick }) => (
   <div
     className="flex items-center mb-3 rounded-xl gap-2 sm:gap-3 px-3 sm:px-4 py-3 cursor-pointer transition-colors"
@@ -103,10 +111,7 @@ const LockedRow = ({ isDark, onClick }) => (
     }
     onMouseLeave={(e) => (e.currentTarget.style.background = rowBg(isDark))}
   >
-    {/* Blurred fake logo */}
     <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex-shrink-0 blur-sm bg-gray-400/40" />
-
-    {/* Blurred fake text */}
     <div className="flex-1 min-w-0 blur-sm select-none">
       <div
         className="h-3.5 w-48 rounded mb-2"
@@ -123,8 +128,6 @@ const LockedRow = ({ isDark, onClick }) => (
         />
       </div>
     </div>
-
-    {/* Lock badge */}
     <div
       className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg flex-shrink-0"
       style={{
@@ -159,147 +162,184 @@ const LockedRow = ({ isDark, onClick }) => (
   </div>
 );
 
-// ── Accessible prediction row ───────────────────────────────────────────────
-const PredictionRow = ({ p, isDark }) => (
-  <div
-    className="flex items-start sm:items-center mb-3 rounded-xl gap-2 sm:gap-3 px-3 sm:px-4 py-3 cursor-pointer transition-colors"
-    style={{ background: rowBg(isDark), border: rowBorder(isDark) }}
-    onMouseEnter={(e) =>
-      (e.currentTarget.style.background = rowBgHover(isDark))
-    }
-    onMouseLeave={(e) => (e.currentTarget.style.background = rowBg(isDark))}
-  >
-    {/* Logo */}
-    <div className="flex-shrink-0">
-      {p.image ? (
-        <img
-          src={p.image}
-          alt={p.game}
-          className="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover"
-        />
-      ) : (
-        <NBALogo />
-      )}
-    </div>
+const PredictionRow = ({ p, isDark }) => {
+  const isLocked = p.prediction_desc === "Upgrade to unlock";
+  const [hovered, setHovered] = useState(false);
 
-    {/* Main Info */}
-    <div className="flex-1 min-w-0">
-      <p
-        className="text-[14px] sm:text-[16px] font-logo font-bold leading-tight mb-1"
-        style={{ color: isDark ? "#ffffff" : "#0a1f1e" }}
-      >
-        {p.prediction_desc || p.title || "N/A"}
-      </p>
-      <div className="flex flex-col xs:flex-row sm:flex-row items-start xs:items-center sm:items-center gap-1 sm:gap-3">
-        <div className="flex items-center gap-1 min-w-0">
-          <BsLightningChargeFill className="text-[10px] text-yellow-500 flex-shrink-0" />
-          <span
-            className="text-[12px] font-logo font-normal sm:text-[14px] truncate"
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+        padding: "10px 14px",
+        borderRadius: 10,
+        marginBottom: 10,
+        cursor: "pointer",
+        background: hovered ? rowBgHover(isDark) : rowBg(isDark),
+        border: rowBorder(isDark),
+        transition: "background 0.2s ease",
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {/* Logo */}
+      <div style={{ flexShrink: 0 }}>
+        {p.image ? (
+          <img
+            src={p.image}
+            alt={p.game}
             style={{
-              color: isDark ? "rgba(255,255,255,0.5)" : "rgba(10,31,30,0.6)",
-            }}
-          >
-            {p.prediction_desc === "Upgrade to unlock" ? (
-              <span className="blur-sm select-none">{p.game || "N/A"}</span>
-            ) : (
-              p.game || "N/A"
-            )}
-          </span>
-        </div>
-        <div className="flex items-center gap-1 flex-shrink-0">
-          <FaRegClock
-            className="text-[10px] flex-shrink-0"
-            style={{
-              color: isDark ? "rgba(255,255,255,0.4)" : "rgba(10,31,30,0.5)",
+              width: 36,
+              height: 36,
+              borderRadius: "50%",
+              objectFit: "cover",
             }}
           />
+        ) : (
+          <NBALogo />
+        )}
+      </div>
 
-          <span
-            className="text-[12px] sm:text-[14px] font-logo font-normal whitespace-nowrap"
+      {/* Middle */}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <p
+          style={{
+            color: isDark ? "#ffffff" : "#0a1f1e",
+            fontWeight: 600,
+            fontSize: 13,
+            lineHeight: 1.4,
+            margin: 0,
+            marginBottom: 3,
+            wordBreak: "break-word",
+            overflowWrap: "break-word",
+          }}
+        >
+          {isLocked
+            ? "••••••••••••••••"
+            : p.prediction_desc || p.title || "N/A"}
+        </p>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            flexWrap: "wrap",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            <BsLightningChargeFill
+              style={{ fontSize: 10, color: "#F5C518", flexShrink: 0 }}
+            />
+            <span
+              style={{
+                color: isDark ? "rgba(255,255,255,0.5)" : "rgba(10,31,30,0.6)",
+                fontSize: 11,
+                ...(isLocked
+                  ? { filter: "blur(4px)", userSelect: "none" }
+                  : {}),
+              }}
+            >
+              {p.game || "N/A"}
+            </span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            <FaRegClock
+              style={{
+                fontSize: 10,
+                color: isDark ? "rgba(255,255,255,0.4)" : "rgba(10,31,30,0.5)",
+                flexShrink: 0,
+              }}
+            />
+            <span
+              style={{
+                color: isDark ? "rgba(255,255,255,0.5)" : "rgba(10,31,30,0.6)",
+                fontSize: 11,
+                whiteSpace: "nowrap",
+                ...(isLocked
+                  ? { filter: "blur(4px)", userSelect: "none" }
+                  : {}),
+              }}
+            >
+              {formatDate(p.date_time)}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Right: Bet Type + Bet Size — row layout */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 24,
+          flexShrink: 0,
+        }}
+      >
+        <div style={{ textAlign: "center" }}>
+          <p
             style={{
-              color: isDark ? "rgba(255,255,255,0.5)" : "rgba(10,31,30,0.6)",
+              color: isDark ? "rgba(255,255,255,0.4)" : "rgba(10,31,30,0.5)",
+              fontSize: 10,
+              margin: 0,
+              marginBottom: 2,
             }}
           >
-            {p.prediction_desc === "Upgrade to unlock" ? (
-              <span className="blur-sm select-none">
-                {" "}
-                {p.date_time ? formatDate(p.date_time) : "N/A"}
-              </span>
-            ) : (
-              p.game || "N/A"
-            )}
+            Bet Type
+          </p>
+          <p
+            style={{
+              color: getBetTypeColor(p.prediction_type || p.bet_type),
+              fontWeight: 700,
+              fontSize: 13,
+              margin: 0,
+              ...(isLocked ? { filter: "blur(4px)", userSelect: "none" } : {}),
+            }}
+          >
+            {p.prediction_type || p.bet_type || "N/A"}
+          </p>
+        </div>
+        <div style={{ textAlign: "center" }}>
+          <p
+            style={{
+              color: isDark ? "rgba(255,255,255,0.4)" : "rgba(10,31,30,0.5)",
+              fontSize: 10,
+              margin: 0,
+              marginBottom: 4,
+            }}
+          >
+            Bet Size
+          </p>
+          <span
+            style={{
+              fontSize: 12,
+              fontWeight: 700,
+              padding: "3px 10px",
+              borderRadius: 6,
+              whiteSpace: "nowrap",
+              background: "rgba(10,144,135,0.15)",
+              color: "#41C551",
+              border: "1px solid #41C551",
+              ...(isLocked ? { filter: "blur(4px)", userSelect: "none" } : {}),
+            }}
+          >
+            {p.unit_size || p.bet_size || "N/A"}
           </span>
         </div>
       </div>
     </div>
+  );
+};
 
-    {/* Bet Type + Bet Size */}
-    <div className="flex flex-col xs:flex-row sm:flex-row items-end xs:items-center sm:items-center gap-2 sm:gap-4 flex-shrink-0">
-      <div className="text-center">
-        <p
-          className="text-[12px] font-logo font-normal sm:text-[14px] mb-1"
-          style={{
-            color: isDark ? "rgba(255,255,255,0.4)" : "rgba(10,31,30,0.5)",
-          }}
-        >
-          Bet Type
-        </p>
-        <p
-          className="font-bold text-[13px] font-logo sm:text-[16px]"
-          style={{ color: getBetTypeColor(p.prediction_type || p.bet_type) }}
-        >
-          {p.prediction_desc === "Upgrade to unlock" ? (
-            <span className="blur-sm select-none">
-              {p.prediction_type || p.bet_type || "N/A"}
-            </span>
-          ) : (
-            p.prediction_type || p.bet_type || "N/A"
-          )}
-        </p>
-      </div>
-
-      <div className="text-center">
-        <p
-          className="text-[12px] sm:text-[14px] font-normal font-logo mb-1"
-          style={{
-            color: isDark ? "rgba(255,255,255,0.4)" : "rgba(10,31,30,0.5)",
-          }}
-        >
-          Bet Size
-        </p>
-        <span
-          className="text-[14px] sm:text-[16px] font-logo font-bold px-2 sm:px-3 py-0.5 sm:py-1 rounded-md whitespace-nowrap"
-          style={{
-            background: "rgba(10,144,135,0.15)",
-            color: "#41C551",
-            border: "1px solid #41C551",
-          }}
-        >
-          {p.prediction_desc === "Upgrade to unlock" ? (
-            <span className="blur-sm select-none">
-              {p.unit_size || p.bet_size || "N/A"}
-            </span>
-          ) : (
-            p.unit_size || p.bet_size || "N/A"
-          )}
-        </span>
-      </div>
-    </div>
-  </div>
-);
-
-// ── Main Component ──────────────────────────────────────────────────────────
 export default function AllPredictions() {
   const { theme } = useTheme();
-  const { sidebarOpen } = useSidebar();
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
   const [expandedPackages, setExpandedPackages] = useState({});
   const [currentPages, setCurrentPages] = useState({});
 
   const PREDICTIONS_PER_PAGE = 10;
   const isDark = theme === "dark";
-  const textColor = isDark ? "#ffffff" : "#111827";
 
   const { data: response, isLoading } = useGet("/predictions/", {
     queryKey: ["all-predictions"],
@@ -321,22 +361,60 @@ export default function AllPredictions() {
 
   const innerData = response?.data || response || {};
   const rawResults = innerData?.results || [];
+
+  // ✅ Build package sections grouped by prediction_type if no package_sections
   const packageSections = innerData?.package_sections
     ? innerData.package_sections
     : rawResults.length > 0
-      ? [
-          {
-            package_name: "Predictions",
+      ? (() => {
+          // Group by prediction_type
+          const groups = {};
+          rawResults.forEach((p) => {
+            const key = p.prediction_type || p.bet_type || "Other";
+            if (!groups[key]) groups[key] = [];
+            groups[key].push(p);
+          });
+          return Object.entries(groups).map(([type, preds]) => ({
+            package_name: getBetTypeLabel(type),
             has_access: true,
-            active_count: rawResults.length,
-            predictions: rawResults,
-          },
-        ]
+            active_count: preds.length,
+            predictions: preds,
+          }));
+        })()
       : [];
 
   const accessiblePackages = packageSections.filter((pkg) => pkg.has_access);
   const lockedPackages = packageSections.filter((pkg) => !pkg.has_access);
-  const allPackages = [...accessiblePackages, ...lockedPackages];
+  const typeOrder = [
+    "Standard",
+    "Live",
+    "Play of the Day",
+    "Player Props",
+    "Futures",
+  ];
+  const allPackages = [...accessiblePackages, ...lockedPackages].sort(
+    (a, b) => {
+      const ai = typeOrder.indexOf(a.package_name);
+      const bi = typeOrder.indexOf(b.package_name);
+      if (ai === -1 && bi === -1) return 0;
+      if (ai === -1) return 1;
+      if (bi === -1) return -1;
+      return ai - bi;
+    },
+  );
+
+  // ✅ Total active predictions count
+  const totalActive =
+    active?.data?.active_count ??
+    active?.active_count ??
+    allPackages.reduce((sum, pkg) => sum + (pkg.active_count || 0), 0);
+
+  // ✅ Package name from active data
+  const packageTitle =
+    active?.data?.package_name ??
+    active?.package_name ??
+    innerData?.package_name ??
+    "Predictions";
 
   const togglePackage = (packageName) => {
     setExpandedPackages((prev) => ({
@@ -352,15 +430,15 @@ export default function AllPredictions() {
     setCurrentPages((prev) => ({ ...prev, [packageName]: page }));
   };
 
-  const handleLockedPredictionClick = () => {
+  const handleLockedClick = () => {
     errorToast("Subscribe first to access this prediction!");
     setTimeout(() => navigate("/dashboard/subscription-tiers"), 1500);
   };
 
-  const getPaginatedPredictions = (predictions, packageName) => {
+  const getPaginated = (predictions, packageName) => {
     const currentPage = currentPages[packageName] || 1;
-    const startIndex = (currentPage - 1) * PREDICTIONS_PER_PAGE;
-    return predictions.slice(startIndex, startIndex + PREDICTIONS_PER_PAGE);
+    const start = (currentPage - 1) * PREDICTIONS_PER_PAGE;
+    return predictions.slice(start, start + PREDICTIONS_PER_PAGE);
   };
 
   const getTotalPages = (predictions) =>
@@ -371,198 +449,216 @@ export default function AllPredictions() {
       className="w-full rounded-xl font-primary overflow-hidden"
       style={{ background: isDark ? "#071412" : "#f8fafc" }}
     >
-      {/* ── Accordion Sections ── */}
-      {allPackages.map((pkg) => {
-        const isOpen = !!expandedPackages[pkg.package_name];
-        const isLocked = !pkg.has_access;
-        const predictions = pkg.predictions || [];
-        const paginated = getPaginatedPredictions(
-          predictions,
-          pkg.package_name,
-        );
-        const totalPages = getTotalPages(predictions);
-        const currentPage = currentPages[pkg.package_name] || 1;
-        const lockedRowCount = pkg.active_count || pkg.locked_count || 3;
-
-        return (
-          <div
-            key={pkg.package_name}
-            className="my-3 sm:my-4 mx-2 sm:mx-4 rounded-lg"
-            style={{
-              background: isDark ? "#021716" : "#ffffff",
-              border: isDark ? "none" : "1px solid #e5e7eb",
-              boxShadow: isDark ? "none" : "0 1px 3px rgba(0,0,0,0.08)",
-            }}
+      {/* ── Top Header: Package title + total active ── */}
+      {allPackages.length > 0 && (
+        <div className="text-center pt-6 pb-2 px-4">
+          <h2
+            className="text-[18px] sm:text-[22px] font-logo font-bold mb-1"
+            style={{ color: isDark ? "#ffffff" : "#0a1f1e" }}
           >
-            {/* Section Header */}
-            <div
-              className="flex items-center justify-between px-3 sm:px-4 py-3 sm:py-4 cursor-pointer"
-              onClick={() => togglePackage(pkg.package_name)}
+            {packageTitle}
+          </h2>
+          <div className="flex items-center justify-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-[#41C551] inline-block" />
+            <span
+              className="text-[13px] sm:text-[14px] font-logo font-medium"
+              style={{ color: "#41C551" }}
             >
-              <div>
-                <p
-                  className="text-[16px] font-logo font-bold sm:text-[20px]"
-                  style={{ color: isDark ? "#ffffff" : "#0a1f1e" }}
-                >
-                  {pkg.package_name}
-                </p>
-                <p
-                  className="text-[12px] font-logo font-normal sm:text-[14px] mt-0.5 flex items-center gap-2"
-                  style={{ color: isDark ? "#92A8C1" : "rgba(10,31,30,0.6)" }}
-                >
-                  {pkg.active_count ?? predictions.length} Active Prediction
-                  {(pkg.active_count ?? predictions.length) !== 1 ? "s" : ""}
-                  {isLocked && (
-                    <span
-                      className="px-1.5 py-0.5 rounded text-[10px] font-bold"
-                      style={{
-                        background: "rgba(251,191,36,0.15)",
-                        color: "#fbbf24",
-                        border: "1px solid rgba(251,191,36,0.3)",
-                      }}
-                    >
-                      🔒 LOCKED
-                    </span>
-                  )}
-                </p>
-              </div>
-              {isOpen ? (
-                <FaChevronUp
-                  style={{
-                    color: isDark
-                      ? "rgba(255,255,255,0.6)"
-                      : "rgba(10,31,30,0.6)",
-                    fontSize: 11,
-                  }}
-                />
-              ) : (
-                <FaChevronDown
-                  style={{
-                    color: isDark
-                      ? "rgba(255,255,255,0.6)"
-                      : "rgba(10,31,30,0.6)",
-                    fontSize: 11,
-                  }}
-                />
-              )}
-            </div>
+              {totalActive} Active Predictions
+            </span>
+          </div>
+        </div>
+      )}
 
-            {/* Rows */}
-            {isOpen && (
-              <div className="px-2 sm:px-4 pb-2">
-                {/* ── LOCKED ── */}
-                {isLocked ? (
-                  <>
-                    {Array.from({ length: lockedRowCount }).map((_, idx) => (
-                      <LockedRow
-                        key={idx}
-                        isDark={isDark}
-                        onClick={handleLockedPredictionClick}
-                      />
-                    ))}
-                    <div
-                      className="flex flex-col items-center justify-center py-4 px-4 mb-2 rounded-xl"
-                      style={{
-                        background: isDark
-                          ? "rgba(10,144,135,0.08)"
-                          : "rgba(10,144,135,0.04)",
-                        border: "1px dashed rgba(10,144,135,0.35)",
-                      }}
-                    >
-                      <p
-                        className="text-[13px] font-logo font-semibold mb-2"
-                        style={{
-                          color: isDark
-                            ? "rgba(255,255,255,0.7)"
-                            : "rgba(10,31,30,0.7)",
-                        }}
-                      >
-                        Upgrade your plan to view these predictions
-                      </p>
-                      <button
-                        onClick={handleLockedPredictionClick}
-                        className="px-4 py-1.5 rounded-lg text-[13px] font-logo font-bold transition-opacity hover:opacity-80"
-                        style={{
-                          background: "rgba(10,144,135,0.9)",
-                          color: "#fff",
-                        }}
-                      >
-                        View Plans →
-                      </button>
-                    </div>
-                  </>
-                ) : paginated.length === 0 ? (
+      {/* ── Accordion Sections ── */}
+      <div className="py-3">
+        {allPackages.map((pkg) => {
+          const isOpen = !!expandedPackages[pkg.package_name];
+          const isLocked = !pkg.has_access;
+          const predictions = pkg.predictions || [];
+          const paginated = getPaginated(predictions, pkg.package_name);
+          const totalPages = getTotalPages(predictions);
+          const currentPage = currentPages[pkg.package_name] || 1;
+          const lockedRowCount = pkg.active_count || pkg.locked_count || 3;
+
+          return (
+            <div
+              key={pkg.package_name}
+              className="my-2 mx-3 sm:mx-5 rounded-xl overflow-hidden"
+              style={{
+                background: isDark ? "#0d1f1e" : "#ffffff",
+                border: isDark ? "1px solid #0a2e2c" : "1px solid #e5e7eb",
+                boxShadow: isDark ? "none" : "0 1px 3px rgba(0,0,0,0.06)",
+              }}
+            >
+              {/* Section Header */}
+              <div
+                className="flex items-center justify-between px-4 sm:px-6 py-4 cursor-pointer select-none"
+                onClick={() => togglePackage(pkg.package_name)}
+                style={{
+                  background: isOpen
+                    ? isDark
+                      ? "rgba(10,144,135,0.06)"
+                      : "rgba(10,144,135,0.03)"
+                    : "transparent",
+                }}
+              >
+                <div>
                   <p
-                    className="text-center py-4 text-sm font-logo"
-                    style={{
-                      color: isDark
-                        ? "rgba(255,255,255,0.4)"
-                        : "rgba(10,31,30,0.4)",
-                    }}
+                    className="text-[15px] sm:text-[17px] font-logo font-bold"
+                    style={{ color: isDark ? "#ffffff" : "#0a1f1e" }}
                   >
-                    No predictions available
+                    {pkg.package_name}
                   </p>
-                ) : (
-                  paginated.map((p) => (
-                    <PredictionRow key={p.id} p={p} isDark={isDark} />
-                  ))
-                )}
-
-                {/* ── Pagination ── */}
-                {!isLocked && totalPages > 1 && (
-                  <div className="flex justify-center items-center gap-2 py-3">
-                    <button
-                      disabled={currentPage === 1}
-                      onClick={() =>
-                        handlePageChange(pkg.package_name, currentPage - 1)
-                      }
-                      className="px-3 py-1 rounded text-sm font-logo"
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <p
+                      className="text-[12px] sm:text-[13px] font-logo font-normal"
                       style={{
-                        opacity: currentPage === 1 ? 0.3 : 1,
-                        cursor: currentPage === 1 ? "not-allowed" : "pointer",
-                        background: isDark ? "#032422" : "#f3f4f6",
-                        color: isDark ? "#ffffff" : "#0a1f1e",
-                        border: isDark ? "none" : "1px solid #e5e7eb",
+                        color: isDark ? "#92A8C1" : "rgba(10,31,30,0.55)",
                       }}
                     >
-                      Prev
-                    </button>
-                    <span
-                      className="text-sm font-logo"
+                      {pkg.active_count ?? predictions.length} Active Prediction
+                      {(pkg.active_count ?? predictions.length) !== 1
+                        ? "s"
+                        : ""}
+                    </p>
+                    {isLocked && (
+                      <span
+                        className="px-1.5 py-0.5 rounded text-[10px] font-bold"
+                        style={{
+                          background: "rgba(251,191,36,0.15)",
+                          color: "#fbbf24",
+                          border: "1px solid rgba(251,191,36,0.3)",
+                        }}
+                      >
+                        🔒 LOCKED
+                      </span>
+                    )}
+                  </div>
+                </div>
+                {isOpen ? (
+                  <FaChevronUp style={{ color: "green", fontSize: 13 }} />
+                ) : (
+                  <FaChevronDown style={{ color: "green", fontSize: 13 }} />
+                )}
+              </div>
+
+              {/* Rows */}
+              {isOpen && (
+                <div className="px-3 sm:px-5 pb-3 pt-1">
+                  {isLocked ? (
+                    <>
+                      {Array.from({ length: lockedRowCount }).map((_, idx) => (
+                        <LockedRow
+                          key={idx}
+                          isDark={isDark}
+                          onClick={handleLockedClick}
+                        />
+                      ))}
+                      <div
+                        className="flex flex-col items-center justify-center py-4 px-4 mb-2 rounded-xl"
+                        style={{
+                          background: isDark
+                            ? "rgba(10,144,135,0.08)"
+                            : "rgba(10,144,135,0.04)",
+                          border: "1px dashed rgba(10,144,135,0.35)",
+                        }}
+                      >
+                        <p
+                          className="text-[13px] font-logo font-semibold mb-2"
+                          style={{
+                            color: isDark
+                              ? "rgba(255,255,255,0.7)"
+                              : "rgba(10,31,30,0.7)",
+                          }}
+                        >
+                          Upgrade your plan to view these predictions
+                        </p>
+                        <button
+                          onClick={handleLockedClick}
+                          className="px-4 py-1.5 rounded-lg text-[13px] font-logo font-bold transition-opacity hover:opacity-80"
+                          style={{
+                            background: "rgba(10,144,135,0.9)",
+                            color: "#fff",
+                          }}
+                        >
+                          View Plans →
+                        </button>
+                      </div>
+                    </>
+                  ) : paginated.length === 0 ? (
+                    <p
+                      className="text-center py-6 text-sm font-logo"
                       style={{
                         color: isDark
-                          ? "rgba(255,255,255,0.6)"
-                          : "rgba(10,31,30,0.6)",
+                          ? "rgba(255,255,255,0.4)"
+                          : "rgba(10,31,30,0.4)",
                       }}
                     >
-                      {currentPage} / {totalPages}
-                    </span>
-                    <button
-                      disabled={currentPage === totalPages}
-                      onClick={() =>
-                        handlePageChange(pkg.package_name, currentPage + 1)
-                      }
-                      className="px-3 py-1 rounded text-sm font-logo"
-                      style={{
-                        opacity: currentPage === totalPages ? 0.3 : 1,
-                        cursor:
-                          currentPage === totalPages
-                            ? "not-allowed"
-                            : "pointer",
-                        background: isDark ? "#032422" : "#f3f4f6",
-                        color: isDark ? "#ffffff" : "#0a1f1e",
-                        border: isDark ? "none" : "1px solid #e5e7eb",
-                      }}
-                    >
-                      Next
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        );
-      })}
+                      No predictions available
+                    </p>
+                  ) : (
+                    paginated.map((p) => (
+                      <PredictionRow key={p.id} p={p} isDark={isDark} />
+                    ))
+                  )}
+
+                  {/* Pagination */}
+                  {!isLocked && totalPages > 1 && (
+                    <div className="flex justify-center items-center gap-2 py-3">
+                      <button
+                        disabled={currentPage === 1}
+                        onClick={() =>
+                          handlePageChange(pkg.package_name, currentPage - 1)
+                        }
+                        className="px-3 py-1 rounded text-sm font-logo"
+                        style={{
+                          opacity: currentPage === 1 ? 0.3 : 1,
+                          cursor: currentPage === 1 ? "not-allowed" : "pointer",
+                          background: isDark ? "#032422" : "#f3f4f6",
+                          color: isDark ? "#ffffff" : "#0a1f1e",
+                          border: isDark ? "none" : "1px solid #e5e7eb",
+                        }}
+                      >
+                        Prev
+                      </button>
+                      <span
+                        className="text-sm font-logo"
+                        style={{
+                          color: isDark
+                            ? "rgba(255,255,255,0.6)"
+                            : "rgba(10,31,30,0.6)",
+                        }}
+                      >
+                        {currentPage} / {totalPages}
+                      </span>
+                      <button
+                        disabled={currentPage === totalPages}
+                        onClick={() =>
+                          handlePageChange(pkg.package_name, currentPage + 1)
+                        }
+                        className="px-3 py-1 rounded text-sm font-logo"
+                        style={{
+                          opacity: currentPage === totalPages ? 0.3 : 1,
+                          cursor:
+                            currentPage === totalPages
+                              ? "not-allowed"
+                              : "pointer",
+                          background: isDark ? "#032422" : "#f3f4f6",
+                          color: isDark ? "#ffffff" : "#0a1f1e",
+                          border: isDark ? "none" : "1px solid #e5e7eb",
+                        }}
+                      >
+                        Next
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
 
       {/* Empty state */}
       {allPackages.length === 0 && (

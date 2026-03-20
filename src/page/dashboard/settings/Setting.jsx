@@ -7,7 +7,6 @@ import {
   FaCreditCard,
   FaBell,
   FaLock,
-  FaChevronRight,
   FaChevronDown,
 } from "react-icons/fa";
 import { GrCompliance } from "react-icons/gr";
@@ -59,16 +58,19 @@ const Setting = () => {
             <div className="mb-6 lg:hidden">
               <button
                 onClick={() => setShowMobileMenu(!showMobileMenu)}
-                className={`w-full flex items-center justify-between p-3 rounded-lg ${
+                className={`w-full flex items-center justify-between rounded-xl border p-3 transition-colors ${
                   theme === "dark"
-                    ? "bg-[#054844] text-white border border-mediumBlack"
-                    : "bg-white text-darkerGrey border border-gray-200"
+                    ? "border-[#12766F]/35 bg-[#032422] text-white shadow-[0_18px_40px_rgba(0,0,0,0.18)]"
+                    : "border-gray-200 bg-white text-darkerGrey shadow-sm"
                 }`}
               >
                 <div className="flex items-center space-x-2 text-sm font-medium">
                   {activeTabData && (
                     <>
-                      <activeTabData.icon size={16} />
+                      <activeTabData.icon
+                        size={16}
+                        className={theme === "dark" ? "text-[#0A9087]" : ""}
+                      />
                       <span>{activeTabData.label}</span>
                     </>
                   )}
@@ -76,21 +78,23 @@ const Setting = () => {
                 <FaChevronDown
                   className={`transition-transform ${
                     showMobileMenu ? "rotate-180" : ""
-                  }`}
+                  } ${theme === "dark" ? "text-[#0A9087]" : ""}`}
                   size={14}
                 />
               </button>
 
               {showMobileMenu && (
                 <div
-                  className={`mt-2 rounded-lg overflow-hidden ${
+                  className={`mt-2 overflow-hidden rounded-xl border ${
                     theme === "dark"
-                      ? "bg-mediumBlack border border-mediumBlack"
-                      : "bg-white border border-gray-200"
+                      ? "border-[#12766F]/30 bg-[#032422]"
+                      : "border-gray-200 bg-white"
                   }`}
                 >
                   {tabs.map((tab) => {
                     const IconComponent = tab.icon;
+                    const isActive = activeTab === tab.id;
+
                     return (
                       <button
                         key={tab.id}
@@ -98,33 +102,29 @@ const Setting = () => {
                           setActiveTab(tab.id);
                           setShowMobileMenu(false);
                         }}
-                        className={`font-medium transition-colors duration-150 cursor-pointer w-full flex items-center space-x-3 p-3 text-sm text-left ${
-                          activeTab === tab.id
+                        className={`w-full cursor-pointer flex items-center space-x-3 p-3 text-left text-sm font-medium transition-colors duration-150 ${
+                          isActive
                             ? theme === "dark"
-                              ? "bg-mediumBlue text-white"
+                              ? "bg-[#054844] text-white"
                               : "bg-blue-50 text-darkBlue"
                             : theme === "dark"
-                              ? "hover:bg-lightBlack hover:text-white"
-                              : "hover:bg-blue-50 hover:text-darkBlue"
+                              ? "text-[#A7CBC7] hover:bg-[#054844]/80 hover:text-white"
+                              : "text-darkerGrey hover:bg-blue-50 hover:text-darkBlue"
                         }`}
                       >
                         <IconComponent
-                          className={`${
-                            theme === "dark"
-                              ? " text-white"
-                              : " text-darkerGrey"
-                          }`}
                           size={16}
+                          className={
+                            isActive
+                              ? theme === "dark"
+                                ? "text-[#0A9087]"
+                                : "text-darkBlue"
+                              : theme === "dark"
+                                ? "text-[#7DC7C0]"
+                                : "text-darkerGrey"
+                          }
                         />
-                        <span
-                          className={`${
-                            theme === "dark"
-                              ? " text-white"
-                              : " text-darkerGrey"
-                          }`}
-                        >
-                          {tab.label}
-                        </span>
+                        <span>{tab.label}</span>
                       </button>
                     );
                   })}

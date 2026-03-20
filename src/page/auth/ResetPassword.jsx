@@ -42,7 +42,7 @@ const ResetPassword = () => {
   const onSubmit = (data) => {
     const payload = {
       ...data,
-      identifier, // add manually
+      identifier,
     };
 
     resetPassword(payload, {
@@ -64,7 +64,6 @@ const ResetPassword = () => {
   return (
     <div className="bg-[#032422]  min-h-screen">
       <div className="container w-full">
-        {/* <MetaText title="OTP Verification" /> */}
         {/* Logo */}
         <div
           data-aos="fade-right"
@@ -74,9 +73,7 @@ const ResetPassword = () => {
           <Logo />
         </div>
         <div className="md:max-w-xl mx-auto min-h-[80vh] h-full flex flex-col justify-center items-center">
-          {/* Main content container - properly centered */}
           <div className="w-full flex flex-col items-center justify-center">
-            {/* Title and description */}
             <div
               data-aos="fade-down"
               data-aos-delay="400"
@@ -84,7 +81,7 @@ const ResetPassword = () => {
             >
               <Link
                 to="/forgot-passowrd"
-                className="flex  justify-center items-center gap-2 text-lightBlack hover:text-mediumBlue focus:text-mediumBlue focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-1 rounded transition-all duration-200 group  mb-5"
+                className="flex justify-center items-center gap-2 text-darkGrey hover:text-[#0A9087] focus:text-[#04776f] focus:outline-none focus:ring-2 focus:ring-[#0A9087] focus:ring-offset-1 rounded transition-all duration-200 group mb-5"
               >
                 <IoIosArrowBack className="group-hover:-translate-x-1 transition-transform duration-200" />
                 <span className="text-sm font-medium">Back</span>

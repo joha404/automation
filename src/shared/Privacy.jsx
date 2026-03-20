@@ -1,6 +1,11 @@
 import Logo from "@/components/svgs/Logo";
 import { useGet } from "@/hooks/api/common/useGet";
 import ScreenLoader from "@/components/loaders/ScreenLoader";
+import {
+  formatLegalDate,
+  LEGAL_CONTENT_STYLES,
+  prepareLegalContent,
+} from "@/shared/legalContent";
 
 const Privacy = () => {
   const { data: privacy, isLoading: privacyLoading } = useGet(
@@ -10,15 +15,6 @@ const Privacy = () => {
       secure: false,
     },
   );
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
 
   const privacyData = privacy?.data || {};
 
@@ -32,186 +28,7 @@ const Privacy = () => {
 
   return (
     <div className="min-h-screen bg-[#021716] text-white">
-      <style>{`
-        .legal-content h1 {
-          font-size: 1.875rem;
-          font-weight: 700;
-          margin-top: 2rem;
-          margin-bottom: 1rem;
-          color: #3B82F6;
-        }
-        
-        .legal-content h2 {
-          font-size: 1.5rem;
-          font-weight: 600;
-          margin-top: 1.5rem;
-          margin-bottom: 0.75rem;
-          color: #60A5FA;
-        }
-        
-        .legal-content p {
-          margin-bottom: 1rem;
-          line-height: 1.75;
-          color: #E5E7EB;
-        }
-        
-        .legal-content strong {
-          font-weight: 600;
-          color: #F3F4F6;
-        }
-        
-        .legal-content ul {
-          margin-left: 1.5rem;
-          margin-bottom: 1rem;
-          list-style-type: disc;
-        }
-        
-        .legal-content li {
-          margin-bottom: 0.5rem;
-          line-height: 1.75;
-          color: #E5E7EB;
-        }
-        
-        .legal-content hr {
-          border: 0;
-          border-top: 1px solid #374151;
-          margin: 1.5rem 0;
-        }
-        
-        .legal-content table {
-          width: 100%;
-          border-collapse: collapse;
-          margin: 1.5rem 0;
-          background-color: #1F2937;
-          border-radius: 0.5rem;
-          overflow: hidden;
-          table-layout: fixed;
-        }
-        
-        .legal-content figure.table {
-          width: 100%;
-          margin: 0;
-        }
-        
-        .legal-content thead {
-          background-color: #374151;
-        }
-        
-        .legal-content th {
-          padding: 0.75rem 1rem;
-          text-align: left;
-          font-weight: 600;
-          color: #F3F4F6;
-          border-bottom: 2px solid #4B5563;
-        }
-        
-        .legal-content td {
-          padding: 0.75rem 1rem;
-          border-bottom: 1px solid #374151;
-          color: #E5E7EB;
-        }
-        
-        .legal-content tbody tr:last-child td {
-          border-bottom: none;
-        }
-        
-        .legal-content tbody tr:hover {
-          background-color: #374151;
-        }
-        
-        .legal-content figure {
-          margin: 1.5rem 0;
-          overflow-x: auto;
-          -webkit-overflow-scrolling: touch;
-        }
-
-        .table-wrapper {
-          overflow-x: auto;
-          -webkit-overflow-scrolling: touch;
-          margin: 1.5rem 0;
-          border-radius: 0.5rem;
-          width: 100%;
-        }
-
-        .table-wrapper::-webkit-scrollbar {
-          height: 8px;
-        }
-
-        .table-wrapper::-webkit-scrollbar-track {
-          background: #1F2937;
-          border-radius: 4px;
-        }
-
-        .table-wrapper::-webkit-scrollbar-thumb {
-          background: #4B5563;
-          border-radius: 4px;
-        }
-
-        .table-wrapper::-webkit-scrollbar-thumb:hover {
-          background: #6B7280;
-        }
-        
-        @media (max-width: 768px) {
-          .legal-content h1 {
-            font-size: 16px;
-          }
-          
-          .legal-content h2 {
-            font-size: 14px;
-          }
-          
-          .legal-content p {
-            font-size: 12px;
-          }
-          
-          .legal-content li {
-            font-size: 12px;
-          }
-          
-          .legal-content table {
-            font-size: 12px;
-            min-width: 600px;
-            table-layout: auto;
-          }
-          
-          .legal-content th,
-          .legal-content td {
-            padding: 0.5rem;
-            white-space: nowrap;
-          }
-        }
-        
-        @media (min-width: 769px) {
-          .legal-content th:first-child,
-          .legal-content td:first-child {
-            width: 35%;
-          }
-          
-          .legal-content th:nth-child(2),
-          .legal-content td:nth-child(2) {
-            width: 25%;
-          }
-          
-          .legal-content th:nth-child(3),
-          .legal-content td:nth-child(3) {
-            width: 40%;
-          }
-        }
-        
-        .legal-content a {
-          color: #3B82F6;
-          text-decoration: underline;
-        }
-        
-        .legal-content a:hover {
-          color: #60A5FA;
-        }
-
-        .legal-content img {
-          display: inline;
-          vertical-align: middle;
-        }
-      `}</style>
+      <style>{LEGAL_CONTENT_STYLES}</style>
 
       <div className="container mx-auto px-4 py-10">
         <div className="flex items-center justify-center min-h-[calc(100vh-160px)]">
@@ -226,7 +43,7 @@ const Privacy = () => {
                 {privacyData.title || "Privacy Policy"}
               </h1>
 
-              <div className="flex flex-col sm:flex-row justify-center items-center gap-2 sm:gap-6 text-sm text-gray-400">
+              <div className="flex flex-col sm:flex-row justify-center items-center gap-2 sm:gap-6 text-sm text-[#9BC5C0]">
                 <div className="flex items-center gap-2">
                   <span className="font-medium font-logo text-[#0A9087]">
                     Version:
@@ -240,21 +57,18 @@ const Privacy = () => {
                   </span>
                   <span>
                     {privacyData.effective_date
-                      ? formatDate(privacyData.effective_date)
+                      ? formatLegalDate(privacyData.effective_date)
                       : "-"}
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className="bg-[#054844] rounded-lg p-6 md:p-8">
+            <div className="rounded-2xl border border-[#12766F]/30 bg-[#054844] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.22)] md:p-8">
               <div
                 className="legal-content break-words"
                 dangerouslySetInnerHTML={{
-                  __html: privacyData.content?.replace(
-                    /<figure class="table">(.*?)<\/figure>/gs,
-                    '<div class="table-wrapper"><figure class="table">$1</figure></div>',
-                  ),
+                  __html: prepareLegalContent(privacyData.content),
                 }}
               />
             </div>
@@ -264,7 +78,7 @@ const Privacy = () => {
               <p className="text-gray-400 text-sm">
                 Last updated:{" "}
                 {privacyData.updated_at
-                  ? formatDate(privacyData.updated_at)
+                  ? formatLegalDate(privacyData.updated_at)
                   : "-"}
               </p>
             </div>
