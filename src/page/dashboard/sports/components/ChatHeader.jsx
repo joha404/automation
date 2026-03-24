@@ -1,6 +1,6 @@
 import React from "react";
 import CommonParagraph from "@/components/texts/CommonParagraph";
-import { FaMapPin, FaTimes } from "react-icons/fa";
+import { FaMapPin } from "react-icons/fa";
 
 const ChatHeader = ({
   theme,
@@ -8,82 +8,22 @@ const ChatHeader = ({
   showPinnedMessages,
   setShowPinnedMessages,
   isConnected,
-  onlineCount,
-  offlineCount,
 }) => {
   return (
     <div className="relative z-20">
-      {/* CONNECTION STATUS - TOP RIGHT - MOBILE ONLY */}
+      {/* CHATROOM TITLE */}
       <div
         className={`lg:hidden py-4 border-b px-5 ${
           theme === "dark" ? "border-gray-700" : "border-gray-300"
         }`}
       >
-        <div className="flex items-center justify-between">
-          {/* LEFT SIDE - Online/Offline Counter */}
-          <div className="flex items-center gap-2">
-            {/* Online Counter */}
-            <div
-              className={`flex items-center gap-1 px-2 py-1 rounded-lg ${
-                theme === "dark"
-                  ? "bg-green-500/10 border border-green-500/20"
-                  : "bg-green-50 border border-green-200"
-              }`}
-            >
-              <div className="flex items-center gap-1">
-                <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
-                <span
-                  className={`text-xs font-medium ${
-                    theme === "dark" ? "text-green-400" : "text-green-700"
-                  }`}
-                >
-                  Online
-                </span>
-              </div>
-              <span
-                className={`text-sm font-bold ${
-                  theme === "dark" ? "text-green-400" : "text-green-600"
-                }`}
-              >
-                {onlineCount || 0}
-              </span>
-            </div>
-
-            {/* Offline Counter */}
-            <div
-              className={`flex items-center gap-1 px-2 py-1 rounded-lg ${
-                theme === "dark"
-                  ? "bg-gray-500/10 border border-gray-500/20"
-                  : "bg-gray-50 border border-gray-200"
-              }`}
-            >
-              <div className="flex items-center gap-1">
-                <div className="w-1.5 h-1.5 bg-gray-400 rounded-full"></div>
-                <span
-                  className={`text-xs font-medium ${
-                    theme === "dark" ? "text-gray-400" : "text-gray-600"
-                  }`}
-                >
-                  Offline
-                </span>
-              </div>
-              <span
-                className={`text-sm font-bold ${
-                  theme === "dark" ? "text-gray-400" : "text-gray-600"
-                }`}
-              >
-                {offlineCount || 0}
-              </span>
-            </div>
-          </div>
-
-          {/* RIGHT SIDE - Connected Badge */}
+        <div className="flex items-center justify-center">
           <div
-            className={`px-2 py-1 rounded-lg text-[10px] font-semibold shadow-lg ${
-              isConnected ? "bg-green-500 text-white" : "bg-red-500 text-white"
+            className={`px-3 py-1.5 rounded-full text-[10px] font-semibold shadow-lg whitespace-nowrap ${
+              isConnected ? "bg-[#0A9087] text-white" : "bg-red-500 text-white"
             }`}
           >
-            {isConnected ? "🟢" : "🔴"}
+            {isConnected ? "🟢 Connected" : "🔴 Disconnected"}
           </div>
         </div>
       </div>

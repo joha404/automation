@@ -7,6 +7,7 @@ import prediction3 from "../../../assets/home/prediction/prediction3.png";
 import prediction4 from "../../../assets/home/prediction/prediction4.png";
 import prediction5 from "../../../assets/home/prediction/prediction5.png";
 import prediction6 from "../../../assets/home/prediction/prediction6.png";
+import { useNavigate } from "react-router-dom";
 
 const predictionImages = [
   prediction1,
@@ -185,6 +186,8 @@ function FeatureGrid({ features = [] }) {
 }
 
 export default function PredictionSection({ data }) {
+  const navigate = useNavigate();
+  console.log(data.features);
   const statsData = data?.stats
     ? [
         {
@@ -227,6 +230,7 @@ export default function PredictionSection({ data }) {
           className="mt-10 flex justify-center"
         >
           <motion.div
+            onClick={() => navigate("/sign-up")}
             className="w-[215px] h-[44px] rounded-full bg-[#0A9087] font-logo text-white font-extrabold text-[16px] leading-[100%] tracking-[0%] text-center flex justify-center items-center cursor-pointer"
             whileHover={{
               scale: 1.06,

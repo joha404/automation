@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import ratting from "../../../assets/home/rating.png";
 import correct from "../../../assets/home/icon/correct.png";
+import { useNavigate } from "react-router-dom";
 
 // ── Variants ──
 const fadeUp = {
@@ -148,6 +149,7 @@ function ReviewCard({ review, index }) {
 }
 
 export default function SportsFan({ data }) {
+  const nagigate = useNavigate();
   const reviews = data ?? [];
 
   // Mobile: < 768px | Tablet: 768px–1279px | Desktop: >= 1280px
@@ -295,6 +297,7 @@ export default function SportsFan({ data }) {
           className="mt-12 flex justify-center"
         >
           <motion.button
+            onClick={() => nagigate("/sign-up")}
             className="w-[215px] h-[44px] rounded-full border border-[#0A9087] font-logo text-white font-extrabold text-[16px] leading-none text-center flex justify-center items-center cursor-pointer"
             whileHover={{
               scale: 1.06,
