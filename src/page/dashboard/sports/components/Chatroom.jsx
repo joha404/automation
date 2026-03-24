@@ -582,7 +582,7 @@ const ChatRoom = () => {
   return (
     <CommonWrapper variant="section" className="min-h-[50vh]">
       <div
-        className={`font-primary rounded-none p-0 h-[90vh] pb-8 flex flex-col transition-colors duration-300 ${
+        className={`font-primary rounded-xl p-0 h-[90vh] pb-8 flex flex-col transition-colors duration-300 ${
           theme === "dark"
             ? " bg-[#021716]  text-white"
             : "bg-gradient-to-br from-white to-gray-50 text-gray-900"

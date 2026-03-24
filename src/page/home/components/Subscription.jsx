@@ -1,5 +1,6 @@
-import React, { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const CheckIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
@@ -49,7 +50,7 @@ const getPeriodLabel = (billing_period) => {
 };
 
 /* ─────────── Mobile Slider ─────────── */
-function MobileSlider({ plans = [] }) {
+function MobileSlider({ plans = [], onSelectPlan }) {
   const [activeSlide, setActiveSlide] = useState(0);
   const touchStartX = useRef(null);
 
@@ -155,7 +156,7 @@ function MobileSlider({ plans = [] }) {
                     ))}
                   </div>
                   <motion.button
-                    onClick={() => navigate("/sign-up")}
+                    onClick={onSelectPlan}
                     className="w-full h-[48px] rounded-full font-extrabold text-white text-[13px] tracking-widest uppercase cursor-pointer"
                     style={{ background: "#0A9087" }}
                     whileHover={{
@@ -198,7 +199,7 @@ function MobileSlider({ plans = [] }) {
 /* ─────────── Quarterly Featured Card (Desktop)
    Layout: LEFT = button | CENTER = features | RIGHT = name/price/badges
 ─────────── */
-function QuarterlyFeaturedCard({ plan }) {
+function QuarterlyFeaturedCard({ plan, onSelectPlan }) {
   return (
     <motion.div
       className="rounded-2xl mb-5 relative overflow-hidden"
@@ -277,7 +278,7 @@ function QuarterlyFeaturedCard({ plan }) {
         {/* RIGHT */}
         <div className="flex items-center justify-end">
           <motion.button
-            onClick={() => navigate("/sign-up")}
+            onClick={onSelectPlan}
             className="cursor-pointer h-[48px] px-8 rounded-full border border-[#0A9087] font-bold text-[15px] text-white flex justify-center items-center whitespace-nowrap"
             style={{
               background:
@@ -300,7 +301,7 @@ function QuarterlyFeaturedCard({ plan }) {
 }
 
 /* ─────────── Regular Featured Card (Desktop) — existing style ─────────── */
-function RegularFeaturedCard({ plan }) {
+function RegularFeaturedCard({ plan, onSelectPlan }) {
   return (
     <motion.div
       className="rounded-2xl lg:h-[279px] mb-5 relative overflow-hidden"
@@ -383,7 +384,7 @@ function RegularFeaturedCard({ plan }) {
         {/* Right CTA */}
         <div className="flex-shrink-0 pl-8">
           <motion.button
-            onClick={() => navigate("/sign-up")}
+            onClick={onSelectPlan}
             className="cursor-pointer w-[210px] h-[48px] px-[30px] rounded-full border border-[#0A9087] font-bold text-[15px] text-white flex justify-center items-center"
             style={{
               background:
@@ -405,7 +406,7 @@ function RegularFeaturedCard({ plan }) {
 }
 
 /* ─────────── Small Plan Card ─────────── */
-function SmallPlanCard({ plan, idx }) {
+function SmallPlanCard({ plan, idx, onSelectPlan }) {
   return (
     <motion.div
       key={plan.id}
@@ -472,7 +473,7 @@ function SmallPlanCard({ plan, idx }) {
           ))}
         </div>
         <motion.button
-          onClick={() => navigate("/sign-up")}
+          onClick={onSelectPlan}
           className="cursor-pointer w-full h-[48px] px-[30px] rounded-full border border-[#0A9087] font-logo font-bold text-[16px] text-white flex justify-center items-center"
           style={{
             background:
@@ -494,6 +495,7 @@ function SmallPlanCard({ plan, idx }) {
 
 /* ─────────── Main Export ─────────── */
 export default function Subscription({ data }) {
+  const navigate = useNavigate();
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
 
   useEffect(() => {
@@ -511,6 +513,7 @@ export default function Subscription({ data }) {
   const smallQuarterly = quarterlyPlans.filter((p) => !p.is_most_popular);
   const featuredOther = otherPlans.find((p) => p.is_most_popular);
   const smallOther = otherPlans.filter((p) => !p.is_most_popular);
+  const handleSelectPlan = () => navigate("/sign-up");
 
   return (
     <div className="bg-[#040e0d] h-full py-16 px-4">
@@ -538,7 +541,10 @@ export default function Subscription({ data }) {
 
       {/* ── MOBILE ── */}
       {!isDesktop && (
-        <MobileSlider plans={[...quarterlyPlans, ...otherPlans]} />
+        <MobileSlider
+          plans={[...quarterlyPlans, ...otherPlans]}
+          onSelectPlan={handleSelectPlan}
+        />
       )}
 
       {/* ── DESKTOP ── */}
@@ -571,14 +577,22 @@ export default function Subscription({ data }) {
 
               {/* Featured quarterly card — new layout */}
               {featuredQuarterly && (
-                <QuarterlyFeaturedCard plan={featuredQuarterly} />
+                <QuarterlyFeaturedCard
+                  plan={featuredQuarterly}
+                  onSelectPlan={handleSelectPlan}
+                />
               )}
 
               {/* Smaller quarterly cards */}
               {smallQuarterly.length > 0 && (
                 <div className="flex flex-wrap justify-center gap-16 mt-5">
                   {smallQuarterly.map((plan, idx) => (
-                    <SmallPlanCard key={plan.id} plan={plan} idx={idx} />
+                    <SmallPlanCard
+                      key={plan.id}
+                      plan={plan}
+                      idx={idx}
+                      onSelectPlan={handleSelectPlan}
+                    />
                   ))}
                 </div>
               )}
@@ -586,12 +600,22 @@ export default function Subscription({ data }) {
           )}
 
           {/* OTHER PLANS */}
-          {featuredOther && <RegularFeaturedCard plan={featuredOther} />}
+          {featuredOther && (
+            <RegularFeaturedCard
+              plan={featuredOther}
+              onSelectPlan={handleSelectPlan}
+            />
+          )}
 
           {smallOther.length > 0 && (
             <div className="flex flex-wrap justify-center gap-16 my-16">
               {smallOther.map((plan, idx) => (
-                <SmallPlanCard key={plan.id} plan={plan} idx={idx} />
+                <SmallPlanCard
+                  key={plan.id}
+                  plan={plan}
+                  idx={idx}
+                  onSelectPlan={handleSelectPlan}
+                />
               ))}
             </div>
           )}

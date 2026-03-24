@@ -216,7 +216,7 @@ const PredictionRow = ({ p, isDark }) => {
           }}
         >
           {isLocked
-            ? "••••••••••••••••"
+            ? "Upgrade to unlock"
             : p.prediction_desc || p.title || "N/A"}
         </p>
         <div

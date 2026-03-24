@@ -114,69 +114,13 @@ const UserList = ({
               }`}
             >
               <div
-                className={`px-3 py-2 rounded-lg text-center text-xs font-semibold shadow-md ${
+                className={`px-3 py-2 rounded-xl text-center text-xs font-semibold shadow-md ${
                   isConnected
                     ? "bg-[#0A9087] text-white"
                     : "bg-red-500 text-white"
                 }`}
               >
                 {isConnected ? "🟢 Connected" : "🔴 Disconnected"}
-              </div>
-              {/* Online Counter Card */}
-              <div className="flex w-full justify-between items-center">
-                <div
-                  className={`flex items-center justify-between px-4 py-1 rounded-lg ${
-                    theme === "dark"
-                      ? "bg-[#05302d] border border-green-500/20"
-                      : "bg-green-50 border border-green-200"
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <div className="w-2.5 h-2.5 bg-[#0A9087] rounded-full animate-pulse"></div>
-                    <span
-                      className={`text-sm font-semibold ${
-                        theme === "dark" ? "text-[#0A9087]" : "text-[#0A9087]"
-                      }`}
-                    >
-                      Online -
-                    </span>
-                  </div>
-                  <span
-                    className={`text-lg font-bold ${
-                      theme === "dark" ? "text-[#0A9087]" : "text-[#0A9087]"
-                    }`}
-                  >
-                    {onlineCount || 0}
-                  </span>
-                </div>
-
-                {/* Offline Counter Card */}
-
-                <div
-                  className={`flex items-center justify-between px-4 py-1 rounded-lg ${
-                    theme === "dark"
-                      ? "bg-gray-500/10 border border-gray-500/20"
-                      : "bg-gray-50 border border-gray-200"
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <div className="w-2.5 h-2.5 bg-gray-400 rounded-full"></div>
-                    <span
-                      className={`text-sm font-semibold ${
-                        theme === "dark" ? "text-gray-400" : "text-gray-600"
-                      }`}
-                    >
-                      Offline -
-                    </span>
-                  </div>
-                  <span
-                    className={`text-lg font-bold ${
-                      theme === "dark" ? "text-gray-400" : "text-gray-600"
-                    }`}
-                  >
-                    {offlineCount || 0}
-                  </span>
-                </div>
               </div>
 
               {/* Connection Status Badge */}
@@ -190,14 +134,14 @@ const UserList = ({
         {/* Online Users Section */}
         {onlineUsers.length > 0 && (
           <div className="mb-6">
-            <div className="flex items-center gap-2 mb-3 px-2">
-              <div className="w-2 h-2 bg-[#0A9087] rounded-full animate-pulse"></div>
-              <CommonParagraph
+            <div className="flex items-center gap-2 mb-0 px-2">
+              {/* <div className="w-2 h-2 bg-[#0A9087] rounded-full animate-pulse"></div> */}
+              {/* <CommonParagraph
                 variant="small"
                 className="font-bold text-[#0A9087]"
               >
                 Online ({onlineCount})
-              </CommonParagraph>
+              </CommonParagraph> */}
             </div>
             <div className="space-y-3">
               {onlineUsers.map((user) => renderUserItem(user, true))}
