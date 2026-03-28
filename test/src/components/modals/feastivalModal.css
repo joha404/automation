@@ -1,0 +1,84 @@
+/* ================================
+   MARQUEE CONTAINER
+================================ */
+.marquee-container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+/* ================================
+   MARQUEE TRACK — মূল চেঞ্জ এখানে
+================================ */
+.marquee-track {
+  display: flex;
+  white-space: nowrap;
+  will-change: transform;
+  animation: marquee var(--marquee-duration, 30s) linear infinite;
+}
+
+/* Desktop hover pause */
+@media (hover: hover) {
+  .marquee-container:hover .marquee-track {
+    animation-play-state: paused;
+  }
+}
+
+/* ================================
+   MARQUEE TEXT ITEM
+================================ */
+.marquee-text {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding-right: 200px; /* গ্যাপ কন্ট্রোল */
+  font-size: 16px;
+  line-height: 1;
+  flex-shrink: 0; /* খুব জরুরি! */
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .marquee-text {
+    padding-right: 140px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 640px) {
+  .marquee-text {
+    padding-right: 90px;
+    font-size: 14px;
+  }
+}
+
+/* Theme colors */
+.dark .marquee-text {
+  color: #f3f4f6;
+  text-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
+}
+
+.light .marquee-text {
+  color: #111827;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+/* ================================
+   ANIMATION — সবচেয়ে গুরুত্বপূর্ণ চেঞ্জ
+================================ */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none !important;
+  }
+}
