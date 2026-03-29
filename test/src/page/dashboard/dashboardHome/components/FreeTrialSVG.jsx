@@ -1,29 +1,19 @@
 // FreeTrailSvg.jsx
-import React, { useState } from "react";
-import freeSVG from "../../../../assets/dashboard/svg/free.svg";
 import { useGet } from "@/hooks/api/common/useGet";
 import { useTheme } from "@/hooks/custom/useTheme";
 
 export default function FreeTrailSvg({ onSvgClick }) {
-  const [isOpen, setIsOpen] = useState(false);
   const { theme } = useTheme();
 
-  const { data: response, isLoading: isActiveLoading } = useGet(
-    "/my-subscription/",
-    {
-      queryKey: ["active"],
-      secure: true,
-    },
-  );
+  const { data: response } = useGet("/my-subscription/", {
+    queryKey: ["active"],
+    secure: true,
+  });
 
   const sub = response?.data || {};
 
-  // Toggle function
-  const handleToggle = () => {
-    setIsOpen(!isOpen);
-    if (onSvgClick) {
-      onSvgClick();
-    }
+  const handleClick = () => {
+    if (onSvgClick) onSvgClick();
   };
 
   return (
@@ -38,7 +28,7 @@ export default function FreeTrailSvg({ onSvgClick }) {
                   ? "bg-[#032422] hover:bg-[#054844] text-[#9AD9D4] hover:text-white border border-[#0A9087]/20"
                   : "bg-[#E6F5F3] hover:bg-[#D5EEEB] text-[#054844] border border-[#0A9087]/15"
               }`}
-              onClick={handleToggle}
+              onClick={handleClick}
             >
               <div
                 className={`h-2 w-2 sm:h-3 sm:w-3 rounded-full animate-pulse flex-shrink-0 ${
@@ -50,18 +40,6 @@ export default function FreeTrailSvg({ onSvgClick }) {
                 <span className="hidden sm:inline">Claim Your Free Trial</span>
               </p>
             </div>
-
-            {/* Dropdown - Shows above badge */}
-            {isOpen && (
-              <div className="absolute bottom-full mb-2 right-0  shadow-2xl rounded-lg p-4 z-50 w-[280px] md:w-[300px] ">
-                {/* Loading state */}
-                {isActiveLoading && (
-                  <div className="text-center">
-                    <p className="text-sm text-gray-600">Loading...</p>
-                  </div>
-                )}
-              </div>
-            )}
           </div>
         </>
       )}

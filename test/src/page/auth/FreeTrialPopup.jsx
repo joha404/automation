@@ -515,9 +515,10 @@ export default function FreeTrialPopup({ isOpen, onClose }) {
                   </motion.div>
 
                   {plansLoading ? (
-                    <div className="flex min-h-[220px] items-center justify-center sm:min-h-[240px]">
-                      <ScreenLoader />
-                    </div>
+                    <ScreenLoader
+                      fullScreen={false}
+                      containerClassName="min-h-[220px] sm:min-h-[240px] px-4 py-8"
+                    />
                   ) : (
                     <>
                       <div

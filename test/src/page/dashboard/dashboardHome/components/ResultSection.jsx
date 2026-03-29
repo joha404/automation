@@ -13,7 +13,6 @@ import { useSidebar } from "@/hooks/custom/useSidebar";
 import { useGet } from "@/hooks/api/common/useGet";
 import CommonParagraph from "@/components/texts/CommonParagraph";
 import CommonWrapper from "@/components/wrappers/CommonWrapper";
-import Dropdown from "@/components/forms/Dropdown";
 import ScreenLoader from "@/components/loaders/ScreenLoader";
 import { FaChartLine } from "react-icons/fa6";
 
@@ -56,8 +55,7 @@ const formatDateLabel = (dateStr, filter) => {
 
 // ─────────────────────────────────────────────────────────────
 
-const ResultSection = ({ data: propData }) => {
-  const [selectedMarket, setSelectedMarket] = useState("Ultimate");
+const ResultSection = () => {
   const [filter, setFilter] = useState("AT");
   const { theme } = useTheme();
   const { sidebarOpen } = useSidebar();
@@ -77,20 +75,12 @@ const ResultSection = ({ data: propData }) => {
   const chartInner = chartResponse?.data || chartResponse || {};
   const summaryInner = summaryResponse?.data || summaryResponse || {};
 
-  const chartPoints = chartInner?.chartPoints || [];
   const headline = summaryInner?.headline || {};
   const summary = summaryInner?.summary || {};
-  const markets = summaryInner?.filters?.markets || [
-    "Ultimate",
-    "Live",
-    "Play of the Day",
-    "Futures",
-    "Player Props",
-  ];
 
   const filteredPoints = useMemo(
-    () => filterByRange(chartPoints, filter),
-    [chartPoints, filter],
+    () => filterByRange(chartInner?.chartPoints ?? [], filter),
+    [chartInner?.chartPoints, filter],
   );
 
   const currentData = filteredPoints.map((p) => ({
@@ -109,8 +99,6 @@ const ResultSection = ({ data: propData }) => {
     },
   ];
 
-  const marketOptions = markets.map((m) => ({ value: m, label: m }));
-
   const headlineUnits =
     headline?.units != null
       ? (Number(headline.units) >= 0 ? "+" : "") +
@@ -120,9 +108,10 @@ const ResultSection = ({ data: propData }) => {
   if (isLoading) {
     return (
       <CommonWrapper variant="bottomSmall" className="lg:my-0 py-1">
-        <div className="flex w-full justify-center py-8">
-          <ScreenLoader />
-        </div>
+        <ScreenLoader
+          fullScreen={false}
+          containerClassName="min-h-[420px] px-4 py-10"
+        />
       </CommonWrapper>
     );
   }

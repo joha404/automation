@@ -2,21 +2,10 @@ import CommonParagraph from "@/components/texts/CommonParagraph";
 import CommonTitle from "@/components/texts/CommonTitle";
 import CommonWrapper from "@/components/wrappers/CommonWrapper";
 import { useTheme } from "@/hooks/custom/useTheme";
-import { FaPlus } from "react-icons/fa6";
 import { MdCalendarMonth } from "react-icons/md";
-import { IoIosCalendar } from "react-icons/io";
-import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useGet } from "@/hooks/api/common/useGet";
 import ScreenLoader from "@/components/loaders/ScreenLoader";
-
-const getFormattedTime = () => {
-  return new Date().toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
-  });
-};
 
 const Header = () => {
   const { theme } = useTheme();
@@ -54,8 +43,11 @@ const Header = () => {
 
   if (isLoading) {
     return (
-      <div className="flex w-full max-w-6xl mx-auto justify-center">
-        <ScreenLoader />
+      <div className="w-full">
+        <ScreenLoader
+          fullScreen={false}
+          containerClassName="min-h-[180px] px-4 py-10"
+        />
       </div>
     );
   }
