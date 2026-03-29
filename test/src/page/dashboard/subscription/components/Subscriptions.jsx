@@ -172,6 +172,7 @@ const PlanCard = ({
   onCancel,
   loadingPlanId,
   isCancelPending,
+  hasActiveSubscription = false,
   isFeatured = false,
   tk,
 }) => {
@@ -305,7 +306,11 @@ const PlanCard = ({
             whileTap={{ scale: 0.95 }}
             transition={{ duration: 0.18 }}
           >
-            {isThisLoading ? "Loading..." : "UPGRADE"}
+            {isThisLoading
+              ? "Loading..."
+              : hasActiveSubscription
+                ? "UPGRADE"
+                : "SELECT PLAN"}
           </motion.button>
         )}
       </div>
@@ -320,6 +325,7 @@ const FeaturedPlanRow = ({
   onCancel,
   loadingPlanId,
   isCancelPending,
+  hasActiveSubscription = false,
   tk,
 }) => {
   const isCurrentPlan = plan.current_plan === true;
@@ -432,7 +438,11 @@ const FeaturedPlanRow = ({
               whileTap={{ scale: 0.95 }}
               transition={{ duration: 0.18 }}
             >
-              {isThisLoading ? "Loading..." : "UPGRADE"}
+              {isThisLoading
+                ? "Loading..."
+                : hasActiveSubscription
+                  ? "UPGRADE"
+                  : "SELECT PLAN"}
             </motion.button>
           )}
         </div>
@@ -484,7 +494,24 @@ const Subscriptions = () => {
 
   // Current plan (for cancel id)
   const currentPlan = rawPlans.find((p) => p.current_plan === true) || null;
-  const activeSub = subResponse?.data?.[0] || subResponse?.data || null;
+  const subscriptionMeta = subResponse?.data ?? subResponse ?? {};
+  const canPurchaseNew = subscriptionMeta?.can_purchase_new;
+  const activeSubList = Array.isArray(subscriptionMeta)
+    ? subscriptionMeta
+    : Array.isArray(subscriptionMeta?.subscriptions)
+      ? subscriptionMeta.subscriptions
+      : Array.isArray(subscriptionMeta?.data)
+        ? subscriptionMeta.data
+        : [];
+  const activeSub =
+    activeSubList.find((sub) => sub?.is_active === true) ||
+    subscriptionMeta?.subscription ||
+    subscriptionMeta?.active_subscription ||
+    null;
+  const hasActiveSubscription =
+    typeof canPurchaseNew === "boolean"
+      ? !canPurchaseNew
+      : Boolean(currentPlan || activeSub?.is_active === true);
 
   // ── Facebook Pixel ───────────────────────────────────────────
   useEffect(() => {
@@ -658,6 +685,7 @@ const Subscriptions = () => {
                   onCancel={handleCancel}
                   loadingPlanId={loadingPlanId}
                   isCancelPending={isCancelPending}
+                  hasActiveSubscription={hasActiveSubscription}
                   isFeatured={plan.id === featuredPlan?.id}
                   tk={tk}
                 />
@@ -676,6 +704,7 @@ const Subscriptions = () => {
               onCancel={handleCancel}
               loadingPlanId={loadingPlanId}
               isCancelPending={isCancelPending}
+              hasActiveSubscription={hasActiveSubscription}
               tk={tk}
             />
           )}
@@ -697,6 +726,7 @@ const Subscriptions = () => {
                   onCancel={handleCancel}
                   loadingPlanId={loadingPlanId}
                   isCancelPending={isCancelPending}
+                  hasActiveSubscription={hasActiveSubscription}
                   isFeatured={false}
                   tk={tk}
                 />

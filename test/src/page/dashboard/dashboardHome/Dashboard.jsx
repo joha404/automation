@@ -3,11 +3,8 @@ import ResultSection from "./components/ResultSection";
 import PastPrediction from "./components/PastPrediction";
 import ScreenLoader from "@/components/loaders/ScreenLoader";
 import { useGet } from "@/hooks/api/common/useGet";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import FreeTrailSvg from "./components/FreeTrialSVG";
-import Streaks from "./components/Streaks";
-import UpcomingEvents from "./components/UpcommingEvents";
-import PredictionSection from "@/page/home/components/PredictionSection";
 import PredictionComponent from "./components/PredictionComponent";
 import RollingBanner from "@/components/modals/FeastivalModal";
 import FreeTrialPopup from "@/page/auth/FreeTrialPopup";
@@ -16,15 +13,16 @@ const Dashboard = () => {
   const {
     data: predictionsData,
     isLoading: predictionLoading,
-    refetch: predictionRefetch,
   } = useGet("/predictions/", {
     queryKey: ["prediction-ultimate-dashboard"],
     secure: true,
   });
 
-  const [selectedMarket, setSelectedMarket] = useState("Ultimate");
+  const [selectedMarket] = useState("Ultimate");
   const [showPopup, setShowPopup] = useState(false);
   const [isApiReady, setIsApiReady] = useState(false);
+  const welcomePopupTimerRef = useRef(null);
+  const hasScheduledWelcomePopupRef = useRef(false);
 
   const { data: response, isLoading: isActiveLoading } = useGet(
     "/my-subscription/",
@@ -39,28 +37,40 @@ const Dashboard = () => {
   });
 
   useEffect(() => {
-    // API পুরোপুরি load না হওয়া পর্যন্ত কিছুই করবো না
-    if (isActiveLoading || !response) return;
+    if (isActiveLoading) return;
 
-    const canPurchase = response?.data?.can_purchase_new;
-    const isNewUser = localStorage.getItem("showWelcomePopup");
+    const subscriptionMeta = response?.data ?? response ?? {};
+    const canPurchase = subscriptionMeta?.can_purchase_new;
+    const shouldShowWelcomePopup =
+      canPurchase === true &&
+      localStorage.getItem("showWelcomePopup") === "true" &&
+      !hasScheduledWelcomePopupRef.current;
 
-    // API ready mark করো
     setIsApiReady(true);
 
-    // Package আছে অথবা new user না হলে — popup কখনোই না
-    if (canPurchase !== true || isNewUser !== "true") {
-      setShowPopup(false);
-      return;
-    }
+    if (!shouldShowWelcomePopup) return;
 
-    // সব API load নিশ্চিত করতে 5 seconds পরে popup দেখাও
-    const timer = setTimeout(() => {
+    hasScheduledWelcomePopupRef.current = true;
+    welcomePopupTimerRef.current = setTimeout(() => {
       setShowPopup(true);
+      welcomePopupTimerRef.current = null;
     }, 3000);
 
-    return () => clearTimeout(timer);
+    return () => {
+      if (welcomePopupTimerRef.current) {
+        clearTimeout(welcomePopupTimerRef.current);
+        welcomePopupTimerRef.current = null;
+      }
+    };
   }, [isActiveLoading, response]);
+
+  useEffect(() => {
+    return () => {
+      if (welcomePopupTimerRef.current) {
+        clearTimeout(welcomePopupTimerRef.current);
+      }
+    };
+  }, []);
 
   const marketEndpoints = {
     Ultimate: "/ultimate/chart/",
@@ -70,22 +80,19 @@ const Dashboard = () => {
     Live: "/live/chart/",
   };
 
-  const { data: unitInfo, isLoading: unitLoading } = useGet(
-    "/dashboard-info/",
-    { queryKey: ["unit-info"] },
-  );
+  const { isLoading: unitLoading } = useGet("/dashboard-info/", {
+    queryKey: ["unit-info"],
+  });
 
-  const { data: pastPredictionData, isLoading: pastPredictionLoading } = useGet(
-    "/past-predictions/",
-    { queryKey: ["past-prediction"] },
-  );
+  const { data: pastPredictionData } = useGet("/past-predictions/", {
+    queryKey: ["past-prediction"],
+  });
   const endpoint = marketEndpoints[selectedMarket] || "/ultimate/";
 
   const { data: results, isLoading: resultLoading } = useGet(endpoint, {
     queryKey: ["result-dashboard", selectedMarket],
   });
 
-  const data = results?.data || {};
   const bannerData = bannerResponse?.data ?? bannerResponse;
   const shouldShowBanner = bannerData?.show_it !== false;
   const bannerMessage =
@@ -102,15 +109,6 @@ const Dashboard = () => {
       </div>
     );
   }
-
-  const markets = data.markets || [
-    "Ultimate",
-    "International",
-    "North America",
-    "Play of the Day",
-    "Player Props",
-    "Parlays",
-  ];
 
   const handleSvgClick = () => {
     // শুধুমাত্র API ready হওয়ার পরেই কাজ করবে
