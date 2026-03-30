@@ -1,0 +1,19 @@
+{
+  "name": "Hyper Picks",
+  "short_name": "HyperPicks",
+  "icons": [
+    {
+      "src": "logo.png?v=hyperpicks-20260321",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "logo.png?v=hyperpicks-20260321",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "display": "standalone"
+}
