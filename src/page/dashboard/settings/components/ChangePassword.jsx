@@ -26,8 +26,8 @@ const ChangePassword = () => {
   });
 
   // Use the usePost hook for password update
-  const { mutate: updatePassword, isPending: isSubmitting } = usePost(
-    "/change-password/" );
+  const { mutate: updatePassword, isPending: isSubmitting } =
+    usePost("/change-password/");
 
   const onSubmit = (data) => {
     // Prepare the data in the required format
@@ -71,7 +71,6 @@ const ChangePassword = () => {
   return (
     <CommonWrapper>
       <div className="max-w-5xl mx-auto">
-
         <div className="grid lg:grid-cols-5 gap-8">
           {/* Password Form Card */}
           <div className="lg:col-span-3">
@@ -79,7 +78,7 @@ const ChangePassword = () => {
               className={`rounded-xl shadow-sm border p-6 transition-colors duration-300
                 ${
                   theme === "dark"
-                    ? "bg-darkBlack border-mediumBlack"
+                    ? "bg-[#054844] border-mediumBlack"
                     : "bg-white border-gray-200"
                 }`}
             >
@@ -119,7 +118,7 @@ const ChangePassword = () => {
                       validate: (value) => {
                         if (
                           !/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])/.test(
-                            value
+                            value,
                           )
                         ) {
                           return "Password must include uppercase, lowercase, number, and special character";
@@ -133,7 +132,6 @@ const ChangePassword = () => {
                     autoComplete="new-password"
                     variant={theme === "dark" ? "bg_black" : "bg_white"}
                   />
-
                 </div>
 
                 {/* Confirm Password */}
@@ -159,7 +157,6 @@ const ChangePassword = () => {
                 <div className="pt-4">
                   <SubmitButton
                     type="submit"
-                    variant={theme === "dark" ? "bg_blue" : "bg_blue"}
                     isLoading={isSubmitting}
                     loadingText="Updating Password"
                     disabled={isSubmitting}
@@ -178,7 +175,7 @@ const ChangePassword = () => {
               className={`rounded-xl shadow-sm border p-6 h-full transition-colors duration-300
                 ${
                   theme === "dark"
-                    ? "bg-darkBlack border-mediumBlack"
+                    ? "bg-[#054844] border-mediumBlack"
                     : "bg-white border-gray-200"
                 }`}
             >
@@ -212,8 +209,8 @@ const ChangePassword = () => {
                               ? "text-green-400"
                               : "text-green-600"
                             : theme === "dark"
-                            ? "text-gray-400"
-                            : "text-gray-500"
+                              ? "text-gray-400"
+                              : "text-gray-500"
                         }`}
                       >
                         {req.text}

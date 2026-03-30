@@ -18,8 +18,8 @@ import { useWebSocket } from "@/hooks/ useWebSocket";
 // Hooks
 
 // Cloudinary configuration
-const CLOUD_NAME = "dkgnzxmy8";
-const API_KEY = "788391149578185";
+const CLOUD_NAME = "dbtzfek0q";
+const API_KEY = "986312557576329";
 const UPLOAD_PRESET = "chatroom";
 const UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`;
 
@@ -582,9 +582,9 @@ const ChatRoom = () => {
   return (
     <CommonWrapper variant="section" className="min-h-[50vh]">
       <div
-        className={`font-primary rounded-none p-0 h-[90vh] pb-8 flex flex-col transition-colors duration-300 ${
+        className={`font-primary rounded-xl p-0 h-[90vh] pb-8 flex flex-col transition-colors duration-300 ${
           theme === "dark"
-            ? "bg-gradient-to-br from-mediumBlack/50 to-darkBlack text-white"
+            ? " bg-[#021716]  text-white"
             : "bg-gradient-to-br from-white to-gray-50 text-gray-900"
         }`}
       >
@@ -689,7 +689,7 @@ const ChatRoom = () => {
             />
           </div>
         </div>
-
+        {/* 
         <UserList
           theme={theme}
           onlineUsers={onlineUsers}
@@ -700,7 +700,7 @@ const ChatRoom = () => {
           isMobile={true}
           showUserList={showUserList}
           setShowUserList={setShowUserList}
-        />
+        /> */}
       </div>
     </CommonWrapper>
   );

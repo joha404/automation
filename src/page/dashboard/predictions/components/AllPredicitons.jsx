@@ -1,35 +1,346 @@
 import React, { useState } from "react";
-import CommonParagraph from "@/components/texts/CommonParagraph";
-import CommonTitle from "@/components/texts/CommonTitle";
-import CommonWrapper from "@/components/wrappers/CommonWrapper";
-import { useTheme } from "@/hooks/custom/useTheme";
-import team from "@/assets/dashboard/team.jpg";
-import {
-  FaCircle,
-  FaRegClock,
-  FaChevronDown,
-  FaChevronUp,
-} from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import { BsLightningChargeFill } from "react-icons/bs";
+import { FaRegClock, FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { useTheme } from "@/hooks/custom/useTheme";
 import { useSidebar } from "@/hooks/custom/useSidebar";
 import { useGet } from "@/hooks/api/common/useGet";
 import ScreenLoader from "@/components/loaders/ScreenLoader";
-import Pagination from "@/components/buttons/Pagination";
-import { useSearchParams, useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
 import errorToast from "@/hooks/custom/errorToast";
 
-const AllPredictions = () => {
-  const { theme } = useTheme();
-  const { sidebarOpen } = useSidebar();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [expandedPackages, setExpandedPackages] = useState({});
-  const navigate = useNavigate();
+const getBetTypeColor = (type) => {
+  switch (type?.toUpperCase()) {
+    case "L":
+      return "#FFDB5B";
+    case "S":
+      return "#9CA3AF";
+    case "F":
+      return "#eb464c";
+    case "PP":
+      return "#4ade80";
+    case "POTD":
+      return "#c084fc";
+    case "P":
+      return "#facc15";
+    case "WIN":
+      return "#059669";
+    case "LOSS":
+      return "#e11d48";
+    default:
+      return "#60a5fa";
+  }
+};
 
-  // Pagination states for each package
+const getBetTypeLabel = (type) => {
+  switch (type?.toUpperCase()) {
+    case "L":
+      return "Lock";
+    case "S":
+      return "Standard";
+    case "F":
+      return "Futures";
+    case "PP":
+      return "Player Props";
+    case "POTD":
+      return "Play of the Day";
+    case "P":
+      return "Premium";
+    case "WIN":
+      return "Win";
+    case "LOSS":
+      return "Loss";
+    default:
+      return type || "N/A";
+  }
+};
+
+const formatDate = (dateString) => {
+  if (!dateString) return "N/A";
+  const date = new Date(dateString);
+  return (
+    date.toLocaleDateString("en-US", { month: "short", day: "numeric" }) +
+    ", " +
+    date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
+  );
+};
+
+const NBALogo = () => (
+  <div
+    className="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center flex-shrink-0"
+    style={{ background: "#C8102E" }}
+  >
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <circle
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="white"
+        strokeWidth="1.5"
+        fill="none"
+      />
+      <path
+        d="M12 2 C12 2 8 7 8 12 C8 17 12 22 12 22"
+        stroke="white"
+        strokeWidth="1.2"
+        fill="none"
+      />
+      <path
+        d="M12 2 C12 2 16 7 16 12 C16 17 12 22 12 22"
+        stroke="white"
+        strokeWidth="1.2"
+        fill="none"
+      />
+      <line x1="2" y1="12" x2="22" y2="12" stroke="white" strokeWidth="1.2" />
+    </svg>
+  </div>
+);
+
+const rowBg = (isDark) => (isDark ? "#032422" : "#f9fafb");
+const rowBgHover = (isDark) =>
+  isDark ? "rgba(10,144,135,0.08)" : "rgba(10,144,135,0.06)";
+const rowBorder = (isDark) =>
+  isDark ? "1px solid #0a3330" : "1px solid #e5e7eb";
+
+const LockedRow = ({ isDark, onClick }) => (
+  <div
+    className="flex items-center mb-3 rounded-xl gap-2 sm:gap-3 px-3 sm:px-4 py-3 cursor-pointer transition-colors"
+    style={{ background: rowBg(isDark), border: rowBorder(isDark) }}
+    onClick={onClick}
+    onMouseEnter={(e) =>
+      (e.currentTarget.style.background = rowBgHover(isDark))
+    }
+    onMouseLeave={(e) => (e.currentTarget.style.background = rowBg(isDark))}
+  >
+    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex-shrink-0 blur-sm bg-gray-400/40" />
+    <div className="flex-1 min-w-0 blur-sm select-none">
+      <div
+        className="h-3.5 w-48 rounded mb-2"
+        style={{ background: isDark ? "rgba(255,255,255,0.2)" : "#d1d5db" }}
+      />
+      <div className="flex gap-3">
+        <div
+          className="h-3 w-24 rounded"
+          style={{ background: isDark ? "rgba(255,255,255,0.1)" : "#e5e7eb" }}
+        />
+        <div
+          className="h-3 w-20 rounded"
+          style={{ background: isDark ? "rgba(255,255,255,0.1)" : "#e5e7eb" }}
+        />
+      </div>
+    </div>
+    <div
+      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg flex-shrink-0"
+      style={{
+        background: "rgba(10,144,135,0.15)",
+        border: "1px solid rgba(10,144,135,0.4)",
+      }}
+    >
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+        <rect
+          x="3"
+          y="11"
+          width="18"
+          height="11"
+          rx="2"
+          stroke="#41C551"
+          strokeWidth="2"
+        />
+        <path
+          d="M7 11V7a5 5 0 0 1 10 0v4"
+          stroke="#41C551"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+      </svg>
+      <span
+        className="text-[11px] sm:text-[12px] font-logo font-bold whitespace-nowrap"
+        style={{ color: "#41C551" }}
+      >
+        Subscribe to Unlock
+      </span>
+    </div>
+  </div>
+);
+
+const PredictionRow = ({ p, isDark }) => {
+  const isLocked = p.prediction_desc === "Upgrade to unlock";
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+        padding: "10px 14px",
+        borderRadius: 10,
+        marginBottom: 10,
+        cursor: "pointer",
+        background: hovered ? rowBgHover(isDark) : rowBg(isDark),
+        border: rowBorder(isDark),
+        transition: "background 0.2s ease",
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {/* Logo */}
+      <div style={{ flexShrink: 0 }}>
+        {p.image ? (
+          <img
+            src={p.image}
+            alt={p.game}
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: "50%",
+              objectFit: "cover",
+            }}
+          />
+        ) : (
+          <NBALogo />
+        )}
+      </div>
+
+      {/* Middle */}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <p
+          style={{
+            color: isDark ? "#ffffff" : "#0a1f1e",
+            fontWeight: 600,
+            fontSize: 13,
+            lineHeight: 1.4,
+            margin: 0,
+            marginBottom: 3,
+            wordBreak: "break-word",
+            overflowWrap: "break-word",
+          }}
+        >
+          {isLocked
+            ? "Upgrade to unlock"
+            : p.prediction_desc || p.title || "N/A"}
+        </p>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            flexWrap: "wrap",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            <BsLightningChargeFill
+              style={{ fontSize: 10, color: "#F5C518", flexShrink: 0 }}
+            />
+            <span
+              style={{
+                color: isDark ? "rgba(255,255,255,0.5)" : "rgba(10,31,30,0.6)",
+                fontSize: 11,
+                ...(isLocked
+                  ? { filter: "blur(4px)", userSelect: "none" }
+                  : {}),
+              }}
+            >
+              {p.game || "N/A"}
+            </span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            <FaRegClock
+              style={{
+                fontSize: 10,
+                color: isDark ? "rgba(255,255,255,0.4)" : "rgba(10,31,30,0.5)",
+                flexShrink: 0,
+              }}
+            />
+            <span
+              style={{
+                color: isDark ? "rgba(255,255,255,0.5)" : "rgba(10,31,30,0.6)",
+                fontSize: 11,
+                whiteSpace: "nowrap",
+                ...(isLocked
+                  ? { filter: "blur(4px)", userSelect: "none" }
+                  : {}),
+              }}
+            >
+              {formatDate(p.date_time)}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Right: Bet Type + Bet Size — row layout */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 24,
+          flexShrink: 0,
+        }}
+      >
+        <div style={{ textAlign: "center" }}>
+          <p
+            style={{
+              color: isDark ? "rgba(255,255,255,0.4)" : "rgba(10,31,30,0.5)",
+              fontSize: 10,
+              margin: 0,
+              marginBottom: 2,
+            }}
+          >
+            Bet Type
+          </p>
+          <p
+            style={{
+              color: getBetTypeColor(p.prediction_type || p.bet_type),
+              fontWeight: 700,
+              fontSize: 13,
+              margin: 0,
+              ...(isLocked ? { filter: "blur(4px)", userSelect: "none" } : {}),
+            }}
+          >
+            {p.prediction_type || p.bet_type || "N/A"}
+          </p>
+        </div>
+        <div style={{ textAlign: "center" }}>
+          <p
+            style={{
+              color: isDark ? "rgba(255,255,255,0.4)" : "rgba(10,31,30,0.5)",
+              fontSize: 10,
+              margin: 0,
+              marginBottom: 4,
+            }}
+          >
+            Bet Size
+          </p>
+          <span
+            style={{
+              fontSize: 12,
+              fontWeight: 700,
+              padding: "3px 10px",
+              borderRadius: 6,
+              whiteSpace: "nowrap",
+              background: "rgba(10,144,135,0.15)",
+              color: "#41C551",
+              border: "1px solid #41C551",
+              ...(isLocked ? { filter: "blur(4px)", userSelect: "none" } : {}),
+            }}
+          >
+            {p.unit_size || p.bet_size || "N/A"}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default function AllPredictions() {
+  const { theme } = useTheme();
+  const navigate = useNavigate();
+  const [expandedPackages, setExpandedPackages] = useState({});
   const [currentPages, setCurrentPages] = useState({});
 
-  // Fetch predictions data
+  const PREDICTIONS_PER_PAGE = 10;
+  const isDark = theme === "dark";
+
   const { data: response, isLoading } = useGet("/predictions/", {
     queryKey: ["all-predictions"],
     secure: true,
@@ -37,224 +348,7 @@ const AllPredictions = () => {
 
   const { data: active, isLoading: activeLoading } = useGet(
     "/predictions/active-count/",
-    {
-      queryKey: ["total-active-predictions"],
-      secure: true,
-    },
-  );
-
-  const packageSections = response?.data?.package_sections || [];
-  const userPackages = response?.data?.user_packages || [];
-  const userTierName = response?.data?.user_tier_name || "";
-  const totalAccessible = response?.data?.total_accessible || 0;
-  const hasFree = userPackages.includes("Free");
-
-  // SIMPLE LOGIC: If user has user_tier_name, they have a package
-  const hasAnyPackages = !!userTierName;
-  const mainPackageName = userTierName;
-
-  // Check if user has Ultimate package specifically
-  const hasUltimatePackage = userTierName.toLowerCase().includes("ultimate");
-
-  // Constants for pagination
-  const PREDICTIONS_PER_PAGE = 10;
-
-  // For Ultimate users: show all packages with has_access=true
-  // For non-Ultimate users: show only packages with has_access=true
-  const accessiblePackages = hasUltimatePackage
-    ? packageSections.filter((pkg) => pkg.has_access)
-    : packageSections.filter((pkg) => pkg.has_access);
-
-  // Locked packages are those where has_access=false
-  const lockedPackages = packageSections.filter((pkg) => !pkg.has_access);
-
-  // All packages combined for display
-  const allPackages = [...accessiblePackages, ...lockedPackages];
-
-  // Toggle package expansion for ALL packages
-  const togglePackage = (packageName) => {
-    setExpandedPackages((prev) => ({
-      ...prev,
-      [packageName]: !prev[packageName],
-    }));
-
-    if (!currentPages[packageName]) {
-      setCurrentPages((prev) => ({
-        ...prev,
-        [packageName]: 1,
-      }));
-    }
-  };
-
-  // Handle page change for specific package
-  const handlePageChange = (packageName, page) => {
-    setCurrentPages((prev) => ({
-      ...prev,
-      [packageName]: page,
-    }));
-  };
-
-  // Handle click on locked prediction
-  const handleLockedPredictionClick = () => {
-    errorToast("Subscribe first to access this prediction!");
-    setTimeout(() => {
-      navigate("/dashboard/subscription-tiers");
-    }, 1500);
-  };
-
-  // Get paginated predictions for a package
-  const getPaginatedPredictions = (predictions, packageName) => {
-    const currentPage = currentPages[packageName] || 1;
-    const startIndex = (currentPage - 1) * PREDICTIONS_PER_PAGE;
-    const endIndex = startIndex + PREDICTIONS_PER_PAGE;
-    return predictions.slice(startIndex, endIndex);
-  };
-
-  // Get total pages for a package
-  const getTotalPages = (predictions) => {
-    return Math.ceil(predictions.length / PREDICTIONS_PER_PAGE);
-  };
-
-  const getTypeColor = (type) => {
-    switch (type) {
-      case "L":
-        return "text-[#FFDB5B] ";
-      case "S":
-        return "text-lightGrey";
-      case "F":
-        return "text-[#eb464c]";
-      case "PP":
-        return "text-green-400";
-      case "POTD":
-        return "text-purple-400";
-      case "P":
-        return "text-yellow-400";
-      case "win":
-        return "text-emerald-600 border border-emearald-600";
-      case "loss":
-        return "text-rose-600 border border-rose-600";
-      default:
-        return "text-lightBlue";
-    }
-  };
-
-  // Format date for display
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return (
-      date.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-      }) +
-      ", " +
-      date.toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-      })
-    );
-  };
-
-  // Render prediction item (reusable component)
-  const renderPredictionItem = (prediction, isLocked = false) => (
-    <div
-      key={prediction?.id}
-      className={`flex flex-row lg:p-5 p-2 rounded-xl transition-all duration-200 gap-5 w-full ${
-        theme === "dark" ? "bg-darkerBlack" : "bg-white"
-      } ${isLocked ? "cursor-pointer" : ""}`}
-      onClick={isLocked ? handleLockedPredictionClick : undefined}
-    >
-      {/* Left section */}
-      <div className="flex justify-start items-center gap-3 w-full">
-        {/* Professional team logo with border and subtle shadow */}
-        <div
-          className={`xl:min-w-12 xl:w-12 xl:h-12 md:min-w-10 md:w-10 md:h-10 min-w-8 w-8 h-8 rounded-full flex items-center justify-center border-1 mt-1.5 ${
-            theme === "dark" ? "border-lightBlack" : "border-lighterGrey"
-          }`}
-        >
-          {prediction?.image ? (
-            <img
-              src={prediction?.image}
-              alt={prediction.game}
-              className="w-full h-full rounded-full object-cover"
-            />
-          ) : (
-            <div className="w-full h-full rounded-full flex items-center justify-center bg-gray-200 text-gray-700 font-bold text-base">
-              <div className="w-full h-full rounded-full flex items-center justify-center bg-gray-200 text-gray-700 font-bold text-xl">
-                {prediction?.game?.[0]?.toUpperCase() || ""}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Main content row */}
-        <div className="flex flex-row items-center justify-between gap-1 w-full">
-          {/* Left: Bet info */}
-          <div className="w-full">
-            <CommonParagraph
-              variant=""
-              className={`${
-                isLocked ? "blur-xs" : ""
-              } mb-1 font-semibold text-left capitalize md:text-base text-xs ${
-                theme === "dark" ? "text-lightGrey" : "text-mediumBlack"
-              }`}
-            >
-              {isLocked
-                ? "Upgrade to unlock"
-                : prediction?.prediction_desc || "N/A"}
-            </CommonParagraph>
-            {/* Game details */}
-            <div
-              className={`flex items-start gap-2 ${
-                theme === "dark" ? "text-mediumGrey" : "text-darkGrey"
-              }`}
-            >
-              {/* Icon for type */}
-              <div className="flex items-center">
-                <BsLightningChargeFill className="text-xs text-yellow-500" />
-                <CommonParagraph variant="smaller" className="ms-1 uppercase">
-                  {prediction?.game || "N/A"}
-                </CommonParagraph>
-              </div>
-
-              {/* Icon for time */}
-              <div className="flex items-center">
-                <FaRegClock className="text-xs" />
-                <CommonParagraph variant="smaller" className="ms-1">
-                  {formatDate(prediction.date_time)}
-                </CommonParagraph>
-              </div>
-            </div>
-          </div>
-
-          {/* Right: Unit and status */}
-          <div className="flex lg:flex-row flex-col-reverse lg:items-center items-end lg:gap-10 gap-1 justify-end py-2">
-            <div className="2xl:min-w-[600px] lg:min-w-[200px] min-w-[40px] flex justify-center items-center">
-              <span
-                className={`xl:text-sm md:text-xs text-[10px] font-medium text-center ${getTypeColor(
-                  prediction?.prediction_type,
-                )}`}
-                style={{
-                  color:
-                    prediction?.prediction_type === "F" ? "#eb464c" : undefined,
-                }}
-              >
-                {prediction?.prediction_type || "N/A"}
-              </span>
-            </div>
-            <CommonParagraph
-              variant="smaller"
-              className={`font-medium border ${
-                theme === "dark"
-                  ? "text-green-500 border-green-800"
-                  : "text-green-600 border-green-500"
-              } px-2 py-1 rounded text-xs font-medium`}
-            >
-              {prediction.unit_size}%
-            </CommonParagraph>
-          </div>
-        </div>
-      </div>
-    </div>
+    { queryKey: ["total-active-predictions"], secure: true },
   );
 
   if (isLoading || activeLoading) {
@@ -265,144 +359,320 @@ const AllPredictions = () => {
     );
   }
 
+  const innerData = response?.data || response || {};
+  const rawResults = innerData?.results || [];
+
+  // ✅ Build package sections grouped by prediction_type if no package_sections
+  const packageSections = innerData?.package_sections
+    ? innerData.package_sections
+    : rawResults.length > 0
+      ? (() => {
+          // Group by prediction_type
+          const groups = {};
+          rawResults.forEach((p) => {
+            const key = p.prediction_type || p.bet_type || "Other";
+            if (!groups[key]) groups[key] = [];
+            groups[key].push(p);
+          });
+          return Object.entries(groups).map(([type, preds]) => ({
+            package_name: getBetTypeLabel(type),
+            has_access: true,
+            active_count: preds.length,
+            predictions: preds,
+          }));
+        })()
+      : [];
+
+  const accessiblePackages = packageSections.filter((pkg) => pkg.has_access);
+  const lockedPackages = packageSections.filter((pkg) => !pkg.has_access);
+  const typeOrder = [
+    "Standard",
+    "Live",
+    "Play of the Day",
+    "Player Props",
+    "Futures",
+  ];
+  const allPackages = [...accessiblePackages, ...lockedPackages].sort(
+    (a, b) => {
+      const ai = typeOrder.indexOf(a.package_name);
+      const bi = typeOrder.indexOf(b.package_name);
+      if (ai === -1 && bi === -1) return 0;
+      if (ai === -1) return 1;
+      if (bi === -1) return -1;
+      return ai - bi;
+    },
+  );
+
+  // ✅ Total active predictions count
+  const totalActive =
+    active?.data?.active_count ??
+    active?.active_count ??
+    allPackages.reduce((sum, pkg) => sum + (pkg.active_count || 0), 0);
+
+  // ✅ Package name from active data
+  const packageTitle =
+    active?.data?.package_name ??
+    active?.package_name ??
+    innerData?.package_name ??
+    "Predictions";
+
+  const togglePackage = (packageName) => {
+    setExpandedPackages((prev) => ({
+      ...prev,
+      [packageName]: !prev[packageName],
+    }));
+    if (!currentPages[packageName]) {
+      setCurrentPages((prev) => ({ ...prev, [packageName]: 1 }));
+    }
+  };
+
+  const handlePageChange = (packageName, page) => {
+    setCurrentPages((prev) => ({ ...prev, [packageName]: page }));
+  };
+
+  const handleLockedClick = () => {
+    errorToast("Subscribe first to access this prediction!");
+    setTimeout(() => navigate("/dashboard/subscription-tiers"), 1500);
+  };
+
+  const getPaginated = (predictions, packageName) => {
+    const currentPage = currentPages[packageName] || 1;
+    const start = (currentPage - 1) * PREDICTIONS_PER_PAGE;
+    return predictions.slice(start, start + PREDICTIONS_PER_PAGE);
+  };
+
+  const getTotalPages = (predictions) =>
+    Math.ceil(predictions.length / PREDICTIONS_PER_PAGE);
+
   return (
-    <CommonWrapper variant="">
-      <div className={`rounded-xl font-primary`}>
-        <div
-          className={`rounded-lg lg:p-6 sm:p-5 p-3 ${
-            theme === "dark" ? "bg-darkBlack" : "bg-lightestGrey"
-          }`}
-        >
-          {/* Header Section - SIMPLE FIXED LOGIC */}
-          {/* Header Section */}
-          <CommonTitle variant="h3" className="font-semibold text-center ">
-            {hasFree ? "No Package" : userTierName || "Guest"}
-          </CommonTitle>
-
-          <CommonParagraph
-            variant="small"
-            className={`${
-              theme === "dark" ? "text-lightBlue" : "text-darkBlue"
-            }  flex justify-center items-center gap-2 mb-2`}
+    <div
+      className="w-full rounded-xl font-primary overflow-hidden"
+      style={{ background: isDark ? "#071412" : "#f8fafc" }}
+    >
+      {/* ── Top Header: Package title + total active ── */}
+      {allPackages.length > 0 && (
+        <div className="text-center pt-6 pb-2 px-4">
+          <h2
+            className="text-[18px] sm:text-[22px] font-logo font-bold mb-1"
+            style={{ color: isDark ? "#ffffff" : "#0a1f1e" }}
           >
-            <FaCircle size={8} className="text-green-600" />
-            {active?.data?.total_active_predictions || 0} Active Predictions
-          </CommonParagraph>
-          {/* Package Sections */}
-          {allPackages.length > 0 ? (
-            allPackages.map((pkg) => {
-              const isAccessible = pkg.has_access;
-              const predictions = isAccessible
-                ? pkg.predictions
-                : pkg.locked_predictions;
-              const predictionCount = isAccessible
-                ? pkg.accessible_count
-                : pkg.locked_count;
-              const predictionText = isAccessible
-                ? "Active Predictions"
-                : "Locked Predictions";
+            {packageTitle}
+          </h2>
+          <div className="flex items-center justify-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-[#41C551] inline-block" />
+            <span
+              className="text-[13px] sm:text-[14px] font-logo font-medium"
+              style={{ color: "#41C551" }}
+            >
+              {totalActive} Active Predictions
+            </span>
+          </div>
+        </div>
+      )}
 
-              return (
-                <div key={pkg.package_name} className="mb-6">
-                  {/* Package Header - Clickable with Arrow for ALL packages */}
-                  <div
-                    className={`flex items-center justify-between p-4 rounded-lg cursor-pointer transition-all duration-200 ${
-                      theme === "dark"
-                        ? "bg-darkerBlack hover:bg-darkBlack"
-                        : "bg-white hover:bg-gray-50"
-                    } border ${
-                      theme === "dark" ? "border-lightBlack" : "border-gray-200"
-                    }`}
-                    onClick={() => togglePackage(pkg.package_name)}
+      {/* ── Accordion Sections ── */}
+      <div className="py-3">
+        {allPackages.map((pkg) => {
+          const isOpen = !!expandedPackages[pkg.package_name];
+          const isLocked = !pkg.has_access;
+          const predictions = pkg.predictions || [];
+          const paginated = getPaginated(predictions, pkg.package_name);
+          const totalPages = getTotalPages(predictions);
+          const currentPage = currentPages[pkg.package_name] || 1;
+          const lockedRowCount = pkg.active_count || pkg.locked_count || 3;
+
+          return (
+            <div
+              key={pkg.package_name}
+              className="my-2 mx-3 sm:mx-5 rounded-xl overflow-hidden"
+              style={{
+                background: isDark ? "#0d1f1e" : "#ffffff",
+                border: isDark ? "1px solid #0a2e2c" : "1px solid #e5e7eb",
+                boxShadow: isDark ? "none" : "0 1px 3px rgba(0,0,0,0.06)",
+              }}
+            >
+              {/* Section Header */}
+              <div
+                className="flex items-center justify-between px-4 sm:px-6 py-4 cursor-pointer select-none"
+                onClick={() => togglePackage(pkg.package_name)}
+                style={{
+                  background: isOpen
+                    ? isDark
+                      ? "rgba(10,144,135,0.06)"
+                      : "rgba(10,144,135,0.03)"
+                    : "transparent",
+                }}
+              >
+                <div>
+                  <p
+                    className="text-[15px] sm:text-[17px] font-logo font-bold"
+                    style={{ color: isDark ? "#ffffff" : "#0a1f1e" }}
                   >
-                    <div className="flex flex-col">
-                      <CommonParagraph
-                        variant="medium"
-                        className={`font-semibold ${
-                          theme === "dark"
-                            ? "text-lightGrey"
-                            : "text-mediumBlack"
-                        }`}
+                    {pkg.package_name}
+                  </p>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <p
+                      className="text-[12px] sm:text-[13px] font-logo font-normal"
+                      style={{
+                        color: isDark ? "#92A8C1" : "rgba(10,31,30,0.55)",
+                      }}
+                    >
+                      {pkg.active_count ?? predictions.length} Active Prediction
+                      {(pkg.active_count ?? predictions.length) !== 1
+                        ? "s"
+                        : ""}
+                    </p>
+                    {isLocked && (
+                      <span
+                        className="px-1.5 py-0.5 rounded text-[10px] font-bold"
+                        style={{
+                          background: "rgba(251,191,36,0.15)",
+                          color: "#fbbf24",
+                          border: "1px solid rgba(251,191,36,0.3)",
+                        }}
                       >
-                        {pkg.package_name}
-                      </CommonParagraph>
-                      <CommonParagraph
-                        variant="small"
-                        className={`${
-                          theme === "dark" ? "text-mediumGrey" : "text-darkGrey"
-                        } mt-1`}
-                      >
-                        {predictionCount} {predictionText}
-                      </CommonParagraph>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {expandedPackages[pkg.package_name] ? (
-                        <FaChevronUp className="text-lightBlue" />
-                      ) : (
-                        <FaChevronDown className="text-lightBlue" />
-                      )}
-                    </div>
+                        🔒 LOCKED
+                      </span>
+                    )}
                   </div>
+                </div>
+                {isOpen ? (
+                  <FaChevronUp style={{ color: "green", fontSize: 13 }} />
+                ) : (
+                  <FaChevronDown style={{ color: "green", fontSize: 13 }} />
+                )}
+              </div>
 
-                  {/* Package Content - Expandable for ALL packages */}
-                  {expandedPackages[pkg.package_name] && (
-                    <div className="mt-3 space-y-3">
-                      {predictions.length > 0 ? (
-                        <>
-                          {/* Render paginated predictions for this package */}
-                          {getPaginatedPredictions(
-                            predictions,
-                            pkg.package_name,
-                          ).map((prediction) =>
-                            renderPredictionItem(prediction, !isAccessible),
-                          )}
+              {/* Rows */}
+              {isOpen && (
+                <div className="px-3 sm:px-5 pb-3 pt-1">
+                  {isLocked ? (
+                    <>
+                      {Array.from({ length: lockedRowCount }).map((_, idx) => (
+                        <LockedRow
+                          key={idx}
+                          isDark={isDark}
+                          onClick={handleLockedClick}
+                        />
+                      ))}
+                      <div
+                        className="flex flex-col items-center justify-center py-4 px-4 mb-2 rounded-xl"
+                        style={{
+                          background: isDark
+                            ? "rgba(10,144,135,0.08)"
+                            : "rgba(10,144,135,0.04)",
+                          border: "1px dashed rgba(10,144,135,0.35)",
+                        }}
+                      >
+                        <p
+                          className="text-[13px] font-logo font-semibold mb-2"
+                          style={{
+                            color: isDark
+                              ? "rgba(255,255,255,0.7)"
+                              : "rgba(10,31,30,0.7)",
+                          }}
+                        >
+                          Upgrade your plan to view these predictions
+                        </p>
+                        <button
+                          onClick={handleLockedClick}
+                          className="px-4 py-1.5 rounded-lg text-[13px] font-logo font-bold transition-opacity hover:opacity-80"
+                          style={{
+                            background: "rgba(10,144,135,0.9)",
+                            color: "#fff",
+                          }}
+                        >
+                          View Plans →
+                        </button>
+                      </div>
+                    </>
+                  ) : paginated.length === 0 ? (
+                    <p
+                      className="text-center py-6 text-sm font-logo"
+                      style={{
+                        color: isDark
+                          ? "rgba(255,255,255,0.4)"
+                          : "rgba(10,31,30,0.4)",
+                      }}
+                    >
+                      No predictions available
+                    </p>
+                  ) : (
+                    paginated.map((p) => (
+                      <PredictionRow key={p.id} p={p} isDark={isDark} />
+                    ))
+                  )}
 
-                          {/* Pagination for this package */}
-                          {getTotalPages(predictions) > 1 && (
-                            <div className="mt-6 flex justify-center">
-                              <Pagination
-                                currentPage={
-                                  currentPages[pkg.package_name] || 1
-                                }
-                                totalPages={getTotalPages(predictions)}
-                                onPageChange={(page) =>
-                                  handlePageChange(pkg.package_name, page)
-                                }
-                              />
-                            </div>
-                          )}
-                        </>
-                      ) : (
-                        <div className="text-center py-4">
-                          <CommonParagraph variant="medium">
-                            No predictions available in this package
-                          </CommonParagraph>
-                        </div>
-                      )}
+                  {/* Pagination */}
+                  {!isLocked && totalPages > 1 && (
+                    <div className="flex justify-center items-center gap-2 py-3">
+                      <button
+                        disabled={currentPage === 1}
+                        onClick={() =>
+                          handlePageChange(pkg.package_name, currentPage - 1)
+                        }
+                        className="px-3 py-1 rounded text-sm font-logo"
+                        style={{
+                          opacity: currentPage === 1 ? 0.3 : 1,
+                          cursor: currentPage === 1 ? "not-allowed" : "pointer",
+                          background: isDark ? "#032422" : "#f3f4f6",
+                          color: isDark ? "#ffffff" : "#0a1f1e",
+                          border: isDark ? "none" : "1px solid #e5e7eb",
+                        }}
+                      >
+                        Prev
+                      </button>
+                      <span
+                        className="text-sm font-logo"
+                        style={{
+                          color: isDark
+                            ? "rgba(255,255,255,0.6)"
+                            : "rgba(10,31,30,0.6)",
+                        }}
+                      >
+                        {currentPage} / {totalPages}
+                      </span>
+                      <button
+                        disabled={currentPage === totalPages}
+                        onClick={() =>
+                          handlePageChange(pkg.package_name, currentPage + 1)
+                        }
+                        className="px-3 py-1 rounded text-sm font-logo"
+                        style={{
+                          opacity: currentPage === totalPages ? 0.3 : 1,
+                          cursor:
+                            currentPage === totalPages
+                              ? "not-allowed"
+                              : "pointer",
+                          background: isDark ? "#032422" : "#f3f4f6",
+                          color: isDark ? "#ffffff" : "#0a1f1e",
+                          border: isDark ? "none" : "1px solid #e5e7eb",
+                        }}
+                      >
+                        Next
+                      </button>
                     </div>
                   )}
                 </div>
-              );
-            })
-          ) : (
-            /* Empty State - User has packages but no package sections */
-            <div className="text-center py-10">
-              <CommonParagraph variant="medium" className="mb-4">
-                {userTierName
-                  ? `You have the ${userTierName} package but no predictions are currently available.`
-                  : "No predictions found. Subscribe to get started!"}
-              </CommonParagraph>
-              <CommonParagraph variant="small" className="mt-2">
-                {userTierName
-                  ? "Check back later for new predictions!"
-                  : "Upgrade your subscription to access premium predictions!"}
-              </CommonParagraph>
+              )}
             </div>
-          )}
-        </div>
+          );
+        })}
       </div>
-    </CommonWrapper>
-  );
-};
 
-export default AllPredictions;
+      {/* Empty state */}
+      {allPackages.length === 0 && (
+        <div className="flex justify-center items-center py-16">
+          <p
+            className="text-sm font-logo"
+            style={{
+              color: isDark ? "rgba(255,255,255,0.4)" : "rgba(10,31,30,0.4)",
+            }}
+          >
+            No predictions found
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}

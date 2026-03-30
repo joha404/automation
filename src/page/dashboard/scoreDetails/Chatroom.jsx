@@ -213,7 +213,7 @@ const ChatRoom = () => {
         return false;
       }
     },
-    [socket]
+    [socket],
   );
 
   // Enhanced file upload and send function - FIXED: Send image URL in content field
@@ -252,8 +252,8 @@ const ChatRoom = () => {
             prev.map((msg) =>
               msg.id === tempId
                 ? { ...msg, isOptimistic: false, failed: true }
-                : msg
-            )
+                : msg,
+            ),
           );
         }
       } catch (error) {
@@ -267,8 +267,8 @@ const ChatRoom = () => {
                   failed: true,
                   content: "Failed to upload file",
                 }
-              : msg
-          )
+              : msg,
+          ),
         );
       }
     },
@@ -280,7 +280,7 @@ const ChatRoom = () => {
       replyingTo,
       uploadToCloudinary,
       scrollToBottom,
-    ]
+    ],
   );
 
   // Handle file selection and preview
@@ -306,7 +306,7 @@ const ChatRoom = () => {
         e.target.value = "";
       }
     },
-    [handleFileUploadAndSend]
+    [handleFileUploadAndSend],
   );
 
   // Cancel image selection
@@ -323,7 +323,7 @@ const ChatRoom = () => {
       return;
     }
 
-    const wsUrl = `wss://admin.techtakes.ai/ws/rooms/chatroom/?token=${token}`;
+    const wsUrl = `wss://admin.hyperpicks.ai/ws/rooms/chatroom/?token=${token}`;
     const newSocket = new WebSocket(wsUrl);
 
     newSocket.onopen = () => {
@@ -401,7 +401,7 @@ const ChatRoom = () => {
                 avatar:
                   msg.avatar ||
                   `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                    msg.sender || "User"
+                    msg.sender || "User",
                   )}&background=2e3450&color=fff&bold=true&size=64`,
                 isPinned: msg.is_pinned || false,
                 is_removed_by_admin: msg.is_removed_by_admin || false,
@@ -453,8 +453,8 @@ const ChatRoom = () => {
                       isOwn: msg.isOwn,
                       reply_to: msg.reply_to,
                     }
-                  : msg
-              )
+                  : msg,
+              ),
             );
 
             // Also update in pinned messages if it was pinned
@@ -473,8 +473,8 @@ const ChatRoom = () => {
                       file_type: null,
                       reactions: [],
                     }
-                  : msg
-              )
+                  : msg,
+              ),
             );
 
             console.log("✅ Message ID", data.message_id, "marked as deleted");
@@ -509,7 +509,7 @@ const ChatRoom = () => {
               avatar:
                 data.message.avatar ||
                 `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                  data.message.sender || "User"
+                  data.message.sender || "User",
                 )}&background=2e3450&color=fff&bold=true&size=64`,
               isPinned: data.message.is_pinned || false,
               is_removed_by_admin: data.message.is_removed_by_admin || false,
@@ -524,8 +524,9 @@ const ChatRoom = () => {
                   (msg.isOptimistic &&
                     msg.sender_id === newMessage.sender_id &&
                     Math.abs(
-                      new Date().getTime() - parseInt(msg.id.split("_")[1] || 0)
-                    ) < 10000)
+                      new Date().getTime() -
+                        parseInt(msg.id.split("_")[1] || 0),
+                    ) < 10000),
               );
 
               if (existingIndex !== -1) {
@@ -550,7 +551,7 @@ const ChatRoom = () => {
                   return [...prev, newMessage];
                 }
                 return prev.map((msg) =>
-                  msg.id === newMessage.id ? newMessage : msg
+                  msg.id === newMessage.id ? newMessage : msg,
                 );
               });
             }
@@ -560,10 +561,10 @@ const ChatRoom = () => {
         case "message_deleted":
           if (data.message_id) {
             setMessages((prev) =>
-              prev.filter((msg) => msg.id !== data.message_id)
+              prev.filter((msg) => msg.id !== data.message_id),
             );
             setPinnedMessages((prev) =>
-              prev.filter((msg) => msg.id !== data.message_id)
+              prev.filter((msg) => msg.id !== data.message_id),
             );
           }
           break;
@@ -585,7 +586,7 @@ const ChatRoom = () => {
               avatar:
                 data.message.avatar ||
                 `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                  data.message.sender || "User"
+                  data.message.sender || "User",
                 )}&background=2e3450&color=fff&bold=true&size=64`,
               isPinned: data.message.is_pinned || false,
               is_removed_by_admin: data.message.is_removed_by_admin || false,
@@ -595,14 +596,14 @@ const ChatRoom = () => {
 
             setMessages((prev) =>
               prev.map((msg) =>
-                msg.id === updatedMessage.id ? updatedMessage : msg
-              )
+                msg.id === updatedMessage.id ? updatedMessage : msg,
+              ),
             );
 
             setPinnedMessages((prev) =>
               prev.map((msg) =>
-                msg.id === updatedMessage.id ? updatedMessage : msg
-              )
+                msg.id === updatedMessage.id ? updatedMessage : msg,
+              ),
             );
           }
           break;
@@ -615,7 +616,7 @@ const ChatRoom = () => {
         case "member_list": {
           if (data.members && Array.isArray(data.members)) {
             const onlineMembers = data.members.filter(
-              (member) => member.online === true
+              (member) => member.online === true,
             );
 
             const formattedMembers = onlineMembers.map((member) => ({
@@ -624,7 +625,7 @@ const ChatRoom = () => {
               avatar:
                 member.avatar ||
                 `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                  member.name || "User"
+                  member.name || "User",
                 )}&background=2e3450&color=fff&bold=true&size=64`,
               online: member.online,
               role: member.job || "Member",
@@ -643,16 +644,16 @@ const ChatRoom = () => {
               prev.map((msg) =>
                 msg.id === data.message_id
                   ? { ...msg, reactions: data.reactions }
-                  : msg
-              )
+                  : msg,
+              ),
             );
 
             setPinnedMessages((prev) =>
               prev.map((msg) =>
                 msg.id === data.message_id
                   ? { ...msg, reactions: data.reactions }
-                  : msg
-              )
+                  : msg,
+              ),
             );
           }
           break;
@@ -674,7 +675,7 @@ const ChatRoom = () => {
               avatar:
                 data.message.avatar ||
                 `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                  data.message.sender || "User"
+                  data.message.sender || "User",
                 )}&background=2e3450&color=fff&bold=true&size=64`,
               isPinned: data.message.is_pinned || false,
               is_removed_by_admin: data.message.is_removed_by_admin || false,
@@ -684,8 +685,8 @@ const ChatRoom = () => {
 
             setMessages((prev) =>
               prev.map((msg) =>
-                msg.id === updatedMessage.id ? updatedMessage : msg
-              )
+                msg.id === updatedMessage.id ? updatedMessage : msg,
+              ),
             );
 
             setPinnedMessages((prev) => {
@@ -695,7 +696,7 @@ const ChatRoom = () => {
                   return [...prev, updatedMessage];
                 }
                 return prev.map((msg) =>
-                  msg.id === updatedMessage.id ? updatedMessage : msg
+                  msg.id === updatedMessage.id ? updatedMessage : msg,
                 );
               } else {
                 return prev.filter((msg) => msg.id !== updatedMessage.id);
@@ -708,7 +709,7 @@ const ChatRoom = () => {
         // Handle other message types if needed
       }
     },
-    [user?.id, scrollToBottom]
+    [user?.id, scrollToBottom],
   );
 
   // GIF search function
@@ -722,7 +723,7 @@ const ChatRoom = () => {
     const results = popularGifs.filter(
       (gif) =>
         gif.title.toLowerCase().includes(searchTerm) ||
-        gif.tags.some((tag) => tag.includes(searchTerm))
+        gif.tags.some((tag) => tag.includes(searchTerm)),
     );
 
     setFilteredGifs(results);
@@ -747,7 +748,7 @@ const ChatRoom = () => {
       setFilteredGifs(popularGifs);
       setReplyingTo(null);
     },
-    [canSendMessages, socket, replyingTo]
+    [canSendMessages, socket, replyingTo],
   );
 
   // Enhanced scroll handler
@@ -800,7 +801,7 @@ const ChatRoom = () => {
             return !isOld;
           }
           return true;
-        })
+        }),
       );
     }, 5000);
 
@@ -849,7 +850,7 @@ const ChatRoom = () => {
         avatar:
           user?.avatar ||
           `https://ui-avatars.com/api/?name=${encodeURIComponent(
-            user?.name || "You"
+            user?.name || "You",
           )}&background=2e3450&color=fff&bold=true&size=64`,
         isPinned: false,
         reply_to: replyingTo
@@ -880,8 +881,8 @@ const ChatRoom = () => {
           prev.map((msg) =>
             msg.id === tempId
               ? { ...msg, isOptimistic: false, failed: true }
-              : msg
-          )
+              : msg,
+          ),
         );
       }
     }
@@ -907,10 +908,10 @@ const ChatRoom = () => {
           type: "message_reaction",
           message_id: messageId,
           emoji: emoji,
-        })
+        }),
       );
     },
-    [socket]
+    [socket],
   );
 
   const handleReaction = useCallback(
@@ -918,7 +919,7 @@ const ChatRoom = () => {
       sendReaction(messageId, emoji);
       setShowReactionPicker(null);
     },
-    [sendReaction]
+    [sendReaction],
   );
 
   // Enhanced Pin/Unpin message function
@@ -943,7 +944,7 @@ const ChatRoom = () => {
 
       setActiveMessageMenu(null);
     },
-    [socket, messages]
+    [socket, messages],
   );
 
   const shareMessage = useCallback((message) => {
@@ -960,14 +961,14 @@ const ChatRoom = () => {
         prev.map((msg) =>
           msg.id === message.id
             ? { ...msg, content: "✓ Copied to clipboard!" }
-            : msg
-        )
+            : msg,
+        ),
       );
       setTimeout(() => {
         setMessages((prev) =>
           prev.map((msg) =>
-            msg.id === message.id ? { ...msg, content: originalText } : msg
-          )
+            msg.id === message.id ? { ...msg, content: originalText } : msg,
+          ),
         );
       }, 2000);
     }
@@ -1001,7 +1002,7 @@ const ChatRoom = () => {
       });
       return reactionCounts;
     },
-    [user?.id]
+    [user?.id],
   );
 
   // Close popups when clicking outside
@@ -1348,7 +1349,7 @@ const ChatRoom = () => {
                       className="w-6 h-6 rounded-full object-cover flex-shrink-0 shadow-md"
                       onError={(e) => {
                         e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                          msg.sender || "User"
+                          msg.sender || "User",
                         )}&background=2e3450&color=fff&bold=true&size=64`;
                       }}
                     />
@@ -1422,13 +1423,13 @@ const ChatRoom = () => {
                                   userReacted
                                     ? " text-white transform scale-105"
                                     : theme === "dark"
-                                    ? " hover:bg-gray-600 hover:scale-105"
-                                    : " hover:bg-gray-300 hover:scale-105"
+                                      ? " hover:bg-gray-600 hover:scale-105"
+                                      : " hover:bg-gray-300 hover:scale-105"
                                 }`}
                               >
                                 {emoji} {count}
                               </button>
-                            )
+                            ),
                           )}
                         </div>
                       )}
@@ -1473,7 +1474,7 @@ const ChatRoom = () => {
                         <button
                           onClick={() =>
                             setShowReactionPicker(
-                              showReactionPicker === msg.id ? null : msg.id
+                              showReactionPicker === msg.id ? null : msg.id,
                             )
                           }
                           className={`p-1 cursor-pointer opacity-40 rounded-full transition-all duration-200 ${
@@ -1601,10 +1602,10 @@ const ChatRoom = () => {
                     replyingTo
                       ? `Replying to ${replyingTo.sender}...`
                       : !canSendMessages
-                      ? "⚠️ You need an active subscription to send messages"
-                      : isConnected
-                      ? "Type here..."
-                      : "Connecting..."
+                        ? "⚠️ You need an active subscription to send messages"
+                        : isConnected
+                          ? "Type here..."
+                          : "Connecting..."
                   }
                   disabled={!isConnected || !canSendMessages}
                   className={`w-full text-wrap ${

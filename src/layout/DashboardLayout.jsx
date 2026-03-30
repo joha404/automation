@@ -10,48 +10,52 @@ import { MdClose } from "react-icons/md";
 import { motion } from "framer-motion";
 import CommonParagraph from "@/components/texts/CommonParagraph";
 import PixelTracker from "@/components/facebook/PixelTracker";
-
-// ─── Static Data ───────────────────────────────────────────────────────────────
-const STATIC_COUNT_DATA = {
-  data: {
-    count: 3,
-  },
-};
-
-const STATIC_NOTIFICATIONS = [
-  {
-    id: 1,
-    title: "Your order has been confirmed!",
-    message:
-      "Your recent order #ORD-20240219 has been successfully confirmed and is being processed.",
-    is_read: false,
-  },
-  {
-    id: 2,
-    title: "Payment received",
-    message: "We have received your payment of $120.00. Thank you!",
-    is_read: false,
-  },
-  {
-    id: 3,
-    title: "Profile updated",
-    message: "Your profile information has been successfully updated.",
-    is_read: true,
-  },
-];
-// ──────────────────────────────────────────────────────────────────────────────
+import { useGet } from "@/hooks/api/common/useGet";
+import hImage from "../assets/dashboard/h.png";
 
 const DashboardLayout = () => {
   const { theme } = useTheme();
 
   const [showPopup, setShowPopup] = useState(false);
+  const [prevCount, setPrevCount] = useState(0);
+  const [hasInitialized, setHasInitialized] = useState(false);
 
-  const notifications = STATIC_NOTIFICATIONS;
-  const countData = STATIC_COUNT_DATA;
-
+  // ✅ Real notifications from API
+  const { data: response } = useGet("/in-app/", {
+    queryKey: ["notifications"],
+    secure: true,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+  });
+  const notifications = response?.data || [];
   const firstUnreadNotification = notifications.find(
     (notification) => !notification.is_read,
   );
+
+  // ✅ Unread count with polling
+  const { data: countData } = useGet("/in-app/unread/count/", {
+    queryKey: ["total-unread-dashboard"],
+    secure: true,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    refetchInterval: 30000,
+  });
+
+  // ✅ Detect new notification
+  useEffect(() => {
+    const currentCount = countData?.data?.count || 0;
+
+    if (!hasInitialized && currentCount !== undefined) {
+      setPrevCount(currentCount);
+      setHasInitialized(true);
+      return;
+    }
+
+    if (currentCount > prevCount) {
+      setShowPopup(true);
+    }
+    setPrevCount(currentCount);
+  }, [countData?.data?.count, prevCount, hasInitialized]);
 
   const { sidebarOpen, isMobile, toggleSidebar, closeSidebar } =
     useContext(SidebarContext);
@@ -67,35 +71,56 @@ const DashboardLayout = () => {
 
   return (
     <div
-      className={`flex h-screen flex-col relative ${
-        theme === "dark" ? "bg-darkerBlack" : "bg-extraLightBlue"
+      className={`flex h-screen flex-col relative rounded-[16px] border-none ${
+        theme === "dark" ? "bg-[#020C0B]" : "bg-extraLightBlue"
       }`}
     >
       <PixelTracker />
 
       {/* Header with Logo and Toggle Button */}
-      <div
-        className={`flex items-center w-[280px] z-[2001] fixed top-0 h-[56px] transition-all duration-300 ${
-          sidebarOpen
-            ? "left-0  px-5 justify-between"
-            : isMobile
-              ? "left-2 w-auto"
-              : "left-[80px] w-auto px-4"
-        }`}
-      >
-        <div className="flex items-center">
-          <div className="text-xl font-semibold">
-            {sidebarOpen && <Logo transition={true} />}
+      <div className="flex items-center  gap-2 ">
+        <div
+          className={`flex items-center w-[280px] z-[2001] fixed top-0 h-[56px] transition-all duration-300 ${
+            sidebarOpen
+              ? "left-0  px-5 justify-between"
+              : isMobile
+                ? "left-2 w-auto"
+                : "left-[80px] w-auto px-4"
+          }`}
+        >
+          <div className="flex items-center">
+            <div className="text-xl font-semibold">
+              {sidebarOpen && (
+                <div className="flex items-center gap-2">
+                  <div
+                    className={`flex justify-center items-center h-[44px] p-3 w-[44px] rounded-lg overflow-hidden ${
+                      theme === "dark" ? "bg-none" : "bg-[#032422]"
+                    }`}
+                  >
+                    <img
+                      src={hImage}
+                      className="h-full w-full object-contain"
+                      alt=""
+                    />
+                  </div>
+                  <h1 className="font-bold font-logo text-2xl">
+                    <span className="text-[#0A9087]">Hyper</span>
+                    <span
+                      className={`${theme === "dark" ? "text-white" : "text-green-900"}`}
+                    >
+                      Picks
+                    </span>
+                  </h1>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
 
-        <button
-          onClick={toggleSidebar}
-          className={`mr-2 rounded-sm p-0.5 group transition-all duration-300 cursor-pointer ${
-            theme === "dark"
-              ? "hover:bg-mediumBlack"
-              : "hover:bg-extraLightBlue"
-          } 
+          <button
+            onClick={toggleSidebar}
+            className={`mr-2 rounded-sm p-0.5 group transition-all duration-300 cursor-pointer ${
+              theme === "dark" ? "hover:bg-" : "hover:bg-extraLightBlue"
+            } 
           ${
             !sidebarOpen
               ? theme === "dark"
@@ -103,30 +128,31 @@ const DashboardLayout = () => {
                 : "max-xl:bg-lightBlack max-xl:hover:bg-darkBlack"
               : ""
           }`}
-        >
-          {sidebarOpen ? (
-            <TbLayoutSidebarLeftCollapseFilled
-              className={`h-5 w-5 transition-all duration-300 ${
-                theme === "dark"
-                  ? "text-mediumGrey group-hover:text-white "
-                  : "text-darkGrey group-hover:text-darkBlack"
-              }`}
-            />
-          ) : (
-            <IoMenu
-              className={`h-5 w-5 transition-all duration-300  ${
-                !sidebarOpen
-                  ? theme === "dark"
-                    ? "max-xl:text-darkBlack group-hover:max-xl:text-darkBlack text-lightestGrey group-hover:text-white "
-                    : "max-xl:text-lightestGrey group-hover:max-xl:text-white text-darkGrey group-hover:text-darkBlack"
-                  : ""
-              }`}
-            />
-          )}
-        </button>
+          >
+            {sidebarOpen ? (
+              <TbLayoutSidebarLeftCollapseFilled
+                className={`h-5 w-5 transition-all duration-300 ${
+                  theme === "dark"
+                    ? "text-mediumGrey group-hover:text-white "
+                    : "text-darkGrey group-hover:text-darkBlack"
+                }`}
+              />
+            ) : (
+              <IoMenu
+                className={`h-5 w-5 transition-all duration-300  ${
+                  !sidebarOpen
+                    ? theme === "dark"
+                      ? "max-xl:text-darkBlack group-hover:max-xl:text-darkBlack text-lightestGrey group-hover:text-white "
+                      : "max-xl:text-lightestGrey group-hover:max-xl:text-white text-darkGrey group-hover:text-darkBlack"
+                    : ""
+                }`}
+              />
+            )}
+          </button>
+        </div>
       </div>
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden ">
         {/* Sidebar */}
         <div className={`${!sidebarOpen && isMobile ? "hidden" : "block"}`}>
           <DashboardSidebar
@@ -177,9 +203,9 @@ const DashboardLayout = () => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ duration: 0.4, type: "spring", damping: 25 }}
-            className={`relative w-full max-w-lg max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl border ${
+            className={`relative w-full max-w-lg max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl  ${
               theme === "dark"
-                ? "bg-gray-900 border-gray-700 text-white"
+                ? "bg-[#002f2d]  text-white"
                 : "bg-white border-gray-200 text-gray-900"
             }`}
           >
@@ -217,7 +243,7 @@ const DashboardLayout = () => {
             <div className="p-6 space-y-4">
               <div
                 className={`p-4 rounded-xl ${
-                  theme === "dark" ? "bg-gray-800/50" : "bg-gray-50"
+                  theme === "dark" ? "bg-[#021716]" : "bg-gray-50"
                 }`}
               >
                 <div className="flex items-start space-x-3">
@@ -258,7 +284,7 @@ const DashboardLayout = () => {
               <Link
                 to="/dashboard/notifications"
                 onClick={() => setShowPopup(false)}
-                className="flex-1 bg-rose-600 text-white px-6 py-3 rounded-xl font-semibold text-center hover:bg-rose-700 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
+                className="flex-1 bg-[#054844] text-white px-6 py-3 rounded-xl font-semibold text-center hover:bg-[#01211f] transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
               >
                 View Notifications
               </Link>

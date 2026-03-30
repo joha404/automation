@@ -216,7 +216,7 @@ const MessageItem = ({
         <div
           className={`relative px-4 py-2 rounded-xl max-w-xs ${
             theme === "dark"
-              ? "bg-lightBlack/20 text-white"
+              ? "bg- text-white"
               : "bg-lightBlack/10 text-darkBlack"
           }`}
         >

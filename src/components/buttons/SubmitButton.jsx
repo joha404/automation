@@ -17,10 +17,12 @@ const SubmitButton = ({
 
   const variants = {
     bg_blue: "bg-mediumBlue text-white hover:bg-darkBlue",
-    bg_none: "bg-transparent border-2 border-mediumGrey text-mediumBlack hover:bg-darkGrey hover:text-white",
-    bg_black: "bg-transparent border-2 border-mediumGrey text-mediumBlack hover:bg-darkGrey hover:text-white",
-    bg_red: "bg-rose-600 border-2 border-rose-700 hover:border-mediumBlue text-white hover:text-white",
-    bg_blank: "bg-mediumBlue/10 border-mediumGrey text-mediumBlue font-semibold",
+    bg_none:
+      "bg-transparent border-2 border-mediumGrey text-mediumBlack hover:bg-darkGrey hover:text-white",
+    bg_black:
+      "bg-transparent border-2 border-[#0A9087] bg-[#0A9087] text-white hover:bg-[#0A9087] hover:text-white",
+    bg_red: "bg-rose-600  hover:border-mediumBlue text-white hover:text-white",
+    bg_blank: "bg-[#0A9087] border-mediumGrey text-white font-semibold",
   };
 
   const ButtonSizes = {
@@ -31,7 +33,7 @@ const SubmitButton = ({
     relative
     transition-all duration-300 ease-in-out
     font-medium rounded-lg w-full cursor-pointer
-    overflow-hidden
+    overflow-hidden font-logo
     z-[1]
     hover:before:left-0 hover:before:right-0 hover:before:opacity-100
     disabled:opacity-90 disabled:cursor-not-allowed
@@ -49,7 +51,7 @@ const SubmitButton = ({
         ButtonSizes[size],
         className,
         "before:content-[''] before:absolute before:top-0 before:left-1/2 before:right-1/2 before:bottom-0 before:opacity-0 before:transition-all before:duration-500 before:ease-[ease] before:-z-[1]",
-        variant === "bg_blue" ? "before:bg-darkBlue" : "before:bg-darkBlue"
+        variant === "bg_blue" ? "before:bg-[#03635d]" : "before:bg-[#03635d]",
       )}
       onClick={isDisabled ? (e) => e.preventDefault() : props.onClick}
       {...props}
