@@ -14,6 +14,11 @@ import MessageItem from "./MessageItem";
 import MessageInput from "./MessageInput";
 import PinnedMessagesModal from "./PinnedMessagesModal";
 import { useWebSocket } from "@/hooks/ useWebSocket";
+import { getAvatarUrl } from "@/utils/getAvatarUrl";
+import {
+  applyCurrentUserReactionOverride,
+  getSingleReactionPlan,
+} from "@/utils/chatReactions";
 
 // Hooks
 
@@ -83,6 +88,7 @@ const ChatRoom = () => {
   const [filteredGifs, setFilteredGifs] = useState(popularGifs);
   const [isUserScrolling, setIsUserScrolling] = useState(false);
   const [lastScrollTop, setLastScrollTop] = useState(0);
+  const [reactionOverrides, setReactionOverrides] = useState({});
 
   // Refs
   const messagesEndRef = useRef(null);
@@ -223,11 +229,7 @@ const ChatRoom = () => {
         isOwn: true,
         isOptimistic: true,
         color: "#466fff",
-        avatar:
-          user?.avatar ||
-          `https://ui-avatars.com/api/?name=${encodeURIComponent(
-            user?.name || "You",
-          )}&background=2e3450&color=fff&bold=true&size=64`,
+        avatar: getAvatarUrl(user, user?.name || "You"),
         isPinned: false,
         preview_url: previewUrl,
         file_name: file.name || null,
@@ -418,11 +420,7 @@ const ChatRoom = () => {
         isOwn: true,
         isOptimistic: true,
         color: "#466fff",
-        avatar:
-          user?.avatar ||
-          `https://ui-avatars.com/api/?name=${encodeURIComponent(
-            user?.name || "You",
-          )}&background=2e3450&color=fff&bold=true&size=64`,
+        avatar: getAvatarUrl(user, user?.name || "You"),
         isPinned: false,
         reply_to: replyingTo
           ? {
@@ -483,12 +481,81 @@ const ChatRoom = () => {
     [socket],
   );
 
+  const updateMessageReactions = useCallback(
+    (messageId, reactions) => {
+      const updateMessage = (message) =>
+        message.id === messageId ? { ...message, reactions } : message;
+
+      setMessages((prev) => prev.map(updateMessage));
+      setPinnedMessages((prev) => prev.map(updateMessage));
+    },
+    [setMessages, setPinnedMessages],
+  );
+
+  const getResolvedMessage = useCallback(
+    (message) => {
+      if (!message) return message;
+
+      const hasOverride = Object.prototype.hasOwnProperty.call(
+        reactionOverrides,
+        message.id,
+      );
+
+      if (!hasOverride) return message;
+
+      return {
+        ...message,
+        reactions: applyCurrentUserReactionOverride(
+          message.reactions,
+          user?.id,
+          reactionOverrides[message.id],
+        ),
+      };
+    },
+    [reactionOverrides, user?.id],
+  );
+
   const handleReaction = useCallback(
     (messageId, emoji) => {
-      sendReaction(messageId, emoji);
+      if (!user?.id || !socket || socket.readyState !== WebSocket.OPEN) {
+        setShowReactionPicker(null);
+        return;
+      }
+
+      const targetMessage = getResolvedMessage(
+        messages.find((message) => message.id === messageId),
+      );
+      if (!targetMessage) {
+        setShowReactionPicker(null);
+        return;
+      }
+
+      const { emojiToAdd, emojisToRemove, nextReactions, nextSelectedEmoji } =
+        getSingleReactionPlan(targetMessage.reactions, user.id, emoji);
+
+      setReactionOverrides((prev) => ({
+        ...prev,
+        [messageId]: nextSelectedEmoji,
+      }));
+      updateMessageReactions(messageId, nextReactions);
+      emojisToRemove.forEach((reactionEmoji) => {
+        sendReaction(messageId, reactionEmoji);
+      });
+      if (emojiToAdd) {
+        sendReaction(messageId, emojiToAdd);
+      }
+
       setShowReactionPicker(null);
     },
-    [sendReaction],
+    [
+      getResolvedMessage,
+      messages,
+      sendReaction,
+      setShowReactionPicker,
+      socket,
+      updateMessageReactions,
+      user?.id,
+    ],
   );
 
   // Pin/unpin
@@ -593,6 +660,9 @@ const ChatRoom = () => {
     scrollToBottom(false);
   }, [messages, scrollToBottom]);
 
+  const displayMessages = messages.map(getResolvedMessage);
+  const displayPinnedMessages = pinnedMessages.map(getResolvedMessage);
+
   if (isLoading) {
     return (
       <div className="flex w-full max-w-6xl mx-auto justify-center">
@@ -615,7 +685,7 @@ const ChatRoom = () => {
             <div className="flex-1 flex flex-col h-full">
               <ChatHeader
                 theme={theme}
-                pinnedMessages={pinnedMessages}
+                pinnedMessages={displayPinnedMessages}
                 showPinnedMessages={showPinnedMessages}
                 setShowPinnedMessages={setShowPinnedMessages}
                 isConnected={isConnected}
@@ -625,7 +695,7 @@ const ChatRoom = () => {
 
               <PinnedMessagesModal
                 theme={theme}
-                pinnedMessages={pinnedMessages}
+                pinnedMessages={displayPinnedMessages}
                 showPinnedMessages={showPinnedMessages}
                 setShowPinnedMessages={setShowPinnedMessages}
                 togglePinMessage={togglePinMessage}
@@ -639,14 +709,14 @@ const ChatRoom = () => {
                 onScroll={handleScroll}
                 className="flex-1 overflow-y-auto lg:px-6 lg:py-4 px-4 py-3 space-y-3 thin-scrollbar h-full"
               >
-                {messages.length === 0 ? (
+                {displayMessages.length === 0 ? (
                   <div className="flex items-center justify-center h-full min-h-[200px]">
                     <CommonParagraph variant="medium" className="text-gray-500">
                       {isConnected ? "Loading conversation!" : "Connecting..."}
                     </CommonParagraph>
                   </div>
                 ) : (
-                  messages.map((msg) => (
+                  displayMessages.map((msg) => (
                     <MessageItem
                       key={msg.id}
                       message={msg}

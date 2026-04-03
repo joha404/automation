@@ -6,6 +6,7 @@ import {
   FaPaperclip,
   FaDownload,
 } from "react-icons/fa";
+import { normalizeReactionsSinglePerUser } from "@/utils/chatReactions";
 
 const MessageItem = ({
   message,
@@ -56,13 +57,14 @@ const MessageItem = ({
     : "bg-transparent text-current border-none shadow-none";
 
   function formatReactions(reactions, userId) {
-    if (!reactions || !Array.isArray(reactions)) return {};
+    const normalizedReactions = normalizeReactionsSinglePerUser(reactions);
+    if (normalizedReactions.length === 0) return {};
 
     const reactionCounts = {};
-    reactions.forEach((reaction) => {
+    normalizedReactions.forEach((reaction) => {
       reactionCounts[reaction.emoji] = {
         count: reaction.user_ids.length,
-        userReacted: reaction.user_ids.includes(userId),
+        userReacted: reaction.user_ids.some((id) => String(id) === String(userId)),
       };
     });
     return reactionCounts;
@@ -268,7 +270,7 @@ const MessageItem = ({
               ([emoji, { count, userReacted }]) => (
                 <button
                   key={emoji}
-                  onClick={() => sendReaction(message.id, emoji)}
+                  onClick={() => handleReaction(message.id, emoji)}
                   className={`px-2 py-0.5 rounded-full text-xs font-medium transition-all duration-200 ${
                     userReacted
                       ? theme === "dark"

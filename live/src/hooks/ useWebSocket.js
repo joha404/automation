@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { getAvatarUrl } from "@/utils/getAvatarUrl";
+import { normalizeReactionsSinglePerUser } from "@/utils/chatReactions";
 
 const getOptimisticTimestamp = (message) => {
   if (typeof message?.optimisticCreatedAt === "number") {
@@ -137,15 +139,11 @@ export const useWebSocket = (token, user, scrollToBottom) => {
               file_name: msg.file_name,
               file_type: msg.file_type,
               subscription_pack: msg.subscription_pack,
-              reactions: msg.reactions || [],
+              reactions: normalizeReactionsSinglePerUser(msg.reactions || []),
               isOwn: msg.sender_id === user?.id,
               color: msg.color,
               type: msg.member_type,
-              avatar:
-                msg.avatar ||
-                `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                  msg.sender || "User",
-                )}&background=2e3450&color=fff&bold=true&size=64`,
+              avatar: getAvatarUrl(msg, msg.sender || "User"),
               isPinned: msg.is_pinned || false,
               is_removed_by_admin: msg.is_removed_by_admin || false,
               removed_reason: msg.removed_reason || null,
@@ -169,15 +167,16 @@ export const useWebSocket = (token, user, scrollToBottom) => {
               timestamp: data.message.timestamp,
               file_name: data.message.file_name,
               file_type: data.message.file_type,
-              reactions: data.message.reactions || [],
+              reactions: normalizeReactionsSinglePerUser(
+                data.message.reactions || [],
+              ),
               isOwn: data.message.sender_id === user?.id,
               color: data.message.color,
               type: data.message.member_type,
-              avatar:
-                data.message.avatar ||
-                `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                  data.message.sender || "User",
-                )}&background=2e3450&color=fff&bold=true&size=64`,
+              avatar: getAvatarUrl(
+                data.message,
+                data.message.sender || "User",
+              ),
               isPinned: data.message.is_pinned || false,
               is_removed_by_admin: data.message.is_removed_by_admin || false,
               removed_reason: data.message.removed_reason || null,
@@ -260,14 +259,15 @@ export const useWebSocket = (token, user, scrollToBottom) => {
               timestamp: data.message.timestamp,
               file_name: data.message.file_name,
               file_type: data.message.file_type,
-              reactions: data.message.reactions || [],
+              reactions: normalizeReactionsSinglePerUser(
+                data.message.reactions || [],
+              ),
               isOwn: data.message.sender_id === user?.id,
               color: data.message.color || "#466fff",
-              avatar:
-                data.message.avatar ||
-                `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                  data.message.sender || "User",
-                )}&background=2e3450&color=fff&bold=true&size=64`,
+              avatar: getAvatarUrl(
+                data.message,
+                data.message.sender || "User",
+              ),
               isPinned: data.message.is_pinned || false,
               is_removed_by_admin: data.message.is_removed_by_admin || false,
               removed_reason: data.message.removed_reason || null,
@@ -301,11 +301,7 @@ export const useWebSocket = (token, user, scrollToBottom) => {
             const formattedMembers = data.members.map((member) => ({
               id: member.id,
               name: member.name,
-              avatar:
-                member.avatar ||
-                `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                  member.name || "User",
-                )}&background=2e3450&color=fff&bold=true&size=64`,
+              avatar: getAvatarUrl(member, member.name || "User"),
               online: member.online,
               role: member.job || "Member",
               subscription_pack: member.subscription_pack,
@@ -378,9 +374,12 @@ export const useWebSocket = (token, user, scrollToBottom) => {
 
         case "message_reaction":
           if (data.message_id && data.reactions) {
+            const normalizedReactions = normalizeReactionsSinglePerUser(
+              data.reactions,
+            );
             const updateReactions = (msg) =>
               msg.id === data.message_id
-                ? { ...msg, reactions: data.reactions }
+                ? { ...msg, reactions: normalizedReactions }
                 : msg;
 
             setMessages((prev) => prev.map(updateReactions));
@@ -398,14 +397,15 @@ export const useWebSocket = (token, user, scrollToBottom) => {
               timestamp: data.message.timestamp,
               file_name: data.message.file_name,
               file_type: data.message.file_type,
-              reactions: data.message.reactions || [],
+              reactions: normalizeReactionsSinglePerUser(
+                data.message.reactions || [],
+              ),
               isOwn: data.message.sender_id === user?.id,
               color: data.message.color || "#466fff",
-              avatar:
-                data.message.avatar ||
-                `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                  data.message.sender || "User",
-                )}&background=2e3450&color=fff&bold=true&size=64`,
+              avatar: getAvatarUrl(
+                data.message,
+                data.message.sender || "User",
+              ),
               isPinned: data.message.is_pinned || false,
               is_removed_by_admin: data.message.is_removed_by_admin || false,
               removed_reason: data.message.removed_reason || null,
