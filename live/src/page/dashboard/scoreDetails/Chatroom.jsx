@@ -34,6 +34,12 @@ import { HiGif } from "react-icons/hi2";
 import { IoMdSend, IoIosCheckmarkCircle } from "react-icons/io";
 import { useSelector } from "react-redux";
 import { popularGifs } from "./gifsData";
+import { getAvatarUrl } from "@/utils/getAvatarUrl";
+import {
+  applyCurrentUserReactionOverride,
+  getSingleReactionPlan,
+  normalizeReactionsSinglePerUser,
+} from "@/utils/chatReactions";
 
 // Cloudinary configuration
 const CLOUD_NAME = "dkgnzxmy8";
@@ -113,6 +119,7 @@ const ChatRoom = () => {
   const [showGifPicker, setShowGifPicker] = useState(false);
   const [gifSearchTerm, setGifSearchTerm] = useState("");
   const [filteredGifs, setFilteredGifs] = useState(popularGifs);
+  const [reactionOverrides, setReactionOverrides] = useState({});
 
   // Enhanced scroll tracking
   const [isUserScrolling, setIsUserScrolling] = useState(false);
@@ -395,15 +402,11 @@ const ChatRoom = () => {
                 file_name: msg.file_name,
                 file_type: msg.file_type,
                 subscription_pack: msg.subscription_pack,
-                reactions: msg.reactions || [],
+                reactions: normalizeReactionsSinglePerUser(msg.reactions || []),
                 isOwn: msg.sender_id === user?.id,
                 color: msg.color,
                 type: msg.member_type,
-                avatar:
-                  msg.avatar ||
-                  `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                    msg.sender || "User",
-                  )}&background=2e3450&color=fff&bold=true&size=64`,
+                avatar: getAvatarUrl(msg, msg.sender || "User"),
                 isPinned: msg.is_pinned || false,
                 is_removed_by_admin: msg.is_removed_by_admin || false,
                 removed_reason: msg.removed_reason || null,
@@ -503,15 +506,16 @@ const ChatRoom = () => {
               file_name: data.message.file_name,
               file_type: data.message.file_type,
               subscription_pack: data?.message.subscription_pack,
-              reactions: data.message.reactions || [],
+              reactions: normalizeReactionsSinglePerUser(
+                data.message.reactions || [],
+              ),
               isOwn: data.message.sender_id === user?.id,
               color: data.message.color,
               type: data.message.member_type,
-              avatar:
-                data.message.avatar ||
-                `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                  data.message.sender || "User",
-                )}&background=2e3450&color=fff&bold=true&size=64`,
+              avatar: getAvatarUrl(
+                data.message,
+                data.message.sender || "User",
+              ),
               isPinned: data.message.is_pinned || false,
               is_removed_by_admin: data.message.is_removed_by_admin || false,
               removed_reason: data.message.removed_reason || null,
@@ -581,14 +585,15 @@ const ChatRoom = () => {
               image_url: null, // FIXED: Don't use image_url field
               file_name: data.message.file_name,
               file_type: data.message.file_type,
-              reactions: data.message.reactions || [],
+              reactions: normalizeReactionsSinglePerUser(
+                data.message.reactions || [],
+              ),
               isOwn: data.message.sender_id === user?.id,
               color: data.message.color || "#466fff",
-              avatar:
-                data.message.avatar ||
-                `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                  data.message.sender || "User",
-                )}&background=2e3450&color=fff&bold=true&size=64`,
+              avatar: getAvatarUrl(
+                data.message,
+                data.message.sender || "User",
+              ),
               isPinned: data.message.is_pinned || false,
               is_removed_by_admin: data.message.is_removed_by_admin || false,
               removed_reason: data.message.removed_reason || null,
@@ -623,11 +628,7 @@ const ChatRoom = () => {
             const formattedMembers = onlineMembers.map((member) => ({
               id: member.id,
               name: member.name,
-              avatar:
-                member.avatar ||
-                `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                  member.name || "User",
-                )}&background=2e3450&color=fff&bold=true&size=64`,
+              avatar: getAvatarUrl(member, member.name || "User"),
               online: member.online,
               role: member.job || "Member",
               subscription_pack: member.subscription_pack,
@@ -641,10 +642,13 @@ const ChatRoom = () => {
 
         case "message_reaction":
           if (data.message_id && data.reactions) {
+            const normalizedReactions = normalizeReactionsSinglePerUser(
+              data.reactions,
+            );
             setMessages((prev) =>
               prev.map((msg) =>
                 msg.id === data.message_id
-                  ? { ...msg, reactions: data.reactions }
+                  ? { ...msg, reactions: normalizedReactions }
                   : msg,
               ),
             );
@@ -652,7 +656,7 @@ const ChatRoom = () => {
             setPinnedMessages((prev) =>
               prev.map((msg) =>
                 msg.id === data.message_id
-                  ? { ...msg, reactions: data.reactions }
+                  ? { ...msg, reactions: normalizedReactions }
                   : msg,
               ),
             );
@@ -670,14 +674,15 @@ const ChatRoom = () => {
               image_url: null, // FIXED: Don't use image_url field
               file_name: data.message.file_name,
               file_type: data.message.file_type,
-              reactions: data.message.reactions || [],
+              reactions: normalizeReactionsSinglePerUser(
+                data.message.reactions || [],
+              ),
               isOwn: data.message.sender_id === user?.id,
               color: data.message.color || "#466fff",
-              avatar:
-                data.message.avatar ||
-                `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                  data.message.sender || "User",
-                )}&background=2e3450&color=fff&bold=true&size=64`,
+              avatar: getAvatarUrl(
+                data.message,
+                data.message.sender || "User",
+              ),
               isPinned: data.message.is_pinned || false,
               is_removed_by_admin: data.message.is_removed_by_admin || false,
               removed_reason: data.message.removed_reason || null,
@@ -848,11 +853,7 @@ const ChatRoom = () => {
         isOwn: true,
         isOptimistic: true,
         color: "#466fff",
-        avatar:
-          user?.avatar ||
-          `https://ui-avatars.com/api/?name=${encodeURIComponent(
-            user?.name || "You",
-          )}&background=2e3450&color=fff&bold=true&size=64`,
+        avatar: getAvatarUrl(user, user?.name || "You"),
         isPinned: false,
         reply_to: replyingTo
           ? {
@@ -915,12 +916,73 @@ const ChatRoom = () => {
     [socket],
   );
 
+  const updateMessageReactions = useCallback(
+    (messageId, reactions) => {
+      const updateMessage = (message) =>
+        message.id === messageId ? { ...message, reactions } : message;
+
+      setMessages((prev) => prev.map(updateMessage));
+      setPinnedMessages((prev) => prev.map(updateMessage));
+    },
+    [setMessages, setPinnedMessages],
+  );
+
+  const getResolvedMessage = useCallback(
+    (message) => {
+      if (!message) return message;
+
+      const hasOverride = Object.prototype.hasOwnProperty.call(
+        reactionOverrides,
+        message.id,
+      );
+
+      if (!hasOverride) return message;
+
+      return {
+        ...message,
+        reactions: applyCurrentUserReactionOverride(
+          message.reactions,
+          user?.id,
+          reactionOverrides[message.id],
+        ),
+      };
+    },
+    [reactionOverrides, user?.id],
+  );
+
   const handleReaction = useCallback(
     (messageId, emoji) => {
-      sendReaction(messageId, emoji);
+      if (!user?.id || !socket || socket.readyState !== WebSocket.OPEN) {
+        setShowReactionPicker(null);
+        return;
+      }
+
+      const targetMessage = getResolvedMessage(
+        messages.find((message) => message.id === messageId),
+      );
+      if (!targetMessage) {
+        setShowReactionPicker(null);
+        return;
+      }
+
+      const { emojiToAdd, emojisToRemove, nextReactions, nextSelectedEmoji } =
+        getSingleReactionPlan(targetMessage.reactions, user.id, emoji);
+
+      setReactionOverrides((prev) => ({
+        ...prev,
+        [messageId]: nextSelectedEmoji,
+      }));
+      updateMessageReactions(messageId, nextReactions);
+      emojisToRemove.forEach((reactionEmoji) => {
+        sendReaction(messageId, reactionEmoji);
+      });
+      if (emojiToAdd) {
+        sendReaction(messageId, emojiToAdd);
+      }
+
       setShowReactionPicker(null);
     },
-    [sendReaction],
+    [getResolvedMessage, messages, sendReaction, socket, updateMessageReactions, user?.id],
   );
 
   // Enhanced Pin/Unpin message function
@@ -992,13 +1054,16 @@ const ChatRoom = () => {
   // Enhanced reaction formatting with user tracking
   const formatReactions = useCallback(
     (reactions) => {
-      if (!reactions || !Array.isArray(reactions)) return {};
+      const normalizedReactions = normalizeReactionsSinglePerUser(reactions);
+      if (normalizedReactions.length === 0) return {};
 
       const reactionCounts = {};
-      reactions.forEach((reaction) => {
+      normalizedReactions.forEach((reaction) => {
         reactionCounts[reaction.emoji] = {
           count: reaction.user_ids.length,
-          userReacted: reaction.user_ids.includes(user?.id),
+          userReacted: reaction.user_ids.some(
+            (id) => String(id) === String(user?.id),
+          ),
         };
       });
       return reactionCounts;
@@ -1295,6 +1360,8 @@ const ChatRoom = () => {
     );
   }
 
+  const displayMessages = messages.map(getResolvedMessage);
+
   return (
     <CommonWrapper variant="bottomSection">
       <div
@@ -1321,7 +1388,7 @@ const ChatRoom = () => {
             className="flex-1 overflow-y-auto  lg:py-3 px-4 py-2 space-y-3 thin-scrollbar"
             onScroll={handleScroll}
           >
-            {messages.length === 0 ? (
+            {displayMessages.length === 0 ? (
               <div className="flex items-center justify-center h-full min-h-[200px]">
                 <CommonParagraph variant="medium" className="text-gray-500">
                   {isConnected
@@ -1330,7 +1397,7 @@ const ChatRoom = () => {
                 </CommonParagraph>
               </div>
             ) : (
-              messages.map((msg) => {
+              displayMessages.map((msg) => {
                 const messageReactions = formatReactions(msg.reactions);
                 const isOwnMessage = msg.isOwn;
 
@@ -1419,7 +1486,7 @@ const ChatRoom = () => {
                             ([emoji, { count, userReacted }]) => (
                               <button
                                 key={emoji}
-                                onClick={() => sendReaction(msg.id, emoji)}
+                                onClick={() => handleReaction(msg.id, emoji)}
                                 className={`px-2 py-0.5 rounded-full text-xs font-medium transition-all duration-200 ${
                                   userReacted
                                     ? " text-white transform scale-105"

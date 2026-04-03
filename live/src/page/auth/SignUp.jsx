@@ -48,7 +48,6 @@ const SignUp = () => {
     formState: { errors },
     reset,
     setValue,
-    watch,
   } = useForm({
     defaultValues: {
       first_name: "",
@@ -399,6 +398,16 @@ const SignUp = () => {
                     minLength: {
                       value: 6,
                       message: "Password must be at least 6 characters!",
+                    },
+                    validate: (value) => {
+                      if (
+                        !/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])/.test(
+                          value,
+                        )
+                      ) {
+                        return "Password must include uppercase, lowercase, number, and special character";
+                      }
+                      return true;
                     },
                   }}
                   register={register}
