@@ -708,6 +708,9 @@ const ChatRoom = () => {
               onlineCount={onlineCount}
               offlineCount={offlineCount}
               isConnected={isConnected}
+              isMobile={false}
+              showUserList={showUserList}
+              setShowUserList={setShowUserList}
             />
           </div>
         </div>

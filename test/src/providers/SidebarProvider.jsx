@@ -1,20 +1,19 @@
-import { SidebarContext } from '@/context/context';
-import { useState, useEffect } from 'react';
-
+import { SidebarContext } from "@/context/context";
+import { useState, useEffect } from "react";
 
 const SidebarProvider = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(() => {
     if (typeof window === "undefined") return false;
     return localStorage.getItem("sidebar_open") === "true" || false;
   });
-  
+
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const checkIfMobile = () => {
       const mobile = window.innerWidth < 1280;
       setIsMobile(mobile);
-      
+
       if (window.innerWidth >= 1280) {
         setSidebarOpen(true);
       } else {
@@ -32,7 +31,7 @@ const SidebarProvider = ({ children }) => {
   }, [sidebarOpen]);
 
   const toggleSidebar = () => {
-    setSidebarOpen(prev => !prev);
+    setSidebarOpen((prev) => !prev);
   };
 
   const openSidebar = () => {
@@ -48,13 +47,11 @@ const SidebarProvider = ({ children }) => {
     isMobile,
     toggleSidebar,
     openSidebar,
-    closeSidebar
+    closeSidebar,
   };
 
   return (
-    <SidebarContext.Provider value={value}>
-      {children}
-    </SidebarContext.Provider>
+    <SidebarContext.Provider value={value}>{children}</SidebarContext.Provider>
   );
 };
 export default SidebarProvider;
