@@ -1,5 +1,4 @@
 import Logo from "@/components/svgs/Logo";
-import MetaText from "@/components/texts/MetaText";
 import CommonTitle from "@/components/texts/CommonTitle";
 import CommonParagraph from "@/components/texts/CommonParagraph";
 import SubmitButton from "@/components/buttons/SubmitButton";
@@ -17,29 +16,104 @@ const ForgotPasswordOtp = () => {
   const { identifier, identifier_type } = location?.state || {};
   const navigate = useNavigate();
   console.log(identifier_type, identifier);
+  const OTP_LENGTH = 6;
+  const isEmailIdentifier =
+    identifier_type === "email" || identifier?.includes("@");
+
+  const maskEmail = (value) => {
+    if (!value || !value.includes("@")) return "your email address";
+
+    const [localPart, domain] = value.split("@");
+    const visibleStart = localPart.slice(0, 2);
+    const visibleEnd = localPart.length > 4 ? localPart.slice(-1) : "";
+    const maskedLocal = `${visibleStart}${"*".repeat(
+      Math.max(localPart.length - visibleStart.length - visibleEnd.length, 3),
+    )}${visibleEnd}`;
+
+    return `${maskedLocal}@${domain}`;
+  };
+
+  const maskPhone = (value) => {
+    if (!value) return "your phone number";
+
+    const visibleEnd = value.slice(-2);
+    return `${"*".repeat(Math.max(value.length - 2, 4))}${visibleEnd}`;
+  };
+
+  const maskedIdentifier =
+    isEmailIdentifier ? maskEmail(identifier) : maskPhone(identifier);
 
   // State for OTP inputs
-  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [otp, setOtp] = useState(new Array(OTP_LENGTH).fill(""));
   const continueButtonRef = useRef(null);
+  const otpInputRefs = useRef([]);
 
   const { mutate: resendOtp, isPending: otpLoading } = useResetResendOtp();
   const { mutate: verifyOtp, isPending: isLoading } = useVerifyPasswordOtp(
     "/password-reset/verify-otp/",
   );
-  const handleChange = (index, value) => {
-    if (!/^[0-9]?$/.test(value)) return;
-    const newOtp = [...otp];
-    newOtp[index] = value;
-    setOtp(newOtp);
 
-    if (value && index < otp.length - 1) {
-      document.getElementById(`otp-${index + 1}`).focus();
+  const focusOtpInput = (index) => {
+    const focusInput = () => {
+      const input = otpInputRefs.current[index];
+
+      if (!input) return;
+
+      input.focus();
+      input.select();
+    };
+
+    if (typeof window !== "undefined" && window.requestAnimationFrame) {
+      window.requestAnimationFrame(focusInput);
+      return;
+    }
+
+    setTimeout(focusInput, 0);
+  };
+
+  const handleChange = (index, value) => {
+    const digits = value.replace(/\D/g, "");
+
+    if (!digits) {
+      setOtp((prevOtp) => {
+        const newOtp = [...prevOtp];
+        newOtp[index] = "";
+        return newOtp;
+      });
+      return;
+    }
+
+    setOtp((prevOtp) => {
+      const newOtp = [...prevOtp];
+      const nextDigits = digits.slice(0, OTP_LENGTH - index).split("");
+
+      nextDigits.forEach((digit, offset) => {
+        newOtp[index + offset] = digit;
+      });
+
+      return newOtp;
+    });
+
+    const nextIndex = Math.min(index + digits.length, OTP_LENGTH - 1);
+    if (nextIndex !== index) {
+      focusOtpInput(nextIndex);
     }
   };
 
   const handleKeyDown = (index, e) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
-      document.getElementById(`otp-${index - 1}`).focus();
+      e.preventDefault();
+      focusOtpInput(index - 1);
+    }
+
+    if (e.key === "ArrowLeft" && index > 0) {
+      e.preventDefault();
+      focusOtpInput(index - 1);
+    }
+
+    if (e.key === "ArrowRight" && index < OTP_LENGTH - 1) {
+      e.preventDefault();
+      focusOtpInput(index + 1);
     }
   };
   const isOtpComplete = otp.every((digit) => digit !== "");
@@ -47,7 +121,8 @@ const ForgotPasswordOtp = () => {
   const handleResendOtp = () => {
     resendOtp(identifier, {
       onSuccess: () => {
-        setOtp(new Array(6).fill(""));
+        setOtp(new Array(OTP_LENGTH).fill(""));
+        focusOtpInput(0);
       },
     });
   };
@@ -60,31 +135,31 @@ const ForgotPasswordOtp = () => {
     verifyOtp(
       { identifier, otp },
       {
-        onSuccess: (res) => {
+        onSuccess: () => {
           navigate("/reset-password", { state: { identifier: identifier } });
         },
       },
     );
   };
 
-  const handlePaste = (e) => {
+  const handlePaste = (index, e) => {
     e.preventDefault();
-    const paste = e.clipboardData.getData("text").trim();
+    const paste = e.clipboardData.getData("text").replace(/\D/g, "").trim();
 
-    if (!/^\d+$/.test(paste)) return;
+    if (!paste) return;
 
-    const pasteDigits = paste.slice(0, otp.length).split("");
-    const updatedOtp = [...otp];
-    pasteDigits.forEach((digit, i) => {
-      updatedOtp[i] = digit;
+    const pasteDigits = paste.slice(0, OTP_LENGTH - index).split("");
+    setOtp((prevOtp) => {
+      const updatedOtp = [...prevOtp];
+
+      pasteDigits.forEach((digit, offset) => {
+        updatedOtp[index + offset] = digit;
+      });
+
+      return updatedOtp;
     });
 
-    setOtp(updatedOtp);
-
-    const nextInput = document.getElementById(
-      `otp-${Math.min(pasteDigits.length - 1, otp.length - 1)}`,
-    );
-    if (nextInput) nextInput.focus();
+    focusOtpInput(Math.min(index + pasteDigits.length, OTP_LENGTH - 1));
   };
 
   useEffect(() => {
@@ -122,14 +197,15 @@ const ForgotPasswordOtp = () => {
               </Link>
               <CommonTitle variant="regular" className="mb-2 font-semibold">
                 Please check your{" "}
-                {`${identifier_type === "email" ? "email" : "phone"}`}!
+                {`${isEmailIdentifier ? "email" : "phone"}`}!
               </CommonTitle>
               <CommonParagraph
                 variant="small"
                 className="font-normal  mx-auto xlg:mx-0 mb-5"
               >
-                We've emailed a 6-digit confirmation code to acb@domain, please
-                enter the code in below box to verify your email.{" "}
+                We&apos;ve sent a 6-digit confirmation code to {maskedIdentifier},
+                please enter the code in the box below to verify your{" "}
+                {isEmailIdentifier ? "email address" : "phone number"}.
               </CommonParagraph>
             </div>
 
@@ -147,11 +223,18 @@ const ForgotPasswordOtp = () => {
                     type="text"
                     value={digit}
                     maxLength={1}
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    autoComplete={index === 0 ? "one-time-code" : "off"}
+                    aria-label={`OTP digit ${index + 1}`}
+                    ref={(element) => {
+                      otpInputRefs.current[index] = element;
+                    }}
                     className="lg:w-16 xl:h-16 xs:w-14 xs:h-14 w-9 h-9 text-center text-2xl font-semibold border border-[#0A9087] lg:rounded-lg rounded-md shadow focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white font-logo"
                     onChange={(e) => handleChange(index, e.target.value)}
                     onFocus={(e) => e.target.select()}
                     onKeyDown={(e) => handleKeyDown(index, e)}
-                    onPaste={index === 0 ? handlePaste : undefined}
+                    onPaste={(e) => handlePaste(index, e)}
                   />
                 ))}
               </div>
@@ -182,7 +265,7 @@ const ForgotPasswordOtp = () => {
               className=" text-center w-full"
             >
               <CommonParagraph variant="small" className="font-normal ">
-                Didn't receive the email?{" "}
+                Didn&apos;t receive the email?{" "}
                 <button
                   onClick={!otpLoading ? handleResendOtp : undefined}
                   disabled={otpLoading}

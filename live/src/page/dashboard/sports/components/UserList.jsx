@@ -5,7 +5,6 @@ import { FaUsers, FaTimes, FaUserFriends } from "react-icons/fa";
 const UserList = ({
   theme,
   onlineUsers,
-  offlineUsers,
   onlineCount,
   offlineCount,
   isConnected,
@@ -150,7 +149,7 @@ const UserList = ({
         )}
 
         {/* Empty State */}
-        {onlineUsers.length === 0 && offlineUsers.length === 0 && (
+        {onlineUsers.length === 0 && (
           <div className="text-center py-8">
             <div
               className={`w-16 h-16 rounded-full mx-auto mb-3 flex items-center justify-center ${
@@ -188,7 +187,14 @@ const UserList = ({
 
   // Desktop version
   return (
-    <aside className="w-full lg:w-80 border-l hidden lg:flex flex-col">
+    <aside
+      className={`w-72 border-l flex flex-col h-full flex-shrink-0
+    ${
+      theme === "dark"
+        ? "bg-[#021716] border-gray-700"
+        : "bg-white border-gray-300"
+    }`}
+    >
       {content}
     </aside>
   );

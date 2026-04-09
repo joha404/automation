@@ -1,6 +1,4 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { getAvatarUrl } from "@/utils/getAvatarUrl";
-import { normalizeReactionsSinglePerUser } from "@/utils/chatReactions";
 
 const getOptimisticTimestamp = (message) => {
   if (typeof message?.optimisticCreatedAt === "number") {
@@ -84,12 +82,7 @@ export const useWebSocket = (token, user, scrollToBottom) => {
   const [canSendMessages, setCanSendMessages] = useState(true);
 
   const wsRef = useRef(null);
-  const reconnectTimeoutRef = useRef(null);
   const isConnectingRef = useRef(false);
-  const lastValidMemberCountRef = useRef(0);
-  const memberUpdateTimestampRef = useRef(0);
-  const memberCountHistoryRef = useRef([]);
-  const initialLoadCompleteRef = useRef(false);
   const isAtBottomRef = useRef(true);
 
   // Helper functions
@@ -139,11 +132,15 @@ export const useWebSocket = (token, user, scrollToBottom) => {
               file_name: msg.file_name,
               file_type: msg.file_type,
               subscription_pack: msg.subscription_pack,
-              reactions: normalizeReactionsSinglePerUser(msg.reactions || []),
+              reactions: msg.reactions || [],
               isOwn: msg.sender_id === user?.id,
               color: msg.color,
               type: msg.member_type,
-              avatar: getAvatarUrl(msg, msg.sender || "User"),
+              avatar:
+                msg.avatar ||
+                `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                  msg.sender || "User",
+                )}&background=2e3450&color=fff&bold=true&size=64`,
               isPinned: msg.is_pinned || false,
               is_removed_by_admin: msg.is_removed_by_admin || false,
               removed_reason: msg.removed_reason || null,
@@ -167,16 +164,15 @@ export const useWebSocket = (token, user, scrollToBottom) => {
               timestamp: data.message.timestamp,
               file_name: data.message.file_name,
               file_type: data.message.file_type,
-              reactions: normalizeReactionsSinglePerUser(
-                data.message.reactions || [],
-              ),
+              reactions: data.message.reactions || [],
               isOwn: data.message.sender_id === user?.id,
               color: data.message.color,
               type: data.message.member_type,
-              avatar: getAvatarUrl(
-                data.message,
-                data.message.sender || "User",
-              ),
+              avatar:
+                data.message.avatar ||
+                `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                  data.message.sender || "User",
+                )}&background=2e3450&color=fff&bold=true&size=64`,
               isPinned: data.message.is_pinned || false,
               is_removed_by_admin: data.message.is_removed_by_admin || false,
               removed_reason: data.message.removed_reason || null,
@@ -259,15 +255,14 @@ export const useWebSocket = (token, user, scrollToBottom) => {
               timestamp: data.message.timestamp,
               file_name: data.message.file_name,
               file_type: data.message.file_type,
-              reactions: normalizeReactionsSinglePerUser(
-                data.message.reactions || [],
-              ),
+              reactions: data.message.reactions || [],
               isOwn: data.message.sender_id === user?.id,
               color: data.message.color || "#466fff",
-              avatar: getAvatarUrl(
-                data.message,
-                data.message.sender || "User",
-              ),
+              avatar:
+                data.message.avatar ||
+                `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                  data.message.sender || "User",
+                )}&background=2e3450&color=fff&bold=true&size=64`,
               isPinned: data.message.is_pinned || false,
               is_removed_by_admin: data.message.is_removed_by_admin || false,
               removed_reason: data.message.removed_reason || null,
@@ -294,92 +289,36 @@ export const useWebSocket = (token, user, scrollToBottom) => {
 
         case "member_list": {
           if (data.members && Array.isArray(data.members)) {
-            const now = Date.now();
-            console.log("📦 Received members:", data.members.length);
-
-            // Format all members
             const formattedMembers = data.members.map((member) => ({
               id: member.id,
               name: member.name,
-              avatar: getAvatarUrl(member, member.name || "User"),
+              avatar:
+                member.avatar ||
+                `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                  member.name || "User",
+                )}&background=2e3450&color=fff&bold=true&size=64`,
               online: member.online,
               role: member.job || "Member",
               subscription_pack: member.subscription_pack,
               color: member.color,
             }));
 
-            // Split into online and offline
             const online = formattedMembers.filter((m) => m.online === true);
             const offline = formattedMembers.filter((m) => m.online === false);
 
-            const newOnlineCount = online.length;
-            const newOfflineCount = offline.length;
-
-            // Track count history
-            memberCountHistoryRef.current.push(newOnlineCount);
-            if (memberCountHistoryRef.current.length > 3) {
-              memberCountHistoryRef.current.shift();
-            }
-
-            // Smart update logic
-            const timeSinceLastUpdate = now - memberUpdateTimestampRef.current;
-            const countAppearances = memberCountHistoryRef.current.filter(
-              (c) => c === newOnlineCount,
-            ).length;
-            const isStableCount = countAppearances >= 2;
-
-            // Initial load
-            if (!initialLoadCompleteRef.current) {
-              if (
-                isStableCount ||
-                newOnlineCount > (lastValidMemberCountRef.current || 0)
-              ) {
-                setOnlineUsers(online);
-                setOfflineUsers(offline);
-                setOnlineCount(newOnlineCount);
-                setOfflineCount(newOfflineCount);
-                lastValidMemberCountRef.current = newOnlineCount;
-                memberUpdateTimestampRef.current = now;
-                initialLoadCompleteRef.current = true;
-              } else {
-                console.log("⏳ Waiting for stable count...");
-                return;
-              }
-            } else {
-              // After initial load
-              const shouldUpdate =
-                newOnlineCount > lastValidMemberCountRef.current ||
-                (isStableCount && timeSinceLastUpdate > 3000);
-
-              if (shouldUpdate) {
-                setOnlineUsers(online);
-                setOfflineUsers(offline);
-                setOnlineCount(newOnlineCount);
-                setOfflineCount(newOfflineCount);
-                lastValidMemberCountRef.current = newOnlineCount;
-                memberUpdateTimestampRef.current = now;
-              } else {
-                console.log("⏭️ Keeping stable count");
-                // Update lists but keep count stable
-                if (online.length > 0 || offline.length > 0) {
-                  setOnlineUsers(online);
-                  setOfflineUsers(offline);
-                  setOfflineCount(newOfflineCount);
-                }
-              }
-            }
+            setOnlineUsers(online);
+            setOfflineUsers(offline);
+            setOnlineCount(online.length);
+            setOfflineCount(offline.length);
           }
           break;
         }
 
         case "message_reaction":
           if (data.message_id && data.reactions) {
-            const normalizedReactions = normalizeReactionsSinglePerUser(
-              data.reactions,
-            );
             const updateReactions = (msg) =>
               msg.id === data.message_id
-                ? { ...msg, reactions: normalizedReactions }
+                ? { ...msg, reactions: data.reactions }
                 : msg;
 
             setMessages((prev) => prev.map(updateReactions));
@@ -397,15 +336,14 @@ export const useWebSocket = (token, user, scrollToBottom) => {
               timestamp: data.message.timestamp,
               file_name: data.message.file_name,
               file_type: data.message.file_type,
-              reactions: normalizeReactionsSinglePerUser(
-                data.message.reactions || [],
-              ),
+              reactions: data.message.reactions || [],
               isOwn: data.message.sender_id === user?.id,
               color: data.message.color || "#466fff",
-              avatar: getAvatarUrl(
-                data.message,
-                data.message.sender || "User",
-              ),
+              avatar:
+                data.message.avatar ||
+                `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                  data.message.sender || "User",
+                )}&background=2e3450&color=fff&bold=true&size=64`,
               isPinned: data.message.is_pinned || false,
               is_removed_by_admin: data.message.is_removed_by_admin || false,
               removed_reason: data.message.removed_reason || null,
@@ -551,3 +489,4 @@ export const useWebSocket = (token, user, scrollToBottom) => {
     isAtBottomRef,
   };
 };
+
