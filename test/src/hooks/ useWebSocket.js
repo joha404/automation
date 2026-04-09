@@ -82,12 +82,7 @@ export const useWebSocket = (token, user, scrollToBottom) => {
   const [canSendMessages, setCanSendMessages] = useState(true);
 
   const wsRef = useRef(null);
-  const reconnectTimeoutRef = useRef(null);
   const isConnectingRef = useRef(false);
-  const lastValidMemberCountRef = useRef(0);
-  const memberUpdateTimestampRef = useRef(0);
-  const memberCountHistoryRef = useRef([]);
-  const initialLoadCompleteRef = useRef(false);
   const isAtBottomRef = useRef(true);
 
   // Helper functions
@@ -294,10 +289,6 @@ export const useWebSocket = (token, user, scrollToBottom) => {
 
         case "member_list": {
           if (data.members && Array.isArray(data.members)) {
-            const now = Date.now();
-            console.log("📦 Received members:", data.members.length);
-
-            // Format all members
             const formattedMembers = data.members.map((member) => ({
               id: member.id,
               name: member.name,
@@ -312,66 +303,13 @@ export const useWebSocket = (token, user, scrollToBottom) => {
               color: member.color,
             }));
 
-            // Split into online and offline
             const online = formattedMembers.filter((m) => m.online === true);
             const offline = formattedMembers.filter((m) => m.online === false);
 
-            const newOnlineCount = online.length;
-            const newOfflineCount = offline.length;
-
-            // Track count history
-            memberCountHistoryRef.current.push(newOnlineCount);
-            if (memberCountHistoryRef.current.length > 3) {
-              memberCountHistoryRef.current.shift();
-            }
-
-            // Smart update logic
-            const timeSinceLastUpdate = now - memberUpdateTimestampRef.current;
-            const countAppearances = memberCountHistoryRef.current.filter(
-              (c) => c === newOnlineCount,
-            ).length;
-            const isStableCount = countAppearances >= 2;
-
-            // Initial load
-            if (!initialLoadCompleteRef.current) {
-              if (
-                isStableCount ||
-                newOnlineCount > (lastValidMemberCountRef.current || 0)
-              ) {
-                setOnlineUsers(online);
-                setOfflineUsers(offline);
-                setOnlineCount(newOnlineCount);
-                setOfflineCount(newOfflineCount);
-                lastValidMemberCountRef.current = newOnlineCount;
-                memberUpdateTimestampRef.current = now;
-                initialLoadCompleteRef.current = true;
-              } else {
-                console.log("⏳ Waiting for stable count...");
-                return;
-              }
-            } else {
-              // After initial load
-              const shouldUpdate =
-                newOnlineCount > lastValidMemberCountRef.current ||
-                (isStableCount && timeSinceLastUpdate > 3000);
-
-              if (shouldUpdate) {
-                setOnlineUsers(online);
-                setOfflineUsers(offline);
-                setOnlineCount(newOnlineCount);
-                setOfflineCount(newOfflineCount);
-                lastValidMemberCountRef.current = newOnlineCount;
-                memberUpdateTimestampRef.current = now;
-              } else {
-                console.log("⏭️ Keeping stable count");
-                // Update lists but keep count stable
-                if (online.length > 0 || offline.length > 0) {
-                  setOnlineUsers(online);
-                  setOfflineUsers(offline);
-                  setOfflineCount(newOfflineCount);
-                }
-              }
-            }
+            setOnlineUsers(online);
+            setOfflineUsers(offline);
+            setOnlineCount(online.length);
+            setOfflineCount(offline.length);
           }
           break;
         }
