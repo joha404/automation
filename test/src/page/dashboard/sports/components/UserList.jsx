@@ -188,7 +188,14 @@ const UserList = ({
 
   // Desktop version
   return (
-    <aside className="w-full lg:w-80 border-l hidden lg:flex flex-col">
+    <aside
+      className={`w-72 border-l flex flex-col h-full flex-shrink-0
+    ${
+      theme === "dark"
+        ? "bg-[#021716] border-gray-700"
+        : "bg-white border-gray-300"
+    }`}
+    >
       {content}
     </aside>
   );

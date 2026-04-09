@@ -10,13 +10,13 @@ import RollingBanner from "@/components/modals/FeastivalModal";
 import FreeTrialPopup from "@/page/auth/FreeTrialPopup";
 
 const Dashboard = () => {
-  const {
-    data: predictionsData,
-    isLoading: predictionLoading,
-  } = useGet("/predictions/", {
-    queryKey: ["prediction-ultimate-dashboard"],
-    secure: true,
-  });
+  const { data: predictionsData, isLoading: predictionLoading } = useGet(
+    "/predictions/",
+    {
+      queryKey: ["prediction-ultimate-dashboard"],
+      secure: true,
+    },
+  );
 
   const [selectedMarket] = useState("Ultimate");
   const [showPopup, setShowPopup] = useState(false);
