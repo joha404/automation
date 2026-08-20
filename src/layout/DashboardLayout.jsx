@@ -17,7 +17,6 @@ const STATIC_COUNT_DATA = {
     count: 3,
   },
 };
-
 const STATIC_NOTIFICATIONS = [
   {
     id: 1,
