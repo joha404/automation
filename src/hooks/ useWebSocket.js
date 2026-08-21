@@ -11,7 +11,6 @@ export const useWebSocket = (token, user, scrollToBottom) => {
   const [onlineCount, setOnlineCount] = useState(0);
   const [offlineCount, setOfflineCount] = useState(0);
   const [canSendMessages, setCanSendMessages] = useState(true);
-
   const wsRef = useRef(null);
   const reconnectTimeoutRef = useRef(null);
   const isConnectingRef = useRef(false);
