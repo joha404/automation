@@ -23,7 +23,6 @@ const Otp = () => {
 
   const email = userData?.email;
 
-  // State for OTP inputs
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const continueButtonRef = useRef(null);
 
