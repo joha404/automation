@@ -50,7 +50,6 @@ const DashboardSection = ({ data }) => {
                 />
               </div>
             </div>
-            {/* Right Side - Content */}
             <div
               data-aos="fade-left"
               className="space-y-12 order-1 lg:order-2"
