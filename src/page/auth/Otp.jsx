@@ -25,7 +25,6 @@ const Otp = () => {
 
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const continueButtonRef = useRef(null);
-
   const { mutate: resendOtp, isPending: otpLoading } = useResendOtp();
   const { mutate: verifyOtp, isPending: isLoading } =
     useVerifyOtp("/verify-account/");
