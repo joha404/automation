@@ -40,7 +40,6 @@ export const useWebSocket = (token, user, scrollToBottom) => {
     );
   };
 
-  // Core websocket message handler
   const handleWebSocketMessage = useCallback(
     (data) => {
       switch (data.type) {
